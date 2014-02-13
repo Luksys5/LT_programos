@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,45 +19,39 @@ public class Delimiter {
             PrintWriter out = new PrintWriter("Baigta.txt");
             
         //   while((input = br.readLine()) != null){  
-            int i = -1;    
+            int i = 0;    
             
                 while((input = br.readLine()) != null){
-                pilnas[i+1] = input;
+                pilnas[i] = input;
                 sc = new Scanner(input);    
                 
                 sakau = sc.next(); 
                      if(sakau.matches(".*\\d.*"))
                      {                        
-                            i++;
+                         
                         sakau=sc.next();                       
                         kodas[i] = sakau;                       
 
                      }
 
-                if(i>=1){ 
-                    int z=i;
-                    tikr = kodas[z].toCharArray();
-                    int index = 0;                    
-                    for(i = z - 1; i > 0;i--){   
-                        index = 0;
-                        temp = kodas[i].toCharArray();                       
-                        for(int j=0; j<tikr.length;j++){                            
-                            if(tikr[j]==temp[j])
-                                index++;
+                 int index = 0; 
+                     if(i>0){ 
+                        tikr = kodas[i].toCharArray();                     
+                        for(int j = 1; j <= i ;j++){  
+                            index = 0;
+                                temp = kodas[i-j].toCharArray();
+                                System.out.println("i:"+i+"sk="+tikr.length);
+                            for(int sk = 0; sk < tikr.length;sk++){
+                                if(tikr[sk] == temp[sk])
+                                    index++;}
+                            if(index == tikr.length)
+                                kodas[i] = "null";
                         }
-                        if(index == tikr.length){
-                             kodas[z] = "null";   
-                             System.out.println(kodas[z]);
                         }
-                    }
-
-                    i=z;
-                    
-                }
-                              
-                }
-                
-                out.close();
+                   //  for(int j = 0; j < i;j++)
+                    //%     System.out.println(kodas[j]);
+                     if(ivykis==0)
+                         i++;
     }
 }
 
