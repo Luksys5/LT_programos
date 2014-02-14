@@ -46,8 +46,9 @@ public class Delimiter {
                     
             }
                 for(int j =0; j < i ,j++)
-                    if(kodas[i] != "null")
+                    if(kodas[j] != "null")
                         out.println(pilnas[j]);
+                out.close();
     
 }
 
