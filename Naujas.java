@@ -11,45 +11,38 @@ public class Delimiter {
     static Scanner sc = null;
     static char[] tikr = new char[5];
     static char[] temp = new char[5];
-    static String[] pilnas = new String[1000];
-    static String[] kodas =  new String[1000]; 
+    static String[] pilnas = new String[10000];
+    static String[] kodas =  new String[10000]; 
     
     public static void main(String[] args) throws   IOException{
-            BufferedReader br = new BufferedReader(new FileReader("labas.txt"));  
+            BufferedReader br = new BufferedReader(new FileReader("1seka.txt"));  
             PrintWriter out = new PrintWriter("Baigta.txt");
             
-        //   while((input = br.readLine()) != null){  
             int i = 0;    
-            
+                
                 while((input = br.readLine()) != null){
                 pilnas[i] = input;
                 sc = new Scanner(input);    
-                
+                int ivykis = 1;
                 sakau = sc.next(); 
                      if(sakau.matches(".*\\d.*"))
                      {                        
-                         
+                        ivykis=0; 
                         sakau=sc.next();                       
                         kodas[i] = sakau;                       
 
                      }
 
-                 int index = 0; 
-                     if(i>0){ 
-                        tikr = kodas[i].toCharArray();                     
+                    if(i > 0 && ivykis == 0){                         
+                        String naujas = kodas[i];                             
                         for(int j = 1; j <= i ;j++){  
-                            index = 0;
-                                temp = kodas[i-j].toCharArray();
-                                System.out.println("i:"+i+"sk="+tikr.length);
-                            for(int sk = 0; sk < tikr.length;sk++){
-                                if(tikr[sk] == temp[sk])
-                                    index++;}
-                            if(index == tikr.length)
-                                kodas[i] = "null";
-                        }
-                        }
-                   //  for(int j = 0; j < i;j++)
-                    //%     System.out.println(kodas[j]);
+                            String senas = kodas[i-j];
+                            if(naujas.equals(senas))
+                                kodas[i]= "null" ;                 
+                        }   
+                     }
+                    if(kodas[i]!= "null")
+                        out.println(input);
                      if(ivykis==0)
                          i++;
     }
