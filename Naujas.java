@@ -9,8 +9,6 @@ public class Delimiter {
     static String sakau = null;
     static String input = null;
     static Scanner sc = null;
-    static char[] tikr = new char[5];
-    static char[] temp = new char[5];
     static String[] pilnas = new String[10000];
     static String[] kodas =  new String[10000]; 
     
@@ -41,10 +39,15 @@ public class Delimiter {
                                 kodas[i]= "null" ;                 
                         }   
                      }
-                    if(kodas[i]!= "null")
-                        out.println(input);
+                //    if(kodas[i]!= "null")
+                  //      out.println(input);
                      if(ivykis==0)
                          i++;
-    }
+                    
+            }
+                for(int j =0; j < i ,j++)
+                    if(kodas[i] != "null")
+                        out.println(pilnas[j]);
+    
 }
 
