@@ -1,0 +1,42 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+
+public class Delimiter {
+    static String sakau = null;
+    static String input = null;
+    static char[] temp = new char[10];
+    static Scanner sc = null;
+    static String[] pilnas = new String[10000];
+    static String[] kodas = new String[10000];
+    
+    public static void main(String[] args) throws IOException{
+            BufferedReader br = new BufferedReader(new FileReader("1seka.txt"));
+            PrintWriter out = new PrintWriter("Baigta.txt");
+            
+            int i = 0;
+                
+                while((input = br.readLine()) != null){
+                pilnas[i] = input;
+                sc = new Scanner(input);
+                int ivykis = 1;
+                sakau = sc.next();
+                     if(sakau.matches(".*\\d.*"))
+                     {
+                        ivykis=0;
+                        sakau=sc.next();
+                        temp = sakau.ChartoArray();
+                        for(int j=0;j< temp[].length;j++)
+                            if(temp[j] == '-')
+                              tempj[j]= '_' ;
+                        kodas[i] = temp.toString();
+                        
+                     }
+
+    
+                }
+      }
+}
