@@ -23,20 +23,23 @@ public class Delimiter {
                 pilnas[i] = input;
                 sc = new Scanner(input);
                 int ivykis = 1;
+                String nenaudingas = null;
                 sakau = sc.next();
                      if(sakau.matches(".*\\d.*"))
                      {
                         ivykis=0;
                         sakau=sc.next();
-                        temp = sakau.ChartoArray();
-                        for(int j=0;j< temp[].length;j++)
-                            if(temp[j] == '-')
-                              tempj[j]= '_' ;
-                        kodas[i] = temp.toString();
+                        temp = sakau.toCharArray();
                         
+                        for(int j=0 ;j < temp.length;j++)
+                            if(temp[j] == '-')
+                                temp[j]= '_' ;
+                        nenaudingas = new String(temp);
+                                              
                      }
+                    out.println(nenaudingas);  
 
     
-                }
+                } out.close();
       }
 }
