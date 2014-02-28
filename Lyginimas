@@ -1,0 +1,23 @@
+1.Viska daryti su terminalu
+2.Komandine eilute su Deepscore
+    ./DeepScore -t protein_T -q protein_S [-o out_name] [-a alignment] [-x range_T] [-y range_S] 
+3. Komandine eilute su DeepAlign
+  ./DeepAlign -t protein_T -q protein_S [-o out_name] [-a alignment] [-x range_T] [-y range_S] 
+                        [-p out_option] [-u quality] 
+4.egzistuoja ./home/lukas/Deep*
+  pdb egzistuoja ./home/lukas/pdb/visi  (Baigta.txt yra visi); 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+
+public class Lyginimas(){
+
+  public static void main(){
+  
+  }
+}
+
+
