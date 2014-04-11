@@ -6,20 +6,31 @@ ir lentele su score
 2
 .
 .
-import re
-p = re.compile('[a-z]+')
+import sys
+import os, subprocess
+os.system('rm Lentele')
 Myfile = open('sujungtaOut', 'r')
 lines = Myfile.readlines()
+temp='1axc_A'
+i=3
+sys.stdout = open('Lentele', 'a')
 for x in lines:
-        str = x
-        break
-i=0
-m = re.search(r'^1\d+$', str)
-print m.group(0)
-print str
+        cols= x.split()
+        str=cols[0]
+        if str==temp:
+                if i!=1:
+                        print cols[1], cols[7]
+
+
+        else:
+                temp=str
+                print '\n'
+                i=1
 
 Myfile.close()
-Myfile2= open('Lentele', 'w');
-
+#sys.stdout = open('Lentele', 'a')
+#sys.stdout.write(" ".join(str(x) for x in all))
+#for x in all:
+#       sys.stdout.write(x+' '+cols[7]+'\n')
 
 1axc_A 1axc_E  249  253 ->   1253   1024   2212.48 ->  249   0.232   0.998 ->  0.996  1.000  0.991
