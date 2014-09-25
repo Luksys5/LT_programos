@@ -1,0 +1,18 @@
+#needfull commands
+git clone https://github.com/username/repository.git
+cd Repository
+git config --list
+git config user.email my@email.com
+git config user.name username
+git remote add origin https://github.com/username/repository.git
+git remote -v
+git add smth
+git status
+git commit -m "comment"
+git commit --amend //before adding another file
+git push origin master
+git pull
+git reset --hard
+rm -rf .git
+
+
