@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="javascripts/prototype.js" type="text/javascript"></script>
+		<script src="javascripts/scriptaculous.js" type="text/javascript"></script>
+		<script src="javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<title> Vesicular Content Calculator </title>
+		<style type="text/css">
+			@import url("svetaine.css");
+		</style>
+		</head>
+	<script>
+	//$(document).ready(function(){
+	//		$("#reklama").height($("#aprasas").height());
+	//});
+	</script>
+	<body>
+		<img alt="image" src="Vesicle2.jpg" id="img" /> 
+			<div id="name"><h1>Vesicular Content Calculator</h1></div>
+			<div id="login">
+				<table>
+					<form action="http://localhost/Prisijungti.php" method="post" id="prisijungti">
+						<td>Username or Email:<input type="text" name="username" id="nick"></td>
+						<td><input type="button" onclick="neTuscias()" value="  Login  "></td>
+						<tr>
+						<td>Password<input type="password" name="password" id="pass"></td>	
+					</form>
+					<td>
+						<form action="Registracija.html" method="post" id="register">
+							<input type="button" onclick="Registracija()" value="Register">
+						</form>
+					</td>
+				</table>
+			</div>
+			<div id="calcs">
+				<div id="calc1">calc1
+				</div>
+				<div id="calc2">calc2
+				</div>
+				<div id="calc3">calc3
+				</div>
+			</div>
+			
+			<div id="aprasas"><h3>Aprasas keliauja cia Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia
+				Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia
+				Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia
+				Aprasas keliauja cia  Aprasas keliauja cia  Aprasas keliauja cia Aprasas keliauja cia</h3>
+				<!-- first try HTML5 playback: if serving as XML, expand `controls` to `controls="controls"` and autoplay likewise -->
+				<!-- warning: playback does not work on iOS3 if you include the poster attribute! fixed in iOS4.0 -->
+				<video width="768" height="640" controls>
+					<!-- MP4 must be first for iPad! -->
+					<source src="Divine.mp4" type="video/mp4" /><!-- Safari / iOS video    -->
+					<source src="Divine.OGV" type="video/ogg" /><!-- Firefox / Opera / Chrome10 -->
+					<!-- fallback to Flash: -->
+					<object width="640" height="360" type="application/x-shockwave-flash" data="Divine.SWF">
+						<!-- Firefox uses the `data` attribute above, IE/Safari uses the param below -->
+						<param name="movie" value="Divine.SWF" />
+						<param name="flashvars" value="controlbar=over&amp;image=__POSTER__.JPG&amp;file=Divine.MP4" />
+						<!-- fallback image. note the title field below, put the title of the video there -->
+						<img src="Divine.JPG" width="640" height="360" alt="__TITLE__" title="No video playback capabilities, please download the video below" />
+					</object>
+				</video>
+				<!-- you *must* offer a download link as they may be able to play the file locally. customise this bit all you want -->
+				<p>	<strong>Download Video:</strong>
+					Closed Format:	<a href="Divine.mp4">"MP4"</a>
+				</p>
+				<!--<video id="videoId" width="100%" >
+					<source src="Divine.mp4" type="video/mp4">
+					<source src="main.webm" type="video/webm"> 
+					Your browser does not support the video tag.
+				</video>-->
+			</div>
+			
+			<div id="reklama"> <img style="width: 100%; min-height: 100%;"	src="reklama.jpg"></div>
+			
+	</body>
+</html>

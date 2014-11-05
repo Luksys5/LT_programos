@@ -1,0 +1,15 @@
+body{ background-color: gray}
+h1 {color:red}
+h1{margin-top:2cm;}
+span.crosshair {cursor:crosshair}
+h2{color:white; text-indent:10px; }
+h3{margin-left:1cm;font-family:"Times New Roman";}
+#sliderTrack{
+ width: 400px;
+ height: 10px;
+ background-image: url(paveiksl.jpg);
+
+ cursor: pointer;}
+#sliderHandle{
+ margin-top: -4px;
+ cursor: pointer;}

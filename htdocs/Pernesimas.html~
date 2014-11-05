@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> SLenkmatis </title>
+		<script src="prototype-1.6.0.3.js"></script>
+		<script src="scriptaculous.js"></script>
+
+		<style>
+			@import url("style.css");
+		</style>
+		<meta charset="UTF-8">
+		<meta name ="description" content="Lietuvos miestai">
+		<meta name="author" content="MIF 2 kurso bioinfromatikos studentas">	
+	</head>
+	<body>	
+		<div id="normalDiv">
+		Čia yra paprastas div.
+		</div>
+		<div id="relativeDiv">
+		Čia yra reliatyvus div.
+		</div>
+		<div id="absoluteDiv">
+		Cia yra absoliutus div.
+		</div>
+		<img id="anImage" src="randbitmap.jpg">
+		<p>Čia yra
+			<span id="aSpan">nedidelis tarpas</span> sakinyje.
+		</p>
+		<script>
+			var elements=[
+			'normalDiv',
+			'relativeDiv',
+			'absoluteDiv',
+			'anImage',
+			'aSpan'];
+		  	window.onload=function (){
+			elements.each(
+			function(item){new Draggable(item, {});}
+			);
+		}
+
+
+	</body>
+</html>
