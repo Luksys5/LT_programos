@@ -1,0 +1,5 @@
+AuthType Basic
+AddType application/x-httpd-php53 .php
+AuthName "FORBIDDEN AREA"
+AuthUserfile "../htdocs/forbidden/.htpasswd"
+Require valid-user

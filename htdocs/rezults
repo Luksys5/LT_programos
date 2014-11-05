@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+		<script src="javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="javascripts/cookies.js" type="text/javascript"></script>
+		<title> Test </title>
+		<style type="text/css">
+			@import url("test.css");
+		</style>
+	</head>
+<script>
+	function rezults(){
+				var count = document.getElementsByName('quantity')[0].value;
+				checkCookie("mase",document.getElementsByName('Mass')[0].value);
+				checkCookie("Procent", document.getElementsByName('Percentage')[0].value);
+				checkCookie("Molsvor",document.getElementsByName('weight')[0].value);
+				checkCookie("koncent", document.getElementsByName('Concentration')[0].value);
+				
+					var array = json_encode(getCookie("mase"),getCookie("Procent"),getCookie("Molsvor"),getCookie("koncent"));
+					var myurl = "http://localhost/skaiciuok.php/?array="+array;
+					$.ajax({
+						url: myurl,
+						async: false,
+						success: function(responseText) {
+							$("#rezults").html(responseText);
+							$("#rezults").show();
+						}
+					});
+				}
+						return false;
+			}
+		</script>
+<body onload="rezults()">
+</body>
+</html>
