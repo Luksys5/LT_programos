@@ -1,9 +1,0 @@
-center{text-align:center;background:url("Kaunas3.jpg") no-repeat;}
-h1 {color:red;}
-h2 {color:black;}
-p {color:blue;}
-#content{color: white;background-image:url("Kaunas4.jpg");background-repeat: no-repeat;);
-}
-#bandomasis{
-	position: ;absolute;width: 800px;height: 500px; left:-150px;}
-body{margin: 0px;margin-left: 35%;}
