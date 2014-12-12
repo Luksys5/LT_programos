@@ -1,8 +1,0 @@
-div.picture1 {
-   width:100px;
-   height:100px; 
-   background-image:url('paveiksl.jpg');
-   display:none;
-   margin:0; 
-   padding:0; 
-}
