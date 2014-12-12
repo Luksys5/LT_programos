@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<title>dmbz</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Prisijungimas">
+</head>
+<script>
+
+function neTuscias(){
+	
+	if (document.forms["prisijungti"]["nick"].value =="" )
+	{
+		alert('Nepalikite tuscio lauko');
+	}
+	else{ document.getElementById("prisijungti").submit();
+	}
+}
+</script>
+<body >
+	<form action="Prisijungti.php" method="post" id="prisijungti">
+		<ul style="text-align:left"> 
+			<li>Prisijungimas 
+			<br> Nickname <input type="text" name="username" id="nick">
+			<br> Password  <input type="password" name="password" id="pass">
+			<br> <input type="button" onclick="neTuscias()" value="Prisijungti">
+		</ul>
+	</form>
+</body>
+</html>

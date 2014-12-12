@@ -1,0 +1,11 @@
+
+function Insert(name,value,value2) {
+	if (typeof myJson == 'undefined')
+		var myJson = [{name:value}]
+	else{
+		var obj = JSON.parse(myJson);
+		obj.push({name:value2});
+		myJson = JSON.stringify(obj);
+	}
+	alert(myJson[1].name);
+	}

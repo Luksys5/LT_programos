@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="javascripts/json2.js" type="text/javascript"></script>
+		<script src="javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="javascripts/cookies.js" type="text/javascript"></script>
+		<title> Test </title>
+		<style type="text/css">
+			@import url("test.css");
+		</style>
+	</head>
+<style type="text/css">
+.classname {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color:#ededed;
+	-webkit-border-top-left-radius:0px;
+	-moz-border-radius-topleft:0px;
+	border-top-left-radius:0px;
+	-webkit-border-top-right-radius:0px;
+	-moz-border-radius-topright:0px;
+	border-top-right-radius:0px;
+	-webkit-border-bottom-right-radius:0px;
+	-moz-border-radius-bottomright:0px;
+	border-bottom-right-radius:0px;
+	-webkit-border-bottom-left-radius:0px;
+	-moz-border-radius-bottomleft:0px;
+	border-bottom-left-radius:0px;
+	text-indent:0px;
+	border:2px solid #dcdcdc;
+	display:inline-block;
+	color:#777777;
+	font-family:Comic Sans MS;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	height:32px;
+	line-height:32px;
+	width:80px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:2px 2px 4px #ffffff;
+}
+.classname:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background-color:#dfdfdf;
+}.classname:active {
+	position:relative;
+	top:1px;
+}</style>
+<!-- * This buttons were generated using CSSButtonGenerator.com */ -->
+<script>
+	$(document).ready(function(){
+			$(".section").not("#about").hide();
+			$("#break").hide();
+			$("#about").show();
+			$('#reklama').show();
+			$("#login").height($("#name").height());
+			$('#nouser').hide();
+			
+			var height = $("#calcs").height();
+			$("#about").height(height);
+			$("#menu").height(height);
+			$("#support").height(height);
+			$("#help").height(height);
+			$("#reklama").height(height);
+		
+	});
+	
+</script>
+<script type="text/javascript">
+	function rezults(){
+		try{
+			if(getCookie("mase") == null) checkCookie("mase",document.getElementsByName('Mass')[0].value);
+			if ($("#clicks").html() == ''){$("#clicks").html(1);}
+			else $("#clicks").html(parseInt($("#clicks").html())+1);			
+			var count = document.getElementsByName('quantity')[0].value;
+			checkCookie("Procent", document.getElementsByName('Percentage')[0].value);
+			checkCookie("Molsvor",document.getElementsByName('weight')[0].value);
+			checkCookie("koncent", document.getElementsByName('Concentration')[0].value);
+			checkCookie("name", document.getElementsByName('name')[0].value);
+			if(count != $("#clicks").html()) document.getElementById("check2").reset();
+			else{
+			alert(getCookie("mase"));
+				var mystring = getCookie("Procent")+getCookie("Molsvor")+getCookie("koncent")+getCookie("mase");
+				//alert(mystring)		
+				var title=document.getElementsByName("title")[0].value;
+				//var json_text = '{"Procent":getCookie("Procent"),"Molsvor":getCookie("Molsvor"),"koncent":getCookie("koncent"),"mase":getCookie("mase")}';
+				var myurl = "http://localhost/skaiciuok.php"
+				$.ajax({
+					type: "GET",
+					url:myurl,
+					data: {Procent:getCookie("Procent"),
+					Molsvor:getCookie("Molsvor"),
+					koncent:getCookie("koncent"),
+					mase:getCookie("mase"),
+					name:getCookie("name")},
+					cache:false, 
+					async:false,
+					success: function(data) {
+					// the data variable contains all PHP output during this request
+						
+						$('#rezult').html("<h2>"+title+"</h2>"+data);
+						$('#rezult').show();
+					}
+				});	
+			}
+		}
+		catch(err){
+			$("#error").html(err.message);
+		}
+		if(count == $("#clicks").html()){ del();}
+		return false;
+	}
+</script>
+<body>
+	<script type="text/javascript">
+		function toggleVisibility(newSection) {
+			$(".section").not("#" + newSection).hide();
+			if (newSection === 'calc1' || newSection === 'calc2') {
+				if(newSection === 'calc1'){$('#field1').show();}
+				$("#calcs").show();
+				$("#options").show();
+				$("#aprasas").show();
+			}
+			else{
+			$('#break').hide();
+			}
+			$("#" + newSection).show();
+			$("#reklama").show();
+		}
+		function showfirst(){
+			$("#field1").show();
+			$("#field2").hide();
+		}
+		function showother(){
+			$("#field1").hide();
+			$("#field2").show();
+			$("#proceed").height($("#back").height());
+			$("#proceed").width($("#back").width());
+			return false;
+		}
+	</script>
+	<script> <!-- sudeti reiksmes i masyva po kekvieno mygtuko klickinimo ir siusti masyva i ta skaiciuok.php -->
+		function getuser(){
+			slapt= document.getElementsByName('slapt')[0].value;
+			Past = document.getElementsByName('Pastas')[0].value;
+			var myurl = "http://localhost/exists.php/?q="+Past;
+			$.ajax({
+				url: myurl,
+				async: false,
+				success: function(responseText) {
+					if(responseText == 'false'){
+						$('#nouser').show();
+					}else{
+						checkCookie("Pastas", Past);
+						$('#nouser').hide();
+					}
+				},
+			});
+			if( $("#nouser").is(":visible")){
+				return false;
+			}
+
+			return true;
+		}
+		function del(){		
+			if (getCookie("Procent")){ 
+				delCookie("Procent");
+				delCookie("Molsvor");
+				delCookie("mase");
+				delCookie("koncent");
+				delCookie("name");
+			}
+			//$('#calc1').load('#calc1');
+			//window.location.reload();
+			document.getElementById("check2").reset();
+			document.getElementById("check").reset();
+			showfirst();
+			$("#clicks").html('');
+			
+		}
+		</script>	
+		<img alt="image" src="green.jpg" id="img" /> 
+		
+		<div id="name"><h1>Vesicules base background</h1></div>
+		
+		<div id="login" class="logintext">
+			<form onsubmit="return getuser();" name="tables" action="http:\\localhost\loginas.html" method="post"> 
+				E-Mail:
+				<input type="email" name='Pastas' required/><br>
+				Password:
+				<input type='password' name='slapt' required/><br>
+				<input type="submit" value="Sign In " style="float:right;">
+			</form>
+			<div id="nouser" style="float:left;position:relative;">Email doesn't exist</div>
+			<button id="reg" onclick = "window.location.href='Registracija.html'" style="width:auto;height:auto;">Register</button>
+		</div>
+
+		<div id="menu">
+			<b>
+			<br>
+			<button onclick="toggleVisibility('about');return false;" >  Home </button><br>
+			<br>
+			<button  onclick="$('#options').show();$('#break').show();return false;" >Calcs </button><br>
+			<div id= "break"><br></div>
+			<div id="options" class="section">
+				<button id="option" href = "#" onclick="toggleVisibility('calc1');del();"style="width:80%"> Calc1</button><br>
+				<br>
+				<button id="option" href = "#" onclick="toggleVisibility('calc2');return false;"style="width:80%"> Calc2</button><br>
+			</div>
+			<br>
+			<button onclick="toggleVisibility('support'); return false;">Support </button><br>
+			<br>
+			<button onclick="toggleVisibility('help'); return false;" >Help </button>
+			</b>
+		</div>
+		
+		<div id="about" class="section">
+			This is about vesicles<br>
+			This is about life<br>
+			This is about future<br>
+			Vesicules base background<br>
+		</div>
+		
+		<div id="calcs" class="section">
+			<!-- //<div id="aboutcalc1" style="display: none" class="section">about calc1</div> -->
+				<form id="check" onsubmit="return showother();"></form>
+				<form id="check2" onsubmit="return rezults();" ></form>
+				<div id="calc1" class="section"><h2>Vesicles Content Calculator</h2>
+					<fieldset id="field1" class="section">
+						<td>Number of lipids: <input type="number" form="check" name="quantity" min="1" max="10"required/></td><br>
+						<td>Final volume of solution: <input type="number" step="0.01" form="check" name="Volume" min="1" max="50"required/></td><br>
+						<td>Final mass of solution: <input type="number" step="0.01" form="check" name="Mass" min="1" max="50" required/></td><br>
+						<td>Title of experiment: <input type="text" form="check" name="title" style="width:150px;"required/></td>	<br>
+						<input type = "submit" class="classname" form="check" value="Next">
+					</fieldset>
+					<fieldset id="field2" class="section">
+						<td>Lipid's name: <input type="text" form="check2"  class="input3" name="name" novalidate required/></td><br>
+						<td>Percentage of the lipid in vesicle: <input type="number" step="0.01" form="check2" class="input3" name="Percentage" min="0" max="100" novalidate required/></td><br>
+						<td>Molecular weight: <input type="number" step="0.01" form="check2"  class="input3" name="weight" min="1" max="1000" novalidate  required/></td><br>
+						<td>Concentration of the lipid solution: <input type="number" step="0.01" form="check2" class="input3" name="Concentration" style="width:150px;" min="1" max="1000" novalidate  required/></td>	
+						<!-- //<td><input type="submit" value=" Submit "></td>-->
+						<br>
+						<button id="back" class="classname" onclick="showfirst()" style="position:relative;float:left;"\>Back</button>
+						<input id="proceed" type = "submit"	form="check2" class="classname" style="position:relative;float:left;left:5px;" value="Proceed">		
+					</fieldset>
+				</div>
+				<div id='error'></div>
+				<div id='clicks' class="section"></div>
+				<div id="rezult"  >Rezai</div> 
+		</div>
+				<div id="aboutcalc2" class="section">about calc2</div>
+				<div id="calc2" class="section">calc2
+				</div>
+			<div id="aprasas" class="section">
+				aprasas
+			</div>
+		</div>
+
+		<div id="support" class="section">
+			donoras
+		</div>
+		
+		<div id="help" class="section">
+			help
+		</div>
+		<div id="reklama" class="section">
+			<!--<img style="width:100%;height:100%;"; src="reklama.jpg"> -->
+		</div>
+	</body>
+</html>

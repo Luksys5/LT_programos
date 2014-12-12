@@ -1,0 +1,18 @@
+#relativeDiv{
+position: relative;}
+
+#absoluteDiv{
+position: absolute;
+left: 240px;
+top: 100px;}
+
+#aSpan{
+color: blue;}
+
+
+center{text-align:center;}
+
+#sliderTrack{
+width: 175px;
+height: 12px;
+b
