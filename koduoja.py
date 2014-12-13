@@ -24,7 +24,7 @@ def sort(dict):
 	import collections
 	od = collections.OrderedDict(sorted(dict.items()))
 	return od
-def shannon(dict,length,didz):
+def shannon(dict,length):
 	import math
 	sum = float(0);
 	newprob = float(0)
@@ -50,17 +50,14 @@ def shannon(dict,length,didz):
 					kodas += "1"
 				else:
 					kodas += "0"
-		if didz<len(kodas):
-			didz=len(kodas)
 		dict[x]=str(kodas)
-	return dict, didz
+	return dict
 def pailgina(dict,didz):
 	for x in dict:
 		like = "0"*(10-len(dict.get(x)))
 		dict[x]=like+dict.get(x)
 	return dict
-def viskas(dict,didz,length):
-	dict, lengtha, somefile = readncalc(dict,length)
-	dict, didz = shannon(dict,length,didz)
-	dict = pailgina(dict,didz)
+def viskas(dict,somefile,length,):
+	dict, length, somefile = readncalc(dict,length)
+	dict = shannon(dict,length)
 	return dict, somefile
