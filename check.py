@@ -18,6 +18,12 @@ def check(dict):
 def printdict(dict):
         f = open('out','w')
         for x in dict:
-                f.write(x+" "+str(dict.get(x))+" "+str(len(dict.get(x)))+'\n')
+                f.write(x+" "+str(dict.get(x))+str(len(dict.get(x)))+'\n')
         f.close()
         return
+def keyval(dict,smth):
+	if smth in dict.values():
+		print smth, ' yra'
+	for key, value in dict.iteritems():
+		print 'key ', key, 'value ', value
+	return
