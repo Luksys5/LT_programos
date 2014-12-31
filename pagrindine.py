@@ -7,9 +7,9 @@ channel = int(channel)
 if channel == 1:
 	arr={}
 	maxas = 0
-	lengtha = 0 
-	arr,somefile = viskas(arr,lengtha)
-	check(arr)
+	lengtha = 0
+	somefile = ""
+	arr,somefile = viskas(arr,somefile,lengtha)
 	irasokodus(arr)
 	ftotextf(somefile,arr)
 	mkbinfile(somefile,arr)
