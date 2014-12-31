@@ -1,0 +1,377 @@
+lutu0929@linux1:~$ svn checkout file:///stud3/2012/lutu0929/project/repoz/trunk  5darbas/
+A    5darbas/Makefile
+A    5darbas/test
+A    5darbas/manual-computations
+A    5darbas/manual-computations/count.cnt
+A    5darbas/manual-computations/all.pdb
+A    5darbas/manual-computations/frequence
+A    5darbas/manual-computations/dazniai
+A    5darbas/manual-computations/proteases.lst.norm
+A    5darbas/manual-computations/PDB-aa-counts.lst.cnt
+A    5darbas/manual-computations/nucleases.lst
+A    5darbas/manual-computations/myhistory.txt~
+A    5darbas/manual-computations/collagen.sorted
+A    5darbas/manual-computations/collagen.lst
+A    5darbas/manual-computations/myhistory.txt
+A    5darbas/manual-computations/renewed
+A    5darbas/manual-computations/proteases.lst.cnt
+A    5darbas/manual-computations/nucleases.lst.norm
+A    5darbas/manual-computations/PDB-aa-counts.lst
+A    5darbas/manual-computations/collagen.lst.norm
+A    5darbas/manual-computations/proteases.sorted
+A    5darbas/manual-computations/PDB
+A    5darbas/manual-computations/proteases.lst
+A    5darbas/manual-computations/nucleases.lst.cnt
+A    5darbas/manual-computations/PDB-aa-counts.lst.norm
+A    5darbas/manual-computations/collagen.lst.cnt
+A    5darbas/inputs
+A    5darbas/inputs/2ixs.in
+A    5darbas/inputs/1axc.in
+A    5darbas/inputs/3pge.in
+A    5darbas/inputs/1knv.in
+A    5darbas/inputs/1b77.in
+A    5darbas/tests
+A    5darbas/tests/1axc
+A    5darbas/tests/3pge
+A    5darbas/tests/1knv
+A    5darbas/tests/1b77
+A    5darbas/tests/2ixs
+A    5darbas/ciftofasta
+A    5darbas/outputs
+A    5darbas/outputs/1axc.out
+A    5darbas/outputs/3pge.out
+A    5darbas/outputs/1knv.out
+A    5darbas/outputs/1b77.out
+A    5darbas/outputs/2ixs.out
+A    5darbas/tstdiff
+A    5darbas/version1.0
+A    5darbas/bin
+A    5darbas/bin/pdb_get_entry
+A    5darbas/bin/anagrams
+Checked out revision 59.
+lutu0929@linux1:~$ cd 5darbas/
+lutu0929@linux1:~/5darbas$ ls -lh
+viso 20K
+drwxr-xr-x 3 lutu0929 lutu0929    5 Grd 28 13:56 [0m[01;34mbin[0m
+-rwxr-xr-x 1 lutu0929 lutu0929 2,1K Grd 28 13:56 [01;32mciftofasta[0m
+drwxr-xr-x 3 lutu0929 lutu0929    8 Grd 28 13:56 [01;34minputs[0m
+-rw-r--r-- 1 lutu0929 lutu0929  589 Grd 28 13:56 Makefile
+drwxr-xr-x 3 lutu0929 lutu0929   25 Grd 28 13:56 [01;34mmanual-computations[0m
+drwxr-xr-x 3 lutu0929 lutu0929    8 Grd 28 13:56 [01;34moutputs[0m
+-rw-r--r-- 1 lutu0929 lutu0929  369 Grd 28 13:56 test
+drwxr-xr-x 3 lutu0929 lutu0929    8 Grd 28 13:56 [01;34mtests[0m
+-rwxr-xr-x 1 lutu0929 lutu0929  506 Grd 28 13:56 [01;32mtstdiff[0m
+-rw-r--r-- 1 lutu0929 lutu0929   14 Grd 28 13:56 version1.0
+lutu0929@linux1:~/5darbas$ make test[K[K[K[K[K[K[K[K[K./ciftofasta inputs/1axc.in 
+> inputs/1axc.in|A
+AVEARKVQGSIKKKVKEAKKDKINEACWDISSSGVNKQSADSSVVSKVQKTKRSEGVDTYRCDRNKAAGVNKTSASKIK
+KCAGNEDIITKRAEDNADTKAKVVEAKEKVSDYEAKKADKDVEQKGIKEQEYSCVVKAKSGEVARICRDKSVIGDAVVI
+SCAKDGVKVSASGEKGNGNIKKSQTSEEEAVTIEANEKVQKTVAKRYKNVVTKATKKSSTVTKSASADVKKVVEYKIAD
+AGVKKYYKAKKI
+lutu0929@linux1:~/5darbas$ make outputs/[K[K[K[K[K[K[K[Ktest
+./tstdiff outputs/1axc.out > outputs/1axc.diff	
+./tstdiff outputs/1b77.out > outputs/1b77.diff	
+./tstdiff outputs/1knv.out > outputs/1knv.diff	
+./tstdiff outputs/2ixs.out > outputs/2ixs.diff	
+./tstdiff outputs/3pge.out > outputs/3pge.diff	
+lutu0929@linux1:~/5darbas$ vim Makefile 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"Makefile" 30L, 589C[1;1HTEST_DIR = ./tests
+INP_DIR = ./inputs
+OUT_DIR = ./outputs
+
+IN_FILES=$(wildcard ./inputs/*.in)
+OUT_FILES=${IN_FILES:./inputs/%.in=./outputs/%.out}
+TEST_DIFF=${OUT_FILES:./outputs/%.out=./outputs/%.diff}
+TEST_FILES=${OUT_FILES:./outputs/%.out=/stud3/2012/lutu0929/5darb/tests/%}
+
+all:
+
+test: ${TEST_DIFF}
+
+./outputs/%.diff: ./outputs/%.out[15;8H ./tstdiff $^ > $@
+
+./outputs/%.out: ./inputs/%.in[18;8H ./ciftofasta $^ > $@
+
+link: ${TEST_FILES}
+
+
+/stud3/2012/lutu0929/5darb/tests/%: /stud3/2012/lutu0929/5darb/outputs/%.out[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[24;63H3[3;1H[34h[?25h[?25l[24;63H4[4;1H[34h[?25h[?25l[24;63H5[5;1H[34h[?25h[?25l[24;63H6[6;1H[34h[?25h[?25l[24;63H7[7;1H[34h[?25h[?25l[24;63H8[8;1H[34h[?25h[?25l[24;63H9[9;1H[34h[?25h[?25l[24;63H10,1[10;1H[34h[?25h[?25l[24;66H2[10;2H[34h[?25h[?25l[24;66H3[10;3H[34h[?25h[?25l[24;66H4[10;4H[34h[?25h[?25l[24;66H5[10;5H[34h[?25h[?25l[24;66H6[10;6H[34h[?25h[?25l t[24;66H7[10;7H[34h[?25h[?25lte[24;66H8[10;8H[34h[?25h[?25les[24;66H9[10;9H[34h[?25h[?25lst[24;66H10[10;10H[34h[?25h[24;1H[K[10;9H[?25l[24;63H10,9[10CTop[10;9H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"Makefile" 30L, 594C written
+[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ ./tstdiff outputs/1axc.out 
+outputs/1axc.out inputs/1axc.in
+lutu0929@linux1:~/5darbas$ ./tstdiff outputs/1axc.out [14Pvim Makefile[C[14@./tstdiff outputs/1axc.out[Coutputs/1knc[Kv.out 
+outputs/1axc.out inputs/1axc.in
+outputs/1knv.out inputs/1knv.in
+lutu0929@linux1:~/5darbas$ ./tstdiff outputs/1axc.out outputs/1knv.out [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K AABBABABA
+Skaitomas STDIN
+diff: missing operand after `-'
+diff: Try `diff --help' for more information.
+lutu0929@linux1:~/5darbas$ vim tstdiff 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"tstdiff" 35L, 506C[1;1H#! /bin/sh
+FILES=''
+count='ls -1 outputs/*.out | wc -l'
+if [ count = 0 ]
+then
+    echo "doesn't exist"
+fi
+
+SACRIFICE=${1##*/}
+CHECK=${SACRIFICE%.*}
+
+if [ $CHECK = $1 ]
+then[14;8H echo "Skaitomas STDIN"[15;8H #read seka[16;8H seka='echo $2'[17;8H echo $1 | diff - $2[18;8H exit
+fi
+
+while [ $# -gt 0 ]
+do[23;8H case "$1" in[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[24;63H3[3;1H[34h[?25h[?25l[24;63H4[4;1H[34h[?25h[?25l[24;63H5[5;1H[34h[?25h[?25l[24;63H6[6;1H[34h[?25h[?25l[24;63H7[7;1H[34h[?25h[?25l[24;63H8,0-1[8;1H[34h[?25h[?25l[24;63H9,1  [9;1H[34h[?25h[?25l[24;63H10,1[10;1H[34h[?25h[?25l[24;64H1,0-1[11;1H[34h[?25h[?25l[24;64H2,1  [12;1H[34h[?25h[?25l[24;64H3[13;1H[34h[?25h[?25l[24;64H4,1-8[14;8H[34h[?25h[?25l[24;64H5[15;8H[34h[?25h[?25l[24;64H6[16;8H[34h[?25h[?25l[24;64H7[17;8H[34h[?25h[?25l[24;66H2-9[17;9H[34h[?25h[?25l[24;66H3-10[17;10H[34h[?25h[?25l[24;66H4-11[17;11H[34h[?25h[?25l[24;66H5-12[17;12H[34h[?25h[?25l[24;66H6-13[17;13H[34h[?25h[?25l[24;66H7-14[17;14H[34h[?25h[?25l[24;66H8-15[17;15H[34h[?25h[?25l[24;66H9-16[17;16H[34h[?25h[?25l[24;66H10-17[17;17H[34h[?25h[?25l[24;67H1-18[17;18H[34h[?25h[?25l[24;67H2-19[17;19H[34h[?25h[?25l[24;67H3-20[17;20H[34h[?25h[?25l[24;67H4-21[17;21H[34h[?25h[?25l[24;67H5-22[17;22H[34h[?25h[?25l[24;67H6-23[17;23H[34h[?25h[?25l[24;67H7-24[17;24H[34h[?25h[?25l[24;67H8-25[17;25H[34h[?25h[?25l[24;67H9-26[17;26H[34h[?25h[?25l[24;66H20-27[17;27H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H17,20-27      Top[17;27H[34h[?25h[?25l[24;64H6,16-23[16;23H[34h[?25h[?25l[24;67H5-22[16;22H[34h[?25h[?25l[24;67H4-21[16;21H[34h[?25h[?25l[24;67H3-20[16;20H[34h[?25h[?25l[24;67H2-19[16;19H[34h[?25h[?25l[24;67H1-18[16;18H[34h[?25h[?25l[24;67H0-17[16;17H[34h[?25h[?25l[24;66H9-16 [16;16H[34h[?25h[?25l[24;66H8-15[16;15H[34h[?25h[?25l[24;66H7-14[16;14H[34h[?25h[?25l[24;66H6-13[16;13H[34h[?25h[?25l[24;66H5-12[16;12H[34h[?25h[?25l[24;66H4-11[16;11H[34h[?25h[?25l[24;66H3-10[16;10H[34h[?25h[?25l[24;66H2-9 [16;9H[34h[?25h[?25l[24;66H1  [16;1H[34h[?25h[?25l[24;66H2-9[16;9H[34h[?25h[24;1H[K[16;8H[?25l[24;63H16,1-8[8CTop[16;8H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"tstdiff" 35L, 506C written
+[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ vim tstdiff ./tstdiff AABBABABA outputs/diff[K[K[K[K1axc.out 
+Skaitomas STDIN
+1c1,5
+< AABBABABA
+---
+> > inputs/1axc.in|A
+> AVEARKVQGSIKKKVKEAKKDKINEACWDISSSGVNKQSADSSVVSKVQKTKRSEGVDTYRCDRNKAAGVNKTSASKIK
+> KCAGNEDIITKRAEDNADTKAKVVEAKEKVSDYEAKKADKDVEQKGIKEQEYSCVVKAKSGEVARICRDKSVIGDAVVI
+> SCAKDGVKVSASGEKGNGNIKKSQTSEEEAVTIEANEKVQKTVAKRYKNVVTKATKKSSTVTKSASADVKKVVEYKIAD
+> AGVKKYYKAKKI
+lutu0929@linux1:~/5darbas$ ./tstdiff AABBABABA outputs/1axc.out [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cvim tstdiff [K[25@./tstdiff AABBABABA outputs/1axc.out[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K outputs/1xxx.out
+outputs/1xxx.out inputs/1xxx.in
+diff: outputs/1xxx.out: Toks failas ar aplankas neegzistuoja
+grep: inputs/1xxx.in: Toks failas ar aplankas neegzistuoja
+lutu0929@linux1:~/5darbas$ vi[K[Kls[K[Kvim outputs/tuis[K[Kscias
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"outputs/tuscias" [New File][2;1H[1m[34m~                                                                               [3;1H~                                                                               [4;1H~                                                                               [5;1H~                                                                               [6;1H~                                                                               [7;1H~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H0,0-1[9CAll[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H0,1[11CAll[1;1H[34h[?25h[?25l[2;1H[K[24;63H2[2;1H[34h[?25h[?25l[1m[34m~                                                                               [0m[24;63H1[1;1H[34h[?25h[24;1H[K[1;1H[?25l[24;63H1,0-1[9CAll[1;1H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"outputs/tuscias" [New] 1L, 1C written
+[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ vim outputs/tuscias./tstdiff outputs/1xxx.out[K[K[K[K[K[K[K[Ktuscias 
+outputs/tuscias inputs/tuscias.in
+grep: inputs/tuscias.in: Toks failas ar aplankas neegzistuoja
+0a1
+> 
+lutu0929@linux1:~/5darbas$ make clean
+rm -f outputs/*.out
+lutu0929@linux1:~/5darbas$ make distclean
+rm -f outputs/*.diff
+lutu0929@linux1:~/5darbas$ make test[K[K[K[K[K
+./ciftofasta inputs/1axc.in > outputs/1axc.out
+./tstdiff outputs/1axc.out > outputs/1axc.diff	
+./ciftofasta inputs/1b77.in > outputs/1b77.out
+./tstdiff outputs/1b77.out > outputs/1b77.diff	
+./ciftofasta inputs/1knv.in > outputs/1knv.out
+./tstdiff outputs/1knv.out > outputs/1knv.diff	
+./ciftofasta inputs/2ixs.in > outputs/2ixs.out
+./tstdiff outputs/2ixs.out > outputs/2ixs.diff	
+./ciftofasta inputs/3pge.in > outputs/3pge.out
+./tstdiff outputs/3pge.out > outputs/3pge.diff	
+rm outputs/1knv.out outputs/2ixs.out outputs/1axc.out outputs/1b77.out outputs/3pge.out
+lutu0929@linux1:~/5darbas$ ls outputs/
+1axc.diff  1b77.diff  1knv.diff  2ixs.diff  3pge.diff  .svn/      tuscias
+lutu0929@linux1:~/5darbas$ ls outputs/[K[K[K[K[K[K[K[K[K[K[Kvim outputs/1axc.diff 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"outputs/1axc.diff" 1L, 32C[1;1Houtputs/1axc.out inputs/1axc.in
+[1m[34m~                                                                               [3;1H~                                                                               [4;1H~                                                                               [5;1H~                                                                               [6;1H~                                                                               [7;1H~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H1,1[11CAll[1;1H[34h[?25h[?25l[24;1H[K[24;1H:[34h[?25hq[?25l[34h[?25h![?25l[34h[?25h[?25l[24;1H[K[24;1H[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ rm -rf outputs/tuscias 
+lutu0929@linux1:~/5darbas$ svn commit
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"svn-commit.tmp" 4L, 64C[2;1H--This line, and those below, will be ignored--
+
+M    Makefile
+[1m[34m~                                                                               [6;1H~                                                                               [7;1H~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H1,0-1[9CAll[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CAll[1;1H[34h[?25h[?25lI[24;65H2[1;2H[34h[?25h[?25lIn[24;65H3[1;3H[34h[?25h[?25lnc[24;65H4[1;4H[34h[?25h[?25lcl[24;65H5[1;5H[34h[?25h[?25llu[24;65H6[1;6H[34h[?25h[?25lud[24;65H7[1;7H[34h[?25h[?25lde[24;65H8[1;8H[34h[?25h[?25led[24;65H9[1;9H[34h[?25h[?25l[24;65H10[1;10H[34h[?25h[?25l[24;65H9 [1;9H[34h[?25h[?25l[1;8H[K[24;65H8[1;8H[34h[?25h[?25l[1;7H[K[24;65H7[1;7H[34h[?25h[?25l[1;6H[K[24;65H6[1;6H[34h[?25h[?25l[1;5H[K[24;65H5[1;5H[34h[?25h[?25l[1;4H[K[24;65H4[1;4H[34h[?25h[?25l[1;3H[K[24;65H3[1;3H[34h[?25h[?25l[1;2H[K[24;65H2[1;2H[34h[?25h[?25l[1;1H[K[24;65H1[1;1H[34h[?25h[?25lT[24;65H2[1;2H[34h[?25h[?25lTe[24;65H3[1;3H[34h[?25h[?25les[24;65H4[1;4H[34h[?25h[?25lst[24;65H5[1;5H[34h[?25h[?25lti[24;65H6[1;6H[34h[?25h[?25lin[24;65H7[1;7H[34h[?25h[?25lng[24;65H8[1;8H[34h[?25h[?25l[24;65H9[1;9H[34h[?25h[?25l i[24;65H10[1;10H[34h[?25h[?25lif[24;66H1[1;11H[34h[?25h[?25l[24;66H2[1;12H[34h[?25h[?25l p[24;66H3[1;13H[34h[?25h[?25lpr[24;66H4[1;14H[34h[?25h[?25lro[24;66H5[1;15H[34h[?25h[?25log[24;66H6[1;16H[34h[?25h[?25lgr[24;66H7[1;17H[34h[?25h[?25lra[24;66H8[1;18H[34h[?25h[?25lam[24;66H9[1;19H[34h[?25h[?25l[24;65H20[1;20H[34h[?25h[?25l w[24;66H1[1;21H[34h[?25h[?25lwo[24;66H2[1;22H[34h[?25h[?25lor[24;66H3[1;23H[34h[?25h[?25lrk[24;66H4[1;24H[34h[?25h[?25lks[24;66H5[1;25H[34h[?25h[?25l[24;66H6[1;26H[34h[?25h[?25l g[24;66H7[1;27H[34h[?25h[?25lgo[24;66H8[1;28H[34h[?25h[?25lod[24;66H9[1;29H[34h[?25h[?25ldo[24;65H30[1;30H[34h[?25h[?25l[1;29H[K[24;65H29[1;29H[34h[?25h[?25l[1;28H[K[24;66H8[1;28H[34h[?25h[?25loo[24;66H9[1;29H[34h[?25h[?25lod[24;65H30[1;30H[34h[?25h[?25ld.[24;66H1[1;31H[34h[?25h[24;1H[K[1;30H[?25l[24;63H1,30[10CAll[1;30H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"svn-commit.tmp" 4L, 94C written
+[?1l>[34h[?25h[?1049lSending        Makefile
+Transmitting file data .
+Committed revision 60.
+lutu0929@linux1:~/5darbas$ ls
+[0m[01;34mbin[0m         [01;34minputs[0m    [01;34mmanual-computations[0m  test   [01;32mtstdiff[0m
+[01;32mciftofasta[0m  Makefile  [01;34moutputs[0m              [01;34mtests[0m  version1.0
+lutu0929@linux1:~/5darbas$ vim version1.0 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"version1.0" 2L, 14C[1;1HRelease v1.0
+
+[1m[34m~                                                                               [4;1H~                                                                               [5;1H~                                                                               [6;1H~                                                                               [7;1H~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H1,1[11CAll[1;1H[34h[?25h[?25l[24;1H[K[24;1H:[34h[?25hq[?25l[34h[?25h![?25l[34h[?25h[?25l[24;1H[K[24;1H[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ rm version1.0 
+rm: pašalinti paprastas failas „version1.0“? y
+lutu0929@linux1:~/5darbas$ vim outputs/1axc.out 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"outputs/1axc.out" 5L, 274C[1;1H> inputs/1axc.in|A
+AAAVEARKVQGSIKKKVKEAKKDKINEACWDISSSGVNKQSADSSVVSKVQKTKRSEGVDTYRCDRNKAAGVNKTSASKII[3;1HK
+KCAGNEDIITKRAEDNADTKAKVVEAKEKVSDYEAKKADKDVEQKGIKEQEYSCVVKAKSGEVARICRDKSVIGDAVVI
+SCAKDGVKVSASGEKGNGNIKKSQTSEEEAVTIEANEKVQKTVAKRYKNVVTKATKKSSTVTKSASADVKKVVEYKIAD
+AGVKKYYKAKKI
+[1m[34m~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H1,1[11CAll[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CAll[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[2;23r[23;1H
+[1;24r[2;1HAAVEARKVQGSIKKKVKEAKKDKINEACWDISSSGVNKQSADSSVVSKVQKTKRSEGVDTYRCDRNKAAGVNKTSASKIK[23;1H[1m[34m~                                                                               [0m[24;63H[K[24;63H2,1[11CAll[2;1H[34h[?25h[?25l[3;23r[3;1H[L[1;24r[2;2HAAVEARKVQGSIKKKVKEAKKDKINEACWDISSSGVNKQSADSSVVSKVQKTKRSEGVDTYRCDRNKAAGVNKTSASKII[3;1HK[24;63H[K[24;63H2,2[11CAll[2;2H[34h[?25h[24;1H[K[2;1H[?25l[24;63H2,1[11CAll[2;1H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"outputs/1axc.out" 5L, 274C written
+[?1l>[34h[?25h[?1049llutu0929@linux1:~/5darbas$ make
+./tstdiff outputs/1axc.out > outputs/1axc.diff	
+make: *** [outputs/1axc.diff] Error 1
+lutu0929@linux1:~/5darbas$ svn revert -R
+svn: Try 'svn help' for more info
+svn: Not enough arguments provided
+lutu0929@linux1:~/5darbas$ svn revert -R outputs/1axc.out 
+lutu0929@linux1:~/5darbas$ cd ..
+lutu0929@linux1:~$ cd 5darbas/
+lutu0929@linux1:~/5darbas$ svn update
+Restored 'version1.0'
+At revision 61.
+lutu0929@linux1:~/5darbas$ pwd
+/stud3/2012/lutu0929/5darbas
+lutu0929@linux1:~/5darbas$ whoami
+lutu0929
+lutu0929@linux1:~/5darbas$ date
+Sk Grd 28 14:12:43 EET 2014
+lutu0929@linux1:~/5darbas$ history > myhistory>[K.txt
+lutu0929@linux1:~/5darbas$ cd ..
+lutu0929@linux1:~$ tar cvfz 5darbas/[K.tgx[Kz 5darbas/
+5darbas/
+5darbas/ciftofasta
+5darbas/version1.0
+5darbas/manual-computations/
+5darbas/manual-computations/myhistory.txt~
+5darbas/manual-computations/collagen.sorted
+5darbas/manual-computations/nucleases.lst.cnt
+5darbas/manual-computations/nucleases.lst.norm
+5darbas/manual-computations/PDB
+5darbas/manual-computations/collagen.lst
+5darbas/manual-computations/proteases.sorted
+5darbas/manual-computations/PDB-aa-counts.lst
+5darbas/manual-computations/dazniai
+5darbas/manual-computations/all.pdb
+5darbas/manual-computations/renewed
+5darbas/manual-computations/proteases.lst.norm
+5darbas/manual-computations/proteases.lst.cnt
+5darbas/manual-computations/collagen.lst.norm
+5darbas/manual-computations/count.cnt
+5darbas/manual-computations/collagen.lst.cnt
+5darbas/manual-computations/PDB-aa-counts.lst.norm
+5darbas/manual-computations/nucleases.lst
+5darbas/manual-computations/.svn/
+5darbas/manual-computations/.svn/entries
+5darbas/manual-computations/.svn/tmp/
+5darbas/manual-computations/.svn/tmp/text-base/
+5darbas/manual-computations/.svn/tmp/props/
+5darbas/manual-computations/.svn/tmp/prop-base/
+5darbas/manual-computations/.svn/props/
+5darbas/manual-computations/.svn/text-base/
+5darbas/manual-computations/.svn/text-base/frequence.svn-base
+5darbas/manual-computations/.svn/text-base/collagen.lst.svn-base
+5darbas/manual-computations/.svn/text-base/PDB.svn-base
+5darbas/manual-computations/.svn/text-base/nucleases.lst.svn-base
+5darbas/manual-computations/.svn/text-base/collagen.lst.cnt.svn-base
+5darbas/manual-computations/.svn/text-base/proteases.lst.svn-base
+5darbas/manual-computations/.svn/text-base/proteases.lst.cnt.svn-base
+5darbas/manual-computations/.svn/text-base/count.cnt.svn-base
+5darbas/manual-computations/.svn/text-base/myhistory.txt.svn-base
+5darbas/manual-computations/.svn/text-base/nucleases.lst.cnt.svn-base
+5darbas/manual-computations/.svn/text-base/myhistory.txt~.svn-base
+5darbas/manual-computations/.svn/text-base/dazniai.svn-base
+5darbas/manual-computations/.svn/text-base/collagen.lst.norm.svn-base
+5darbas/manual-computations/.svn/text-base/all.pdb.svn-base
+5darbas/manual-computations/.svn/text-base/nucleases.lst.norm.svn-base
+5darbas/manual-computations/.svn/text-base/collagen.sorted.svn-base
+5darbas/manual-computations/.svn/text-base/proteases.lst.norm.svn-base
+5darbas/manual-computations/.svn/text-base/PDB-aa-counts.lst.svn-base
+5darbas/manual-computations/.svn/text-base/PDB-aa-counts.lst.cnt.svn-base
+5darbas/manual-computations/.svn/text-base/proteases.sorted.svn-base
+5darbas/manual-computations/.svn/text-base/renewed.svn-base
+5darbas/manual-computations/.svn/text-base/PDB-aa-counts.lst.norm.svn-base
+5darbas/manual-computations/.svn/prop-base/
+5darbas/manual-computations/frequence
+5darbas/manual-computations/PDB-aa-counts.lst.cnt
+5darbas/manual-computations/myhistory.txt
+5darbas/manual-computations/proteases.lst
+5darbas/.svn/
+5darbas/.svn/prop-base/
+5darbas/.svn/prop-base/tstdiff.svn-base
+5darbas/.svn/prop-base/ciftofasta.svn-base
+5darbas/.svn/props/
+5darbas/.svn/text-base/
+5darbas/.svn/text-base/test.svn-base
+5darbas/.svn/text-base/version1.0.svn-base
+5darbas/.svn/text-base/ciftofasta.svn-base
+5darbas/.svn/text-base/tstdiff.svn-base
+5darbas/.svn/text-base/Makefile.svn-base
+5darbas/.svn/entries
+5darbas/.svn/tmp/
+5darbas/.svn/tmp/prop-base/
+5darbas/.svn/tmp/props/
+5darbas/.svn/tmp/text-base/
+5darbas/inputs/
+5darbas/inputs/.svn/
+5darbas/inputs/.svn/tmp/
+5darbas/inputs/.svn/tmp/prop-base/
+5darbas/inputs/.svn/tmp/text-base/
+5darbas/inputs/.svn/tmp/props/
+5darbas/inputs/.svn/text-base/
+5darbas/inputs/.svn/text-base/3pge.in.svn-base
+5darbas/inputs/.svn/text-base/1knv.in.svn-base
+5darbas/inputs/.svn/text-base/1b77.in.svn-base
+5darbas/inputs/.svn/text-base/2ixs.in.svn-base
+5darbas/inputs/.svn/text-base/1axc.in.svn-base
+5darbas/inputs/.svn/prop-base/
+5darbas/inputs/.svn/entries
+5darbas/inputs/.svn/props/
+5darbas/inputs/3pge.in
+5darbas/inputs/1axc.in
+5darbas/inputs/2ixs.in
+5darbas/inputs/1knv.in
+5darbas/inputs/1b77.in
+5darbas/myhistory.txt
+5darbas/outputs/
+5darbas/outputs/3pge.out
+5darbas/outputs/1axc.out
+5darbas/outputs/1b77.diff
+5darbas/outputs/1knv.diff
+5darbas/outputs/1knv.out
+5darbas/outputs/1b77.out
+5darbas/outputs/3pge.diff
+5darbas/outputs/2ixs.diff
+5darbas/outputs/.svn/
+5darbas/outputs/.svn/dir-prop-base
+5darbas/outputs/.svn/prop-base/
+5darbas/outputs/.svn/props/
+5darbas/outputs/.svn/text-base/
+5darbas/outputs/.svn/text-base/1axc.out.svn-base
+5darbas/outputs/.svn/text-base/3pge.out.svn-base
+5darbas/outputs/.svn/text-base/1b77.out.svn-base
+5darbas/outputs/.svn/text-base/1knv.out.svn-base
+5darbas/outputs/.svn/text-base/2ixs.out.svn-base
+5darbas/outputs/.svn/tmp/
+5darbas/outputs/.svn/tmp/props/
+5darbas/outputs/.svn/tmp/prop-base/
+5darbas/outputs/.svn/tmp/text-base/
+5darbas/outputs/.svn/entries
+5darbas/outputs/2ixs.out
+5darbas/outputs/1axc.diff
+5darbas/tstdiff
+5darbas/Makefile
+5darbas/bin/
+5darbas/bin/anagrams
+5darbas/bin/.svn/
+5darbas/bin/.svn/props/
+5darbas/bin/.svn/text-base/
+5darbas/bin/.svn/text-base/pdb_get_entry.svn-base
+5darbas/bin/.svn/text-base/anagrams.svn-base
+5darbas/bin/.svn/prop-base/
+5darbas/bin/.svn/prop-base/anagrams.svn-base
+5darbas/bin/.svn/prop-base/pdb_get_entry.svn-base
+5darbas/bin/.svn/tmp/
+5darbas/bin/.svn/tmp/prop-base/
+5darbas/bin/.svn/tmp/text-base/
+5darbas/bin/.svn/tmp/props/
+5darbas/bin/.svn/entries
+5darbas/bin/pdb_get_entry
+5darbas/test
+5darbas/tests/
+5darbas/tests/1b77
+5darbas/tests/1knv
+5darbas/tests/.svn/
+5darbas/tests/.svn/props/
+5darbas/tests/.svn/entries
+5darbas/tests/.svn/text-base/
+5darbas/tests/.svn/text-base/3pge.svn-base
+5darbas/tests/.svn/text-base/1knv.svn-base
+5darbas/tests/.svn/text-base/2ixs.svn-base
+5darbas/tests/.svn/text-base/1axc.svn-base
+5darbas/tests/.svn/text-base/1b77.svn-base
+5darbas/tests/.svn/prop-base/
+5darbas/tests/.svn/prop-base/1axc.svn-base
+5darbas/tests/.svn/prop-base/2ixs.svn-base
+5darbas/tests/.svn/prop-base/1b77.svn-base
+5darbas/tests/.svn/prop-base/3pge.svn-base
+5darbas/tests/.svn/prop-base/1knv.svn-base
+5darbas/tests/.svn/tmp/
+5darbas/tests/.svn/tmp/props/
+5darbas/tests/.svn/tmp/prop-base/
+5darbas/tests/.svn/tmp/text-base/
+5darbas/tests/1axc
+5darbas/tests/2ixs
+5darbas/tests/3pge
+lutu0929@linux1:~$ exit
