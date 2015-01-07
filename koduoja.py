@@ -1,5 +1,6 @@
 #!usr/local/bin/python
 from check import *
+import operator
 import os
 def readncalc(dict,length):
 	myfile = raw_input("Failo pavadinimas: ")
@@ -8,6 +9,7 @@ def readncalc(dict,length):
 			c = f.read(1)
 			if not c:
 				sort(dict, length)	
+				f.close()
 				return dict, myfile
 			try:
 				dict[c] += 1
@@ -17,13 +19,11 @@ def readncalc(dict,length):
 	f.close()
 	return dict, myfile
 def sort(dict, length):
-	import collections
 	for i in dict:
         	dict[i] = float(dict.get(i))/float(length)
         os.system('rm -f filelength')
         with open('filelength','w') as f:
                 f.write(str(length))
-	od = collections.OrderedDict(sorted(dict.items()))
 	return dict
 def bshannon(dict):
 	import math
@@ -43,7 +43,7 @@ def bshannon(dict):
 		else:
 			buves = newprob
 			kodas = ""
-			for i in range(0,kodelen):
+			for i in range(0,kodelen+1):
 				buves = buves * 2
 				if buves  >= float(1):
 					buves -= 1
@@ -52,39 +52,51 @@ def bshannon(dict):
 					kodas += "0"
 		dict[x]=str(kodas)
 	return dict
+def sorting(tupl,dict):
+	tupl = []
+        #check(dict)
+        values = []
+        for y in sorted(dict.values(), reverse = True):
+		if y not in values:
+			values.append(y)
+	for val in values:
+		for x in dict:
+			if dict.get(x)==val:
+				tupl.append((x,val))
+
+	return tupl
 def shannon(dict):
         import math
-	z=0
 	prob = float(0)
 	code = ''
-	tmp = 0
-	for x in dict:
-		length = int(math.log(1/dict.get(x),2))+1
+	tuples = []
+	fw = open('probs','w')
+	tuples = sorting(tuples, dict)
+	for key, val in tuples:
+		log = math.log(1/val,2)
+		length = int(math.ceil(log))
 		if prob == float(0):
 			code = '0'*length
 		else:
 			tmp = prob
 			for i in range(0,length):
-				if z ==0:
-					print i
 				tmp = tmp * 2
 				if tmp >= 1:
 					code +='1'
 					tmp -= 1
 				else:
 					code +='0'
-		prob += dict.get(x)	
-		dict[x] = code	
+		fw.write(str(val)+' '+str(prob)+' '+code+'\n')
+		prob += val
+		for x in dict:
+			if x == key:
+				dict[x] = code	
 		code = ''
-		z=1		
-	return dict
-def pailgina(dict,didz):
-	for x in dict:
-		like = "0"*(10-len(dict.get(x)))
-		dict[x]=like+dict.get(x)
+	fw.write('last: '+str(val)+' '+str(prob)+' '+code+'\n')
+	
 	return dict
 def viskas(dict,length):
 	dict, somefile = readncalc(dict,length)
-	check(dict)
+	#checkfile(somefile)
 	dict = shannon(dict)
 	return dict, somefile
