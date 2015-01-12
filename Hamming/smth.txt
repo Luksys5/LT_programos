@@ -1,0 +1,9 @@
+Cia prasideda kodas:  4
+Databins:  ['0011', '0101', '0110', '0111', '1001', '1010', '1011', '1100']
+Checkbins: ['0001', '0010', '0100', '1000']
+0 'iasis 0
+1 'iasis 1
+2 'iasis 0
+3 'iasis 0
+Ccode:  0100
+newbits:  010010000011
