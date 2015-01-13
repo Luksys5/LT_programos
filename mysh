@@ -1,13 +1,10 @@
 #!/bin/sh
-# Usage ./mysh program
-# loop for cahnging program's
-# Show the different changed program output.
 var=0
 python $1 > magic.txt
 while [ "$var" = 0 ]
 do
 	sleep 2
-	SMD=$(diff smth.txt magic.txt)
+	SMD=$(diff -H smth.txt magic.txt)
 	python $1 > smth.txt
 	if [ "$SMD" != "" ]
 	then
@@ -15,3 +12,11 @@ do
 		python $1 > magic.txt
 	fi
 done
+
+#	ENDLESS=$(python $1)
+#	if [ "$ENDLESS" != "$MLESS" ]
+#	then
+#		MLESS=$(python $1)
+#	fi
+#	sleep 1
+#done
