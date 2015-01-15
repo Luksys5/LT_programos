@@ -1,0 +1,45 @@
+#!/bin/sh
+var=0
+if [ "$1" ==  "" ]
+then
+	echo "Use: ./mysh program output"
+	exit
+fi
+if [ "$2" != "" ]
+then
+	python $1 
+	cat $2 > magic.txt
+else
+	python $1 > magic .txt
+fi
+
+while [ "$var" = 0 ]
+do
+	sleep 2
+	if [ "$2" != "" ]
+	then    
+	        python $1
+	        cat $2 > smth.txt
+	else
+        	python $1 > smth .txt
+	fi
+	SMD=$(diff -H smth.txt magic.txt)
+	if [ "$SMD" != "" ] && [ "$2" != ""  ]
+	then
+		cat $2 > magic.txt
+		cat magic.txt
+		#python $1 > magic.txt	
+	elif [ "$SMD" != "" ]
+	then
+		#cat smth.txt
+		python $1 > magic.txt
+	fi
+done
+
+#	ENDLESS=$(python $1)
+#	if [ "$ENDLESS" != "$MLESS" ]
+#	then
+#		MLESS=$(python $1)
+#	fi
+#	sleep 1
+#done
