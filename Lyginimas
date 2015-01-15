@@ -1,0 +1,76 @@
+1.Viska daryti su terminalu
+2.Komandine eilute su Deepscore
+    ./DeepScore -t protein_T -q protein_S [-o out_name] [-a alignment] [-x range_T] [-y range_S] 
+3. Komandine eilute su DeepAlign
+  ./DeepAlign -t protein_T -q protein_S [-o out_name] [-a alignment] [-x range_T] [-y range_S] 
+                        [-p out_option] [-u quality] 
+4.egzistuoja ./home/lukas/Deep*
+  pdb egzistuoja ./home/lukas/pdb/visi  (Baigta.txt yra visi); 
+5. Rasau su pythonu 2 ciklus for reikia padaryt 
+    PVZ
+    
+#!/usr/bin/python
+
+import os, subprocess
+#from Bio.PDB import *
+
+def read_file(filename):
+        fr=open(filename, 'r')
+        lines=fr.readlines()
+        fr.close()
+        return(lines)
+
+lines=read_file('Baigta.txt')
+
+gridlist=[]
+for line in lines:#reading pdb_list
+        gridlist.append(line[:-1])
+gridlist=set(gridlist)
+'''
+fw=open('Baigta.txt', 'w')
+
+c=subprocess.Popen("ls ./", shell=True, stdout=subprocess.PIPE)
+out=c.communicate()[0].split('\n')                                                                                                                                                                                                                                             
+b=[]                                                                                                                                                                                                                                                                           
+for x in out:                                                                                                                                                                                                                                                                  
+        b.append(x[:-1]                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                            
+'''                                                                                                                                                                                                                                                                             
+for x in gridlist:
+#        x=x.lower()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                os.system('wget ftp://ftp.wwpdb.org/pub/pdb/data/structures/divided/pdb/'+x[1:3]+'/pdb'+x[0:4]+'.ent.gz') #-r overwrite                                                                                                                                       
+
+                os.system('gunzip -f '+'pdb'+x[0:4]+'.ent.gz')                                                                                                                                                                                                                  
+                os.system('mv '+'pdb'+x[0:4]+'.ent'+' ./'+x[0:4]+'.pdb')
+
+                os.system('mv '+x[0:4]+'.pdb'+' ./'+'visi')
+
+os.system('/home/lukas/pdb/get_pdb_chains.pl Baigta.txt')
+                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+
+public class Lyginimas(){
+
+  public static void main(String args[]) throws IOException{
+        BufferedReader br = new BufferedReader(new FileReader("1seka.txt"));
+        String command= "/usr/bin/xterm"; 
+        String kodas;
+        String kitas = null;
+    	Runtime rt = Runtime.getRuntime();
+        while((kodas = br.readLine())!=null || (kitas = br.readLine()) != null){            
+    	Process pr = rt.exec("./DeepScore"+" -t "+kodas+" -q "+kitas);
+       
+    
+}
+}
+  
+}
+
+
