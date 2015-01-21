@@ -12,14 +12,13 @@ def spalv(dssp,notdssp,output,count,outkons):
                	y = y.rstrip('\n')
                	read = notdssp.readline()
                	if('>' in read):
-			if alfastr != 0 and betastr != 0:
-				betastr += ' '+str(blen)
-				alfastr += ' '+str(alen)
+		#if alfastr != 0 and betastr != 0:
+		#	betastr += ' '+str(blen)
+		#	alfastr += ' '+str(alen)
 			blen = 0
 			alen = 0
 			pavadinimas += read[1:]
 			betastr += bcolors.RESET+'\n'+bcolors.YELLOW+'beta'
-			outkons.write('\n'+read[1:])
 			alfastr += bcolors.RESET+'\n'+bcolors.GREEN+'alfa'
 			length = 0
 			output.write('\n')
@@ -38,39 +37,31 @@ def spalv(dssp,notdssp,output,count,outkons):
                 			output.write(bcolors.RESET)
 					if( y[i-1] == 'E'):
 						betastr += ('-'+str(length+i))
-						outkons.write(('-'+str(length+i)))
 					if( y[i-1] == 'H' and i >0):
-                                                outkons.write('-'+str(length+i)+' ')
 						alfastr += ('-'+str(int(length+i))) 
 					beta = 0
 					alfa = 0
                 		elif( y[i]=='E'):
+					if(y[i-1]=='H'):
+                                        	alfastr += ('-'+str(int(length+i)))
 					if beta == 0:
-						if alfa == 1:
-							outkons.write('-'+str(length+i)+' ')
-                                                	alfastr += ('-'+str(int(length+i)))
 						blen += 1
 						beta = 1
 						betastr += ' ' + str(length+i+1)
-						outkons.write(' '+str(length+i+1))
                 	        	output.write(bcolors.YELLOW)
 					alfa = 0
                 	       	else:
+					if(y[i-1]=='E'):
+                                        	betastr += ('-'+str(int(length+i)))
 					beta = 0
                 	        	output.write(bcolors.GREEN)
 					if alfa == 0:
-						if beta == 1:
-                                                        outkons.write('-'+str(length+i)+' ')
-                                                        betastr += ('-'+str(int(length+i)))
 						alen += 1
 						alfa = 1
 						alfastr += ' ' + str(length+i+1)
 				output.write(read[i]+" "*(len(str(i+length))+(len(str(i+1))-len(read[i]))))
 			length += len(y)
-			#utput.write('\nbeta '+bcolors.RESET+betastr)
-              	output.write('\n')
-	#output.write(betastr)
-	#output.write(alfastr)
+		output.write('\n')
 	alfal = alfastr.split('\n')
 	betal = betastr.split('\n')
 	alfal = alfal[1:]
@@ -78,6 +69,9 @@ def spalv(dssp,notdssp,output,count,outkons):
 	pavlist = pavadinimas.split('\n')
 	for i in range(0, len(betal)):
 		try:
+			outkons.write(pavlist[i]+'\n')
+			outkons.write(betal[i]+'\n')
+			outkons.write(alfal[i]+'\n')
 			output.write(pavlist[i]+'\n')
 			output.write(betal[i]+'\n')
 			output.write(alfal[i]+'\n')
