@@ -1,5 +1,86 @@
+def simplediff(pavlst,alfal,betal,firsta,firstb,out):
+	atst = pavlst[0]
+        out.write(atst+'\n'+bcolors.FAIL+'--------atstovo seka-------------\n'+bcolors.RESET)
+        pavlist = pavlst[1:(len(pavlst)-1)]
+        out.write(firsta+'\n')
+        out.write(firstb+'\n')
+        out.write(bcolors.FAIL+'---------------------------------\n'+bcolors.RESET)
+        for i in range(0,len(pavlist)):
+                out.write(pavlist[i]+'\n')
+                out.write(alfal[i])
+                if firsta.rstrip('\n') != alfal[i].rstrip('\n'):
+                        out.write(bcolors.FAIL+' <---\n'+bcolors.RESET)
+                else:
+                        out.write('\n')
+                out.write(betal[i])
+                if firstb.rstrip('\n') != betal[i].rstrip('\n'):
+                        out.write(bcolors.FAIL+' <---\n'+bcolors.RESET)
+                else:
+                        out.write('\n')
+
+        return
+def wherediff(pavlst,alfalst,betalst,falfa,fbeta,out):
+	import re
+	mystr = ''
+	write = 0
+	atst = pavlst[0]
+        out.write(atst+'\n'+bcolors.FAIL+'--------atstovo seka-------------\n'+bcolors.RESET)
+        pavlist = pavlst[1:(len(pavlst)-1)]
+        out.write(falfa+'\n')
+        out.write(fbeta+'\n')
+        out.write(bcolors.FAIL+'---------------------------------\n'+bcolors.RESET)
+	for i in range(0,len(pavlist)):
+		if betalst[i] != fbeta:
+                        #mystr = ''
+                        out.write(pavlist[i]+'\n')
+                        if len(betalst[i]) == len(fbeta):
+                                #out.write(alfalst[i]+'\n')
+                                out.write(bcolors.YELLOW+'beta'+bcolors.RESET)
+                                for x in range(0,len(betalst[i])):
+                                        if betalst[i][x] == ' ':
+                                                if 'beta' in mystr:
+                                                        mystr = ''
+                                                if write == 1:
+                                                        out.write(' '+mystr)
+                                                write = 0
+                                                mystr = ''
+                                        else:
+                                                mystr += betalst[i][x]
+                                        if fbeta[x] != betalst[i][x]:
+                                                write = 1
+                                        if x == (len(betalst[i])-1):
+                                                out.write(bcolors.RESET+'\n')
+                                mystr = ''
+                        else:
+                                out.write(betalst[i]+'\n')
+		if alfalst[i] != fbeta:
+			#mystr = ''
+			out.write(pavlist[i]+'\n')
+			if len(alfalst[i]) == len(falfa):
+				#out.write(alfalst[i]+'\n')
+				out.write(bcolors.GREEN+'alfa '+bcolors.RESET)
+				for x in range(0,len(alfalst[i])):
+					if alfalst[i][x] == ' ':
+						if 'alfa' in mystr:
+							mystr = ''
+						if write == 1:
+							out.write(mystr+' ')
+						write = 0
+						mystr = ''
+					else:
+						mystr += alfalst[i][x]
+					if falfa[x] != alfalst[i][x]:
+						write = 1
+					if x == (len(alfalst[i])-1):
+						out.write(bcolors.RESET+'\n')
+				mystr = ''
+			else:
+				out.write(alfalst[i]+'\n')
+	return
 #Nurodo pdb strukturos alfa beta strukturas pakeiciant spalva 
+
 #Skirtingi failai perduodami ciklui
+
 #vieni trumpi tik vieno baltymo, kiti keliu baltymu
 def spalv(dssp,notdssp,output,count,outkons,outch):
 	import os, subprocess
@@ -65,80 +146,15 @@ def spalv(dssp,notdssp,output,count,outkons,outch):
 		output.write('\n')
 	alfastr += bcolors.RESET
 	betastr += bcolors.RESET
+	pavlist = pavadinimas.split('\n')
 	alfal = alfastr.split('\n')
 	betal = betastr.split('\n')
 	alfal = alfal[1:]
 	betal = betal[1:]
-	pavlist = pavadinimas.split('\n')
 	firstb = betal[0]
-	mystr = ''
 	firsta = alfal[0]
-	write = 0
-	outch.write('Spausdinu skirtumus\n')
-	outch.write(bcolors.FAIL+pavlist[0]+'--atstovo sekos'+bcolors.RESET+'\n'+firstb+' '+str(len(firstb.rstrip('\n')))+'\n')
-	outch.write(firsta+' '+str(len(firsta.rstrip('\n')))+'\n')
-	#os.system('diff')
-	for i in range(0, len(betal)):
-		try:
-			if i == 0:
-				outkons.write(bcolors.FAIL+pavlist[i]+'\n'+bcolors.RESET)
-			else:
-				outkons.write(pavlist[i]+'\n')
-			tmp = betal[i]
-			if firstb != betal[i]:
-				
-				if mystr != '':
-					#outch.write(mystr+'\n'+bcolors.RESET)
-					mystr = ''
-				write = 0
-				outch.write(pavlist[i]+'\n'+bcolors.YELLOW+'beta '+bcolors.RESET)
-				for x in range(0,len(betal[i])):
-					if betal[i][x] == ' ':
-						
-						if write == 1:
-							outch.write(mystr+' ')
-						mystr = ''
-						write = 0
-					else:
-						mystr += betal[i][x]
-					if firstb[x] != betal[i][x]:
-						write = 1
-				outch.write('\n')
-				outkons.write(betal[i])
-				outkons.write(bcolors.FAIL+' <-- '+bcolors.RESET+'\n') 
-				write = 1
-			else:
-				outkons.write(betal[i]+'\n')
-			if len(firsta.rstrip('\n')) != len(alfal[i].rstrip('\n')):
-				outch.write(pavlist[i]+'\n'+alfal[i]+' '+str(len(alfal[i]))+bcolors.RESET+'\n')
-			elif firsta != alfal[i]:
-				outkons.write(alfal[i])
-				outkons.write(bcolors.FAIL+' <-- '+bcolors.RESET+'\n')
-				if write == 0:
-					outch.write(pavlist[i]+'\n'+bcolors.GREEN+'alfa ')
-				else:
-					outch.write(bcolors.GREEN+'alfa ')
-					write = 0
-                                for x in range(0,len(alfal[i])):
-                                        if alfal[i][x] == ' ':
-                                                if write == 1:
-                                                        outch.write(mystr+' ')
-                                                mystr = ''
-                                                write = 0
-                                        else:
-                                                mystr += alfal[i][x]
-                                        if firsta[x] != alfal[i][x]:
-                                                write = 1
-                                outch.write('\n'+bcolors.RESET)
-			else:
-				outkons.write(alfal[i]+'\n')
-
-			output.write(pavlist[i]+'\n')
-			output.write(betal[i]+'\n')
-			output.write(alfal[i]+'\n')
-		except IndexError:
-			catch = 1
-	outkons.write(bcolors.RESET)
+	simplediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outkons)
+	wherediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outch)
 	return
 class bcolors:
 	FAIL = '\033[91m'
