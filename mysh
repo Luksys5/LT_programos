@@ -1,9 +1,33 @@
 #!/bin/sh
+
+FILES=$*
+ARGS=""
+for FILE in $FILES
+do
+	if [ "$FILE" != "$1" ] && [ "$FILE" != "$2" ] && [ "$FILE" != "1" ]
+	then
+		ARGS="$ARGS $FILE"
+	fi
+done
+echo $ARGS
 var=0
+if [ "$1" ==  "-h" ]
+then
+        echo "./mysh progname - prints your program's STDOUT difference IF there is every second"
+	echo "./mysh program output - prints your program's output file differnece the same way."
+	echo "./mysh program output flag - flag can be 1. It's meaning is to print given output data. If 1: print if 0 dont print"
+	echo "./mysh program output flag (other args) -- prints argument files and output file if there are difference in your OUTPUT file."
+        exit
+fi
+
 if [ "$1" ==  "" ]
 then
-	echo "Use: ./mysh program output"
+	echo "Use: ./mysh program output flag (other args)"
 	exit
+fi
+if [ "$3" ==  "1" ]
+then
+        cat $2
 fi
 if [ "$2" != "" ]
 then
@@ -26,6 +50,7 @@ do
 	SMD=$(diff -H smth.txt magic.txt)
 	if [ "$SMD" != "" ] && [ "$2" != ""  ]
 	then
+		echo -e $ARGS | xargs cat
 		cat $2 > magic.txt
 		cat magic.txt
 		#python $1 > magic.txt	
@@ -36,10 +61,6 @@ do
 	fi
 done
 
-#	ENDLESS=$(python $1)
-#	if [ "$ENDLESS" != "$MLESS" ]
-#	then
-#		MLESS=$(python $1)
-#	fi
-#	sleep 1
-#done
+#	
+#	
+#	
