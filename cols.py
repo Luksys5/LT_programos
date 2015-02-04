@@ -1,12 +1,10 @@
-def simplediff(pavlst,alfal,betal,firsta,firstb,out):
-	atst = pavlst[0]
+def simplediff(pavlst,alfal,betal,firsta,firstb,out,atst):
         out.write(atst+'\n'+bcolors.FAIL+'--------atstovo seka-------------\n'+bcolors.RESET)
-        pavlist = pavlst[1:(len(pavlst)-1)]
         out.write(firsta+'\n')
         out.write(firstb+'\n')
         out.write(bcolors.FAIL+'---------------------------------\n'+bcolors.RESET)
-        for i in range(0,len(pavlist)):
-                out.write(pavlist[i]+'\n')
+        for i in range(0,len(pavlst)):
+                out.write(pavlst[i]+'\n')
                 out.write(alfal[i])
                 if firsta.rstrip('\n') != alfal[i].rstrip('\n'):
                         out.write(bcolors.FAIL+' <---\n'+bcolors.RESET)
@@ -19,22 +17,27 @@ def simplediff(pavlst,alfal,betal,firsta,firstb,out):
                         out.write('\n')
 
         return
-def wherediff(pavlst,alfalst,betalst,falfa,fbeta,out):
+''' wherediff -- function search for difference in given sequence for each number in seq.
+    simpledif -- function that shows if there are differences between normal sequence and given one.
+alfal- list of alfa secondary sequence strings
+betal- ........beta .......
+pavlst- list of secondary sequence names.1b77_C b18h_B and so on...
+fbeta and falfa- are the normal sequence to which we differ the given ones.
+out- output file, where program prints its ouptut.
+'''
+def wherediff(pavlst,alfalst,betalst,falfa,fbeta,out,atst):
 	import re
 	mystr = ''
 	write = 0
-	atst = pavlst[0]
         out.write(atst+'\n'+bcolors.FAIL+'--------atstovo seka-------------\n'+bcolors.RESET)
-        pavlist = pavlst[1:(len(pavlst)-1)]
         out.write(falfa+'\n')
         out.write(fbeta+'\n')
         out.write(bcolors.FAIL+'---------------------------------\n'+bcolors.RESET)
-	for i in range(0,len(pavlist)):
+	for i in range(0,len(pavlst)):
 		if betalst[i] != fbeta:
                         #mystr = ''
-                        out.write(pavlist[i]+'\n')
+                        out.write(pavlst[i]+'\n')
                         if len(betalst[i]) == len(fbeta):
-                                #out.write(alfalst[i]+'\n')
                                 out.write(bcolors.YELLOW+'beta'+bcolors.RESET)
                                 for x in range(0,len(betalst[i])):
                                         if betalst[i][x] == ' ':
@@ -53,9 +56,9 @@ def wherediff(pavlst,alfalst,betalst,falfa,fbeta,out):
                                 mystr = ''
                         else:
                                 out.write(betalst[i]+'\n')
-		if alfalst[i] != fbeta:
+		if alfalst[i] != falfa:
 			#mystr = ''
-			out.write(pavlist[i]+'\n')
+			out.write(pavlst[i]+'\n')
 			if len(alfalst[i]) == len(falfa):
 				#out.write(alfalst[i]+'\n')
 				out.write(bcolors.GREEN+'alfa '+bcolors.RESET)
@@ -77,12 +80,58 @@ def wherediff(pavlst,alfalst,betalst,falfa,fbeta,out):
 			else:
 				out.write(alfalst[i]+'\n')
 	return
-#Nurodo pdb strukturos alfa beta strukturas pakeiciant spalva 
+def maxatst(pavlst,alfa,beta,out):
+	print '------------------Lyginimas-----------'
+	print bcolors.GREEN+'Atstovas, atstovo tasku kiekis'+bcolors.RESET
+	i = j = amax = bmax = aw = bw = 0
+	for z in alfa:
+		points = 0
+		master = z[10:(len(z)-4)]
+		mych = master.split(' ')
+		for x in alfa:
+			if i != j:
+				x = x[10:len(x)-4]
+				#print z,'\n', x
+				targ = x.split(' ')
+				for y in mych:
+					for w in targ:
+						if w == y:
+							points += 1
+			j+=1
+		if points > amax:
+			amax = points
+			aw = i
+		i += 1
+	print pavlst[aw], amax
+	i = j = 0
+	for z in beta:
+                points = 0
+                master = z[10:(len(z)-4)]
+                mych = master.split(' ')
+                for x in beta:
+                        if i != j:
+                                x = x[10:len(x)-4]
+                                #print z,'\n', x
+                                targ = x.split(' ')
+                                for y in mych:
+                                        for w in targ:
+                                                if w == y:
+                                                        points += 1
+                        j+=1
+                if points > bmax:
+                        bmax = points
+                        bw = i
+                i += 1
+        print pavlst[bw], bmax
+	return
+'''
+Nurodo pdb strukturos alfa beta strukturas pakeiciant spalva 
 
-#Skirtingi failai perduodami ciklui
+Skirtingi failai perduodami ciklui
 
-#vieni trumpi tik vieno baltymo, kiti keliu baltymu
-def spalv(dssp,notdssp,output,count,outkons,outch):
+vieni trumpi tik vieno baltymo, kiti keliu baltymu
+'''
+def spalv(dssp,notdssp,output,count,outkons,outch,flag):
 	import os, subprocess
 	lines = dssp.readlines()
 	betastr = ''
@@ -153,8 +202,13 @@ def spalv(dssp,notdssp,output,count,outkons,outch):
 	betal = betal[1:]
 	firstb = betal[0]
 	firsta = alfal[0]
-	simplediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outkons)
-	wherediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outch)
+	#f flag == 1:
+        adfile = ('atst.diff','w')
+        maxatst(pavlist,alfal,betal,adfile)
+        atst = pavlist[0]
+        pavlist = pavlist[1:(len(pavlist)-1)]
+	simplediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outkons,atst)
+	wherediff(pavlist,alfal[1:],betal[1:],firsta,firstb,outch,atst)
 	return
 class bcolors:
 	FAIL = '\033[91m'
@@ -169,7 +223,7 @@ atstout = open('atst.colored','w')
 atstkons = open('atst.kons','w')
 atstch = open('atst.ch','w')
 atstout.write(bcolors.GREEN + ' Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+'\n')
-spalv(fdssp,fdnot,atstout,0,atstkons,atstch)
+spalv(fdssp,fdnot,atstout,0,atstkons,atstch,1)
 for x in range(1,16):
 	f1 = open('../dssp/'+str(x),'r')
 	f2 = open('../notdssp/'+str(x),'r')
@@ -177,4 +231,4 @@ for x in range(1,16):
 	outkons = open(str(x)+'.kons','w')
 	outch = open(str(x)+'.ch','w')
 	outdssp.write(bcolors.GREEN + ' Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
-	spalv(f1,f2,outdssp,x,outkons,outch)
+	spalv(f1,f2,outdssp,x,outkons,outch,0)
