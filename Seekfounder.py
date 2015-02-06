@@ -3,74 +3,94 @@ def maximum(one,two):
 	if max < one:
 		return two, one
 	return one, two
-def Changes(bindl):
-	print bindl[0]
-	print bindl[1]
-	cbind = bindl[0].split(' ')
-	binds = bindl[1].split(' ')	
+
+def cloop(binds,cbind):
+	differs = ''
 	a = b = 0
 	chint = cbind[a].split('-')
-	print 'Tikrinama su ',chint
 	interval = binds[b].split('-')
-	print 'Intervalas',interval
-	while a != len(cbind):
-		if chint == [''] or interval == ['']:
-			break
+	while a != len(cbind) or b != len(binds):
+		if interval == ['']:
+			differs += chint[0]+'-'+chint[1]+' '
+			return differs
+		if chint == ['']:
+
+			differs += interval[0]+'-'+interval[1]+' '
+			return differs
 		if int(chint[1]) < int(interval[0]):
 			a += 1
-			print bcolors.FAIL+'truksta kilpos ', chint[0]+'-'+chint[1], bcolors.RESET
+			differs += chint[0]+'-'+chint[1]+' '
 			chint = cbind[a].split('-')
-			print 'Tikrinama su ',chint
 		elif int(interval[1]) < int(chint[0]):
+			print interval[0]
+			print interval[1]
+			print differs
+			'''     Masyne klaida cia       '''
 			b += 1
-			print bcolors.FAIL+'atsirado kilpa ', interval[0]+'-'+interval[1], bcolors.RESET
+			mystr = interval[0]+'-'+interval[1]+' '
+			differs += mystr
 			interval = binds[b].split('-')
-			print 'Intervalas', interval
 		else:
-			points = 0
-			altint = cbind[a+1].split('-')
-			altint2 = binds[b+1].split('-')
-			if int(altint[0]) < int(interval[1]):
+			zchint = cbind[a+1].split('-')
+			zinterval = binds[b+1].split('-')
+			if zinterval == ['']:
+				differs += zchint[0]+'-'+zchint[1]+' '
+				return differs
+			if zchint == ['']:
+				differs += zinterval[0]+'-'+zinterval[1]+' '
+				return differs
+			if int(zchint[0]) < int(interval[1]):
 				intpoints = 0
 				altpoints = 0
 				for x in range(int(chint[0]),int(chint[1])+1):
 					if x >= int(interval[0]) and x <= int(interval[1])+1:
 						intpoints += 1
-				for x in range(int(altint[0]),int(altint[1])+1):
+				for x in range(int(zchint[0]),int(zchint[1])+1):
 					if x >= int(interval[0]) and x <= int(interval[1])+1:
 						altpoints += 1
 				if altpoints > intpoints:
-					print intpoints, altpoints
 					a += 1
-					print bcolors.FAIL+'truksta kilpos ', chint[0]+'-'+chint[1], bcolors.RESET
+					differs += chint[0]+'-'+chint[1]+' '
 					chint = cbind[a].split('-')
-					print 'Tikrinama su ',chint
-			elif int(altint2[0]) < int(chint[1]):
+			elif int(zinterval[0]) < int(chint[1]):
+			#	print chint, interval
+				
+				'''	Masyne klaida cia 	'''
 				intpoints = 0
                                 altpoints = 0
                                 for x in range(int(interval[0]),int(interval[1])+1):
                                         if x >= int(chint[0]) and x <= int(chint[1])+1:
                                                 intpoints += 1
-                                for x in range(int(altint2[0]),int(altint2[1])+1):
+                                for x in range(int(zinterval[0]),int(zinterval[1])+1):
                                         if x >= int(chint[0]) and x <= int(chint[1])+1:
                                                 altpoints += 1
                                 if altpoints > intpoints:
-                                        print intpoints, altpoints
                                         b += 1
-                                        print bcolors.FAIL+'atsirado kilpa ', interval[0]+'-'+interval[1], bcolors.RESET
+                                        differs = interval[0]+'-'+interval[1], bcolors.RESET+' '
                                         interval = binds[b].split('-')
-                                        print 'Tikrinama su ',chint
+				elif altpoints == intpoints:
+					b += 2
+					interval = binds[b].split('-')
 			else:
-				print 'atitiko'
 				a += 1
 				chint = cbind[a].split('-')
 				b += 1
 				interval = binds[b].split('-')
-				if b > len(cbind):
-					break
-				print 'Tikrinama su ',chint
-				print 'Intervalas ', interval
-	return	
+	return differs
+def Changes(bindl):
+	Diflist = []
+	checkseek = bindl[0].split(' ')
+#	checkseek = checkseek[:len(checkseek)-1]
+	groupseek = bindl[1:]
+	for x in groupseek:
+		x = x.split(' ')
+		#x = x[:len(x)-1]
+		print x
+		print checkseek, '\n'
+		mystr = cloop(x,checkseek)
+		Diflist.append(mystr)
+		print mystr
+	return
 def spalv(dssp,notdssp,output,count,outkons,outch,flag):
 	print bcolors.FAIL+'-----------limitless--------------'+bcolors.RESET
 	import os, subprocess
