@@ -1,0 +1,4 @@
+vim :%s/zodiz/zodis/gc    <-- Keicia kekviena zodiz i zodis patikrinant.
+chmod -R 755 <-- Duoda teses visiem failam folderiam useriui rwx kitiem rw
+cp -avr Folderis/ KitasFold/  <-- kopijuoja failus ir folderius
+
