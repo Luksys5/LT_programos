@@ -11,7 +11,7 @@ do
 done
 echo $ARGS
 var=0
-if [ "$1" ==  "-h" ]
+if [ "$1" = "-h" ]
 then
         echo "./mysh progname - prints your program's STDOUT difference IF there is every second"
 	echo "./mysh program output - prints your program's output file differnece the same way."
@@ -20,12 +20,12 @@ then
         exit
 fi
 
-if [ "$1" ==  "" ]
+if [ "$1" =  "" ]
 then
 	echo "Use: ./mysh program output flag (other args)"
 	exit
 fi
-if [ "$3" ==  "1" ]
+if [ "$3" = "1" ]
 then
         cat $2
 fi
