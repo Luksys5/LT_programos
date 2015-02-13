@@ -34,6 +34,7 @@ def lyginu(int0,int1,zint0,zint1,chk0,chk1,zchk0,zchk1):
 	return diff, notfound, x,y
 	
 def cloop(binds,cbind):
+	print '----------------------zeba--------------------'
 	differs = ''
 	a = b = 0 
 	differs = ''
@@ -49,6 +50,7 @@ def cloop(binds,cbind):
 			notf += chint[0]+'-'+ chint[1] + ' '
 			differs += chint[0]+'-'+ chint[1] + ' '
 		elif int(chint[0]) > int(interval[1]):
+			print differs	
 			b+= 1
 			notf += interval[0]+'-'+ interval[1] + ' '
 			differs += interval[0]+'-'+ interval[1] + ' '
@@ -67,6 +69,8 @@ def cloop(binds,cbind):
 				mystr1, mystr2 ,x, y = lyginu(interval[0],interval[1],zinterval[0],zinterval[1],chint[0],chint[1],zchint[0],zchint[1])
 				differs += mystr1
 				notf += mystr2
+				mystr = mystr2.split('-')
+				#print differs
 				a += x
 				b += y
 				return differs, notf
@@ -78,17 +82,49 @@ def cloop(binds,cbind):
 			b += y
 		chint = cbind[a].split('-')
 		interval = binds[b].split('-')		
-def Changes(bindl):
+def Changes(bindl,m):
 	Diflist = []
 	checkseek = bindl[0].split(' ')
 #	checkseek = checkseek[:len(checkseek)-1]
 	groupseek = bindl[1:]
+	NotfLenList = []
+	diffempty = []
+	notfempty = []
+	DiffLenList = []
 	for x in groupseek:
+		difflen = ''
+		notflen = ''
 		x = x.split(' ')
-		diff, empty = cloop(x,checkseek)
+		diff, empty= cloop(x,checkseek)
 		Diflist.append(empty)
-	return Diflist
-def spalv(dssp,notdssp,output,count,outkons,outch,flag):
+		lengths = diff.split(' ')
+		for x in lengths:
+			mystr = x.split('-')
+			try:
+				if (int(mystr[1])- int(mystr[0]) ) > m:
+					difflen += mystr[0] + '-' + mystr[1]+' '
+			except IndexError:
+				difflen += ''
+		if difflen == '':
+			diffempty.append(1)
+		else:
+			diffempty.append(0)
+		DiffLenList.append(difflen)
+		lengths = empty.split(' ')
+		for x in lengths:
+			mystr = x.split('-')
+			try:
+				if (int(mystr[1])- int(mystr[0]) ) > m:
+					notflen += mystr[0] + '-' + mystr[1]+' '
+			except IndexError:
+				notflen += ''
+		if notflen == '':
+			notfempty.append(1)
+		else:
+			notfempty.append(0)
+		NotfLenList.append(notflen)
+	return Diflist, NotfLenList, notfempty, DiffLenList, diffempty
+def spalv(dssp,notdssp,output,count,outdiff,outch,flag):
 	print bcolors.FAIL+'-----------limitless--------------'+bcolors.RESET
 	import os, subprocess
 	lines = dssp.readlines()
@@ -167,13 +203,30 @@ def spalv(dssp,notdssp,output,count,outkons,outch,flag):
 		output.write(bcolors.YELLOW+'beta '+betal[x]+bcolors.RESET+'\n')
 		output.write(bcolors.GREEN+'alfa '+alfal[x]+bcolors.RESET+'\n')
 	Names = baltlist[1:]
-	Diffgama = Changes(gamal)
-	Diffalfa = Changes(alfal)
-	Diffbeta = Changes(betal)
+	measure = -1
+	
+	Diffgama, NotfgamaLen, notfgempty ,DiffgamaLen, diffgempty = Changes(gamal,measure)
+	Diffalfa, NotfalfaLen, notfaempty, DiffalfaLen, diffaempty = Changes(alfal,measure)
+	Diffbeta, NotfbetaLen, notfbempty, DiffbetaLen, diffbempty = Changes(betal,measure)
+	outch.write("-----------------Main-Diffs----------------------\n")
 	for x in range(0,len(Diffgama)):
-		print Names[x]+bcolors.FAIL+"Bend Doesn't exits: "+bcolors.RESET,Diffgama[x], '\n'
-		print bcolors.GREEN+"Alfa Doesn't exits: "+bcolors.RESET, Diffalfa[x], '\n'
-		print bcolors.YELLOW+"Beta Doesn't exits: "+bcolors.RESET, Diffbeta[x], '\n'
+		if not notfgempty[x] and not notfaempty[x] and not notfbempty[x]:
+			outch.write( Names[x])
+			outdiff.write(Names[x])
+	#	output.write( Names[x]+ '\n')
+		#+bcolors.FAIL +"Bend Doesn't exits: "+bcolors.RESET,Diffgama[x], '\n'
+		if not notfgempty[x]:
+			outch.write( bcolors.GREEN+"Bend length differences by "+str(measure)+' +- '+bcolors.RESET +NotfgamaLen[x] +'\n')
+			outdiff.write(bcolors.GREEN+"Bend length differences by "+str(measure)+' +- '+bcolors.RESET +DiffgamaLen[x] +'\n')
+		#outch.write( bcolors.GREEN+"Alfa Doesn't exits: "+bcolors.RESET, Diffalfa[x], '\n'
+		if not notfaempty[x]:
+			outch.write( bcolors.GREEN+"Alfa length differences by "+str(measure)+' +- '+bcolors.RESET+ NotfalfaLen[x] + '\n')
+			outdiff.write(bcolors.GREEN+"Alfa length differences by "+str(measure)+' +- '+bcolors.RESET+ DiffalfaLen[x] + '\n')
+		#outch.write( bcolors.YELLOW+"Beta Doesn't exits: "+bcolors.RESET, Diffbeta[x], '\n'
+		if not notfbempty[x]:
+			outch.write( bcolors.YELLOW+"Beta length differences by "+str(measure)+' +- '+bcolors.RESET+ NotfbetaLen[x]+'\n'+'\n')
+			outdiff.write(bcolors.YELLOW+"Beta length differences by "+str(measure)+' +- '+bcolors.RESET+ DiffalfaLen[x]+'\n'+'\n')
+
 	return
 class bcolors:
 	FAIL = '\033[91m'
@@ -185,16 +238,16 @@ class bcolors:
 fdssp = open('../atst/atst.dssp','r')
 fdnot = open('../atst/atst.notdssp','r')
 atstout = open('atst.colored','w')
-atstkons = open('atst.kons','w')
+atstdiff = open('atst.diff','w')
 atstch = open('atst.ch','w')
 atstout.write(bcolors.GREEN + '			Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
-spalv(fdssp,fdnot,atstout,0,atstkons,atstch,1)
+spalv(fdssp,fdnot,atstout,0,atstdiff,atstch,1)
 '''for x in range(1,16):
 	f1 = open('../dssp/'+str(x),'r')
 	f2 = open('../notdssp/'+str(x),'r')
 	outdssp = open(str(x)+'.colored','w')
-	outkons = open(str(x)+'.kons','w')
+	outdiff = open(str(x)+'.kons','w')
 	outch = open(str(x)+'.ch','w')
 	outdssp.write(bcolors.GREEN + ' Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
-	spalv(f1,f2,outdssp,x,outkons,outch,0)
+	spalv(f1,f2,outdssp,x,outdiff,outch,0)
 '''
