@@ -10,53 +10,39 @@ def placing(one, two):
 		diff += str(min1)+'-'+str(min2)+' '
 	return diff
 
-def lyginu(dval,int0,int1,zint0,zint1,chk0,chk1,zchk0,zchk1):
+def lyginu(check, zcheck,interv,zinterv):
+	chk = check.split('-')
+	ints = interv.split('-')
+	zchk = zcheck.split('-')
+	zints = zinterv.split('-')
+
 	diff = ''
-	x = y = 0
-	notfound = ''
-	if int(zint1) < int(chk0):
-		if abs(int(int0)-int(int1)) >= dval:
-			diff += placing(int0,int1)
-		notfound += placing(int0,int1)
-		if abs(int(zint0)-int(zint1)) >= dval:
-			diff += placing(zint0,zint1)
-		notfound += placing(zint0,zint1)
-		y += 2
-		x += 1
-
-	elif int(zchk0) < int(int1):
-		if abs(int(chk0)-int(int0)) >= dval:
-			diff += placing(chk0,int0)
-		notfound += chk1+'-'+zchk0+' '
-		if abs(int(int1)-int(zchk1)) >= dval:
-			diff += placing(int1,zchk1)
-		x += 2
-		y += 1
-
-	elif int(int1) < int(chk0):
-		y += 1
-		if abs(int(int1)-int(chk0)) >= dval:
-			diff += placing(int1,int0)
-		notfound += placing(int1,int0)
-
-	elif int(chk1) < int(int0):
-		x += 1
-		if abs(int(chk1)-int(int0)) >= dval:
-			diff += placing(chk1,chk0)
-		notfound += placing(chk1,chk0)
-	else:
-		x += 1
-		y += 1
-		if abs(int(chk0)-int(int0)) >= dval:
-			diff += placing(int(chk0),int(int0))
-		if abs(int(chk1)-int(int1)) >= dval:
-			diff += placing(int(chk1),int(int1))
-	return diff, notfound, x,y
+	signal = 0
+	
+	diff += placing(int(ints[0]),int(chk[0]))
+	diff += placing(int(ints[1]),int(chk[1]))
+	
+	if zinterv == ['']:
+		try:
+			number = int(zchk[0])
+			diff += chk[0]+'-'+zchk[0]+' '
+		except ValueError:
+			diff += ''
+		signal = 1
+	if zcheck == ['']:
+		try:
+			number = int(zints[0])
+			diff += zints[0]+'-'+zints[0]+' '
+		except ValueError:
+			diff += ''
+		signal = 1
+	return diff, signal
 
 def cloop(binds,cbind, chval,name):
 	a = b = 0  ## raides nurodancios pozicija intervalam paimti
         differs = '' ## Irasomi besiskiriantys intervalai, sekos
         notf = ''    ## Nerasti intervalai
+	s = 0
         x = y = 0       ## tas ats kas a,b tik naudojama funkcijai "lyginu".
         chint = cbind[a].split('-')       ## Tikrinimo intervalas.
         interval = binds[b].split('-')    ## Vienas is grupes atstovo intervalas.
@@ -64,85 +50,102 @@ def cloop(binds,cbind, chval,name):
         while interval != [''] or chint != [''] :
 		dvalue = 0
                 if interval == [''] or chint == ['']:
-                        if chint == ['']:
-                                if abs(int(interval[0])-int(interval[1])) >= chval:
-                                        differs += interval[0] +'-'+interval[1]
-                                        notf += interval[0] +'-'+interval[1]
-                        if interval == ['']:
-				if abs(int(chint[0])-int(chint[1])) >= chval:
-                                        differs += chint[0] + '-'+ chint[1]
-                                notf += chint[0] + '-'+ chint[1]
-                        return differs, notf
+			if cbind[a] != binds[b]:
+				if chint == ['']:
+					differs += interval[0] +'-'+interval[1]
+				if interval == ['']:
+					differs += chint[0] + '-'+ chint[1]
+			return differs, notf
 
                 zinterval = binds[b+1].split('-')
                 zchint = cbind[a+1].split('-')
-                if zinterval == [''] or zchint == ['']:
-                        '''     Tuo atveju jei intervalas tarp bruksnio yra tuscias [''] '''
-                        if zinterval == ['']:
-                                zinterval = ('1000','1001')
-                        if zchint == ['']:
-                                zchint = ('1000','1001')
-                        mystr1, mystr2 ,x, y = lyginu(chval,interval[0],interval[1],zinterval[0],zinterval[1],chint[0],chint[1],zchint[0],zchint[1])
-                        differs += mystr1
-                        notf += mystr2
-                        mystr = mystr2.split('-')
-                        a += x
-                        b += y
-                        return differs, notf
 
-		if int(interval[1])> int(chint[1]) and int(interval[1]) > int(zchint[0]):
-			try:
-				number = int(zchint[0])
-			except ValueError:
-				print zchint
-			start = interval
-			startch = chint
-			while int(interval[1]) > int(zchint[0]):
+                if zinterval == [''] or zchint == ['']:
+			print bcolors.FAIL,interval, zinterval, chint ,zchint,bcolors.RESET
+                        '''     Tuo atveju jei intervalas tarp bruksnio yra tuscias [''] '''
+			if binds[b] == cbind[a]:
+				if zinterval == [''] and zchint != ['']:
+					differs += cbind[a+1]+' '
+				if zchint == [''] and zinterval != ['']:
+					differs += binds[b+1]+' '
+
+			else:
+				if chint[1] < interval[0]:
+					differs += cbind[a]+' '
+				elif interval[1] < chint[0]:
+					differs += binds[b]+' '
+			return differs, notf
+
+		if int(interval[0]) > int(zchint[1]):
+			differs += chint[0]+ '-' +chint[1]+' '
+			while int(interval[0]) > int(zchint[1]):    # Intervalas didesnis uz tikrinama intervala. INT > CHECK
 				a += 1
-				dvalue += (int(chint[1])-int(zchint[0]))
 				chint = cbind[a].split('-')
 				zchint = cbind[a+1].split('-')
-				try:	
-					number = int(zchint[0])
-				except ValueError:
-					print zchint ,'<----error here. in protein named:' ,name
-					print 'started here in interval:', start
-					print 'started here in chint:',startch
-					print 'ended here in interval:', interval
-					print 'ended here in chint:', chint
-					notf += zinterval[0]+'-'+zinterval[1]+' '
-					mystr = placing(interval[1],chint[1])
-					mystr2 = placing(interval[0],chint[0])
-					differs += mystr2[0]+'-'+mystr[1]+' '
+				differs += cbind[a]+' '
+				notf += chint[0]+'-'+chint[1]+' '
+				if zchint == ['']:
+					for x in range(b,len(binds)):
+						differs += binds[x]+' '
 					return differs, notf
-				
-			if dvalue >= chval:
-				differs += interval[0]+ '-' +interval[1]+' '
+			a += 1
 
-		if int(interval[1]) <  int(chint[0]) and int(zinterval[0]) < int(chint[1]):
-			while int(chint[1]) > int(zinterval[0]):
+		elif int(chint[0]) > int(zinterval[1]):		# Tikrinimo intervalas didesni uz intervala. CHECK > INT
+			differs += binds[b]
+			while int(chint[0]) > int(interval[1]):
 				b += 1
-				dvalue += (int(interval[1])-int(zinterval[0]))
 				interval = binds[b].split('-')
-				try:
-					zinterval = binds[b+1].split('-')
-				except IndexError:
-					mystr = placing(interval[1],chint[1])
-					mystr2 = placing(interval[0],chint[0])
-					differs += mystr2[0]+'-'+mystr[1]+' '
+				zinterval = binds[b+1].split('-')
+				differs += binds[b]+' '
+				if zinterval == ['']:
+					for x in range(b,len(cbind)):
+						differs +=  cbind[x]+' '
 					return differs, notf
-			if dvalue >= chval:
-				differs += chint[0] + '-' + chint[1]
-	
-		elif int(interval[0]) > int(chint[1]):                    # Intervalas didesnis uz tikrinama intervala.
-                        mystr = chint[0]+'-'+ chint[1] + ' '
-                        a += 1
-                        notf += mystr
-                        check = differs[(len(differs)-len(mystr)):]
-                        if check.rstrip(' ') != mystr.rstrip(' '):
-                                if abs(int(chint[1])-int(chint[0])) >= chval:
-                                        differs += mystr
+			b += 1
 
+		elif (int(chint[1]) >= int(interval[0])) and (int(interval[1]) >= int(zchint[0])):
+			differs += chint[0]+'-'+interval[0]+' '
+			while int(interval[1]) >= int(zchint[0]):
+				differs += chint[1]+'-'+zchint[0]+' '
+				a += 1
+				chint = cbind[a].split('-')
+				zchint = cbind[a+1].split('-')
+				if zchint == ['']:
+					for x in range(b,len(binds)):
+						differs += binds[x]+' '
+					return differs, notf
+			differs += zchint[0]+'-'+zchint[1]+' '
+			a += 1
+			b += 1
+
+		elif (int(interval[1]) >= int(chint[0])) and (int(chint[1]) >= int(zinterval[0])):
+			differs += placing(int(interval[0]),int(chint[0]))
+			while int(chint[1]) >= int(zinterval[0]):
+				differs += interval[1]+'-'+zinterval[0]+' '
+				b += 1
+				interval = binds[b].split('-')
+				zinterval = binds[b+1].split('-')
+				if zinterval == ['']:				## Jei paskutinis intervalas uzejo uz ribu.
+					for x in range(b,len(cbind)):
+						differs += cbind[x]
+					return differs, notf
+			differs += placing(int(chint[1]),int(interval[1]))
+		#	print bcolors.FAIL+differs+bcolors.RESET
+			a += 1
+			b += 1
+
+		elif cbind[a] != binds[b]:
+			mystr1, s = lyginu(cbind[a],cbind[a+1],binds[b],binds[b+1])
+			differs += mystr1
+			a += 1
+			b += 1
+			if s == 1:
+				return differs, notf
+		else:
+#			print bcolors.FAIL+cbind[a]+bcolors.RESET
+			a += 1
+			b += 1
+		'''
                 elif int(chint[0]) > int(interval[1]):                  # Tikrinimo intervalas didesni uz intervala.
                         b+= 1
                         notf += interval[0]+'-'+ interval[1] + ' '
@@ -182,6 +185,7 @@ def cloop(binds,cbind, chval,name):
                         notf += mystr2
                         a += x
                         b += y
+		'''
                 chint = cbind[a].split('-')
                 interval = binds[b].split('-')
 
@@ -333,14 +337,14 @@ def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
 	
 	print bcolors.GREEN+'alfa '+bcolors.RESET
 	NotfalfaLen, notfaempty, DiffalfaLen, diffaempty = Changes(alfal,measure,count,Names)
-	
+	#print DiffalfaLen
+	'''
 	#print bcolors.YELLOW+'beta '+bcolors.RESET
 	#NotfbetaLen, notfbempty, DiffbetaLen, diffbempty = Changes(betal,measure,count,Names)
 	#outdiff.write(bcolors.FAIL+"-----------------Main-"+str(count)+"-Diffs----------------------\n"+bcolors.RESET)
 	#if all(v is None for v in NotfgamaLen) and all(v is None for v in NotfalfaLen) and all(v is None for v in NotfbetaLen):
 #		outch.write("-----------------Main-Diffs----------------------\n")
 #	maximum = max(len(DiffgamaLen),len(DiffalfaLen),len(DiffbetaLen))
-	'''
 	for x in range(0,maximum):
 		z = 0
 		w = 0
@@ -386,7 +390,8 @@ class bcolors:
     	RESET = '\033[0m'
 fdssp = open('../atst/atst.dssp','r')
 fdnot = open('../atst/atst.notdssp','r')
-m = int(raw_input('Panasumo ivertis: '))
+m = 0
+# int(raw_input('Panasumo ivertis: '))
 
 #   Atstovu atstovai
 atstout = open('atst.colored','w')
