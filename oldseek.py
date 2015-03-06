@@ -49,9 +49,9 @@ def last(op1, op2, opc):
 		return diff
 	elif op1 < op2 or op2 < op1:
 		if op2[0] > op1[1]:
-			differ += op1[0]+'-'+op[1]+' '+op2[0]+'-'+op2[1]+' '
+			differ += op1[0]+'-'+op1[1]+' '+op2[0]+'-'+op2[1]+' '
 			return differ
-		differ += op2[0]+'-'+op2[1]+' '+op1[0]+'-'+op[1]+' '
+		differ += op2[0]+'-'+op2[1]+' '+op1[0]+'-'+op1[1]+' '
 	return differ
 def cloop(binds,cbind, chval,name):
 	a = b = 0  ## raides nurodancios pozicija intervalam paimti
@@ -72,14 +72,16 @@ def cloop(binds,cbind, chval,name):
                 if interval == [''] or chint == ['']:
 			if cbind[a] != binds[b]:
 				if chint == ['']:
-					differs += interval[0] +'-'+interval[1]
+					differs += interval[0] +'-'+interval[1]+' '
 				if interval == ['']:
-					differs += chint[0] + '-'+ chint[1]
+					differs += chint[0] + '-'+ chint[1]+' '
 			return differs, notf
 
                 zinterval = binds[b+1].split('-')
                 zchint = cbind[a+1].split('-')
-
+		print 'chint', chint
+		print 'intervalas', interval
+		print 'z-intervalas', zinterval
                 if zinterval == [''] or zchint == ['']:
 			print bcolors.FAIL,interval, zinterval, chint ,zchint,bcolors.RESET
                         '''     Tuo atveju jei intervalas tarp bruksnio yra tuscias ['']    '''
@@ -120,34 +122,6 @@ def cloop(binds,cbind, chval,name):
 							return differs, notf
 						differs += zinterval[0]+'-'+zinterval[1]+' '
 			return differs, notf
-		
-		if int(interval[0]) > int(zchint[1]):
-			differs += chint[0]+ '-' +chint[1]+' '
-			
-			while int(interval[0]) > int(zchint[1]):    # Intervalas didesnis uz tikrinama intervala. INT > CHECK
-				a += 1
-				chint = cbind[a].split('-')
-				zchint = cbind[a+1].split('-')
-				differs += cbind[a]+' '
-				notf += chint[0]+'-'+chint[1]+' '
-				if zchint == ['']:
-					for x in range(b,len(binds)):
-						differs += binds[x]+' '
-					return differs, notf
-			a += 1
-
-		elif int(chint[0]) > int(zinterval[1]):		# Tikrinimo intervalas didesni uz intervala. CHECK > INT
-			differs += binds[b]
-			while int(chint[0]) > int(interval[1]):
-				b += 1
-				interval = binds[b].split('-')
-				zinterval = binds[b+1].split('-')
-				differs += binds[b]+' '
-				if zinterval == ['']:
-					for x in range(b,len(cbind)):
-						differs +=  cbind[x]+' '
-					return differs, notf
-			b += 1
 
 		elif (int(chint[1]) >= int(interval[0])) and (int(interval[1]) >= int(zchint[0])):
 			differs += chint[0]+'-'+interval[0]+' '
@@ -165,8 +139,6 @@ def cloop(binds,cbind, chval,name):
 			b += 1
 
 		elif (int(interval[1]) >= int(chint[0])) and (int(chint[1]) >= int(zinterval[0])):
-			print 'chint', chint
-			print interval,'intervalai', zinterval
 			differs += placing(int(interval[0]),int(chint[0]))
 			while int(chint[1]) >= int(zinterval[0]):
 				differs += interval[1]+'-'+zinterval[0]+' '
@@ -175,16 +147,38 @@ def cloop(binds,cbind, chval,name):
 				zinterval = binds[b+1].split('-')
 				if zinterval == ['']:				## Jei paskutinis intervalas uzejo uz ribu.
 					for x in range(b,len(cbind)):
-						differs += cbind[x]
+						differs += cbind[x]+' '
 					return differs, notf
 			differs += placing(int(chint[1]),int(interval[1]))
 		#	print bcolors.FAIL+differs+bcolors.RESET
 			a += 1
 			b += 1
 
+		elif int(interval[0]) > int(chint[1]):
+			while int(interval[0]) > int(chint[1]):    # Intervalas didesnis uz tikrinama intervala. INT > CHECK
+				zchint = cbind[a+1].split('-')
+				differs += cbind[a]+' '
+				notf += chint[0]+'-'+chint[1]+' '
+				if zchint == ['']:
+					for x in range(b,len(binds)):
+						differs += binds[x]+' '
+					return differs, notf
+				a += 1
+				chint = cbind[a].split('-')
+		
+		elif int(chint[0]) > int(zinterval[1]):         # Tikrinimo intervalas didesni uz intervala. CHECK > INT
+			while int(chint[0]) > int(interval[1]):
+				zinterval = binds[b+1].split('-')
+				differs += binds[b]+' '
+				if zinterval == ['']:
+					for x in range(b,len(cbind)):
+						differs +=  cbind[x]+' '
+					return differs, notf
+				b += 1
+				interval = binds[b].split('-')
 		elif cbind[a] != binds[b]:
 			mystr1, s = lyginu(cbind[a],cbind[a+1],binds[b],binds[b+1])
-			differs += mystr1
+			differs += mystr1+' '
 			a += 1
 			b += 1
 			if s == 1:
@@ -196,11 +190,11 @@ def cloop(binds,cbind, chval,name):
                 chint = cbind[a].split('-')
                 interval = binds[b].split('-')
 
-def Changes(bindl,check,dval,name):
+def Changes(bind,check,dval,name):
 	import re
 	print '---------------check:'+name.rstrip('\n')+'-------------------'
-
-	diff, empty= cloop(bindl,check,dval,name)
+	
+	diff, empty= cloop(check,bind,dval,name)
 	return diff, empty
 
 def spalv(myfile,outch,measure):
@@ -216,47 +210,6 @@ def spalv(myfile,outch,measure):
 	print bcolors.GREEN+'alfa '+bcolors.RESET
 	Diff, empty = Changes(alfal[0],alfal[1],measure,Names)
 	print Diff
-	'''
-	#print bcolors.YELLOW+'beta '+bcolors.RESET
-	#NotfbetaLen, notfbempty, DiffbetaLen, diffbempty = Changes(betal,measure,count,Names)
-	#outdiff.write(bcolors.FAIL+"-----------------Main-"+str(count)+"-Diffs----------------------\n"+bcolors.RESET)
-	#if all(v is None for v in NotfgamaLen) and all(v is None for v in NotfalfaLen) and all(v is None for v in NotfbetaLen):
-#		outch.write("-----------------Main-Diffs----------------------\n")
-#	maximum = max(len(DiffgamaLen),len(DiffalfaLen),len(DiffbetaLen))
-	for x in range(0,maximum):
-		z = 0
-		w = 0
-		if re.match('^-\s',NotfgamaLen[x]) or NotfgamaLen[x] != '' or re.match('^-\s',NotfalfaLen[x]) or NotfalfaLen[x] != '' or re.match('^-\s',NotfbetaLen[x]) or NotfbetaLen[x] != '':
-			outch.write( Names[x])
-		if re.match('^-\s',DiffgamaLen[x]) or DiffgamaLen[x] != '' or re.match('^-\s',DiffalfaLen[x]) or DiffalfaLen[x] != '' or re.match('^-\s',DiffalfaLen[x]) or DiffalfaLen[x] != '':
-			outdiff.write(Names[x])
-		
-		if re.match('^-\s',NotfgamaLen[x]) or NotfgamaLen[x] != '':
-			w = 1
-			outch.write( bcolors.GREEN+"Bend length differences by "+str(measure)+' +- '+bcolors.RESET +NotfgamaLen[x] +'\n')
-		if re.match('^-\s',DiffgamaLen[x]) or DiffgamaLen[x] != '':
-			z = 1
-			outdiff.write(bcolors.GREEN+"Bend length differences by "+str(measure)+' +- '+bcolors.RESET +DiffgamaLen[x] +'\n')
-		#outch.write( bcolors.GREEN+"Alfa Doesn't exits: "+bcolors.RESET, Diffalfa[x], '\n'
-		if re.match('^-\s',NotfalfaLen[x]) or NotfalfaLen[x] != '':
-			w = 1
-			outch.write( bcolors.GREEN+"Alfa length differences by "+str(measure)+' +- '+bcolors.RESET+ NotfalfaLen[x] + '\n')
-		if re.match('^-\s',DiffalfaLen[x]) or DiffalfaLen[x] != '':
-			z = 1
-			outdiff.write(bcolors.GREEN+"Alfa length differences by "+str(measure)+' +- '+bcolors.RESET+ DiffalfaLen[x] + '\n')
-		#outch.write( bcolors.YELLOW+"Beta Doesn't exits: "+bcolors.RESET, Diffbeta[x], '\n'
-		if re.match('^-\s',NotfbetaLen[x]) or NotfbetaLen[x] != '':
-			w = 1
-			outch.write( bcolors.YELLOW+"Beta length differences by "+str(measure)+' +- '+bcolors.RESET+ NotfbetaLen[x]+'\n')
-		if re.match('^-\s',DiffbetaLen[x]) or DiffbetaLen[x] != '':
-			z = 1
-			outdiff.write(bcolors.YELLOW+"Beta length differences by "+str(measure)+' +- '+bcolors.RESET+ DiffbetaLen[x]+'\n')
-		
-		if z == 1:
-			outdiff.write('\n')
-		if w == 1:
-			outch.write('\n')
-	'''
 	return
 import re
 class bcolors:
