@@ -1,8 +1,8 @@
 def minimum(one,two):
-	min = two
-	if min > one:
+	if two > one:
 		return str(one), str(two)
 	return str(two), str(one)
+
 def placing(one, two):
 	diff = ''
 	min1, min2 = minimum(one, two)
@@ -10,273 +10,219 @@ def placing(one, two):
 		diff += str(min1)+'-'+str(min2)+' '
 	return diff
 
-def lyginu(dval,int0,int1,zint0,zint1,chk0,chk1,zchk0,zchk1):
+def lyginu(check, zcheck,interv,zinterv):
+	chk = check.split('-')
+	ints = interv.split('-')
+	zchk = zcheck.split('-')
+	zints = zinterv.split('-')
+
 	diff = ''
-	x = y = 0
-	notfound = ''
-	if int(zint1) < int(chk0):
-		if abs(int(int0)-int(int1)) >= dval:
-			diff += placing(int0,int1)
-		notfound += placing(int0,int1)
-		if abs(int(zint0)-int(zint1)) >= dval:
-			diff += placing(zint0,zint1)
-		notfound += placing(zint0,zint1)
-		y += 2
-		x += 1
+	signal = 0
+	
+	diff += placing(int(ints[0]),int(chk[0]))
+	diff += placing(int(ints[1]),int(chk[1]))
+	
+	if zinterv == ['']:
+		try:
+			number = int(zchk[0])
+			diff += chk[0]+'-'+zchk[0]+' '
+		except ValueError:
+			diff += ''
+		signal = 1
+	if zcheck == ['']:
+		try:
+			number = int(zints[0])
+			diff += zints[0]+'-'+zints[0]+' '
+		except ValueError:
+			diff += ''
+		signal = 1
+	return diff, signal
 
-	elif int(zchk0) < int(int1):
-		if abs(int(chk0)-int(int0)) >= dval:
-			diff += placing(chk0,int0)
-		notfound += chk1+'-'+zchk0+' '
-		if abs(int(int1)-int(zchk1)) >= dval:
-			diff += placing(int1,zchk1)
-		x += 2
-		y += 1
-
-	elif int(int1) < int(chk0):
-		y += 1
-		if abs(int(int1)-int(chk0)) >= dval:
-			diff += placing(int1,int0)
-		notfound += placing(int1,int0)
-
-	elif int(chk1) < int(int0):
-		x += 1
-		if abs(int(chk1)-int(int0)) >= dval:
-			diff += placing(chk1,chk0)
-		notfound += placing(chk1,chk0)
-	else:
-		x += 1
-		y += 1
-		if abs(int(chk0)-int(int0)) >= dval:
-			diff += placing(int(chk0),int(int0))
-		if abs(int(chk1)-int(int1)) >= dval:
-			diff += placing(int(chk1),int(int1))
-	return diff, notfound, x,y
-
-def Myloop(arr,int0,int1,ind):   # arr - seek array, ind - index int0, int1 - interval
-	z = 0 # ciklo invariantas.
-	diffs = ''
-	while z == 0:
-		check = arr[ind]
-		if check == ['']:
-			return diffs, ind
-		if check[1] < int0:
-			diffs += check[0]+'-'+check[1]+' '
-			ind += 1
-		else:
-			return diffs, ind
-		
-		
+def last(op1, op2, opc):
+	differ = ''
+	if op1 == [''] and opc != ['']:
+		differ += op2[0]+'-'+op2[1]+' '+opc[0]+'-'+opc[1]+' '
+	elif op1 == ['']:
+		differ += op2[0]+'-'+op2[1]+' '
+	elif op1 == op2:
+		differ += opc[0]+'-'+opc[1]+' '
+		return diff
+	elif op1 < op2 or op2 < op1:
+		if op2[0] > op1[1]:
+			differ += op1[0]+'-'+op[1]+' '+op2[0]+'-'+op2[1]+' '
+			return differ
+		differ += op2[0]+'-'+op2[1]+' '+op1[0]+'-'+op[1]+' '
+	return differ
 def cloop(binds,cbind, chval,name):
 	a = b = 0  ## raides nurodancios pozicija intervalam paimti
         differs = '' ## Irasomi besiskiriantys intervalai, sekos
         notf = ''    ## Nerasti intervalai
+	s = 0
+	print binds
+	print cbind
+	print ' ------------------+Lyginam+----------------------'
+	cbind = cbind.split(' ')
+	binds = binds.split(' ')
         x = y = 0       ## tas ats kas a,b tik naudojama funkcijai "lyginu".
         chint = cbind[a].split('-')       ## Tikrinimo intervalas.
         interval = binds[b].split('-')    ## Vienas is grupes atstovo intervalas.
-        zinterval = binds[b+1].split('-')
-	zchint = cbind[a+1].split('-')
-        while zinterval != [''] or chint != [''] :
+        #return differs ,[]
+        while interval != [''] or chint != [''] :
 		dvalue = 0
-		zchint = cbind[a+1].split('-')
-		zinterval = binds[b+1].split('-')
-		if int(chint[1]) < int(zinterval[0]):
-			if (int(chint[0]) <= int(interval[1]) and int(interval[1]) <= int(chint[1])) and (int(chint[0]) <= int(zinterval[0]) and int(zinterval[0]) <= int(chint[1])):
-				differs += placing(chint[0],interval[0])
-				differs += placing(chint[1],zchint[0])
-				differs += placing(interval[1],zchint[1])
-				b += 2
-				a += 1
-			elif (int(interval[0]) <= int(chint[1]) and int(chint[1]) <= int(interval[1])) and (int(interval[0]) <=  int(zchint[1]) and int(zchint[0]) <= int(interval[1])):
-				differs += placing(chint[0],interval[0])
-				differs += placing(chint[1],zchint[0])
-				differs += placing(interval[1],zchint[1])
-				a += 2
-				b += 1
-			elif (int(interval[0]) <= int(chint[1]) and int(chint[1]) <= int(interval[1])) or (int(chint[0]) <= int(interval[1]) and int(interval[1]) <= int(chint[1])) :
-				differs += placing(chint[1],interval[1])
-                                differs += placing(chint[0],interval[0])
-				a += 1
-				b += 1
+                if interval == [''] or chint == ['']:
+			if cbind[a] != binds[b]:
+				if chint == ['']:
+					differs += interval[0] +'-'+interval[1]
+				if interval == ['']:
+					differs += chint[0] + '-'+ chint[1]
+			return differs, notf
 
-			elif (int(interval[0]) <= int(chint[0]) and int(chint[0]) <= int(interval[1])) or (int(chint[0]) <= int(interval[0]) and int(interval[0]) <= int(chint[1])):
-				differs += placing(chint[1],interval[1])
-				differs += placing(chint[0],interval[0])
-				a += 1
-				b += 1
+                zinterval = binds[b+1].split('-')
+                zchint = cbind[a+1].split('-')
 
-			elif int(chint[1]) < int(interval[0]):
-				mystr, a = Myloop(cbind,interval[0],interval[1],a)
-				differs += mystr
-
-			elif int(interval[1]) < int(chint[0]):
-				mystr, b = Myloop(binds,interval[0],interval[1],b)
-				differs += mystr
-	#			
-	#		elif int(chint[1]< int(interval[0]):
-	#	else:
-		#	if if (int(interval[0]) - int(chint[0])) != 0:
-		#		while z = 0:
-		#			differs += 
+                if zinterval == [''] or zchint == ['']:
+			print bcolors.FAIL,interval, zinterval, chint ,zchint,bcolors.RESET
+                        '''     Tuo atveju jei intervalas tarp bruksnio yra tuscias ['']    '''
+			if binds[b] == cbind[a]:
+				if zinterval == [''] and zchint != ['']:
+					differs += cbind[a+1]+' '
+				if zchint == [''] and zinterval != ['']:
+					differs += binds[b+1]+' '
+					
+			else:
+				if int(chint[1]) < int(interval[0]):
+					differs += cbind[a]+' '
+					differs += last(zchint,interval,zinterval)
+				elif int(interval[1]) < int(chint[0]):
+					differs += binds[b]+' '
+					differs += last(zinterval, chint,zchint)
+				else:
+					if zinterval == [''] and zchint != ['']:
+						if int(chint[1]) >= int(interval[0]) and int(interval[1]) >= int(zchint[0]):
+							differs += placing(int(chint[0]),int(interval[0]))
+							differs += placing(int(chint[1]),int(zchint[0]))
+							differs += placing(int(interval[1]), int(zchint[1]))
+							print 'shi* happens', interval
+							return differs, notf
+					elif zchint == [''] and zinterval != ['']:
+						if int(interval[1]) >= int(chint[0]) and int(chint[1]) >= int(zinterval[0]):
+							differs += placing(int(interval[0]),int(chint[0]))
+							differs += placing(int(interval[1]),int(zinterval[0]))
+							differs += placing(int(chint[1]), int(zinterval[1]))
+							print 'shi* doesnt happen'
+							return differs, notf
+					differs += placing(int(chint[0]),int(interval[0]))
+					differs += placing(int(chint[1]),int(interval[1]))
+					try:
+						differs += zchint[0]+'-'+zchint[1]+' '
+					except IndexError:
+						if zinterval == ['']:
+							return differs, notf
+						differs += zinterval[0]+'-'+zinterval[1]+' '
+			return differs, notf
+		
+		if int(interval[0]) > int(zchint[1]):
+			differs += chint[0]+ '-' +chint[1]+' '
 			
-		return differs, notf		
-		
-def Changes(bindl,dval,check, protas):
-	import re
-	print '---------------check:'+str(check)+'-------------------'
-	Diflist = []
-	checkseek = bindl[0].split(' ')
-	groupseek = bindl[1:]
-	NotfLenList = []
-	diffempty = []
-	notfempty = []
-	DiffLenList = []
-	count = 0
-	for x in groupseek:
-		count += 1
-		difflen = ''
-		notflen = ''
-		x = x.split(' ')
-		diff, empty= cloop(x,checkseek,dval,protas[count])
-		
-		lengths = diff.split(' ')
-		for x in lengths:
-			mystr = x.split('-')
-			try:
-				if (int(mystr[1])- int(mystr[0]) ) >= dval:
-					difflen += mystr[0] + '-' + mystr[1]+' '
-			except IndexError:
-				difflen += ''
-		DiffLenList.append(difflen)
+			while int(interval[0]) > int(zchint[1]):    # Intervalas didesnis uz tikrinama intervala. INT > CHECK
+				a += 1
+				chint = cbind[a].split('-')
+				zchint = cbind[a+1].split('-')
+				differs += cbind[a]+' '
+				notf += chint[0]+'-'+chint[1]+' '
+				if zchint == ['']:
+					for x in range(b,len(binds)):
+						differs += binds[x]+' '
+					return differs, notf
+			a += 1
 
-		lengths = empty.split(' ')
-		for x in lengths:
-			mystr = x.split('-')
-			try:
-				if (int(mystr[1])- int(mystr[0]) ) > dval:
-					notflen += mystr[0] + '-' + mystr[1]+' '
-			except IndexError:
-				notflen += ''
-		NotfLenList.append(notflen)
-		
-		if re.match('\s',difflen):
-                        diffempty.append(0)
-                else:
-                        diffempty.append(1)
-		if re.match('\s',empty):
-                        notfempty.append(0)
-                else:
-                        notfempty.append(1)
-	return NotfLenList, notfempty, DiffLenList, diffempty
+		elif int(chint[0]) > int(zinterval[1]):		# Tikrinimo intervalas didesni uz intervala. CHECK > INT
+			differs += binds[b]
+			while int(chint[0]) > int(interval[1]):
+				b += 1
+				interval = binds[b].split('-')
+				zinterval = binds[b+1].split('-')
+				differs += binds[b]+' '
+				if zinterval == ['']:
+					for x in range(b,len(cbind)):
+						differs +=  cbind[x]+' '
+					return differs, notf
+			b += 1
 
-def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
-	#print bcolors.FAIL+'-----------limitless--------------'+bcolors.RESET
-	import os, subprocess
-	lines = dssp.readlines()
-	betal = [] # Antrines beta str
-	alfal = [] # Antrines alfa str
-	gamal = [] # kilpos
-	length = 0
-	baltlist = []
-	glen = 0
-	blen = 0
-	alen = 0
-	pavadinimas = ''
-	for y in lines:
-               	y = y.rstrip('\n')
-               	read = notdssp.readline()
-               	if('>' in read):
-			baltlist.append(read[1:])
-			if length != 0:
-				if glen > 0:
-					gamastr += str(length-glen)+'-'+str(length-1)+' '
-					glen = 0
-				if blen > 0:
-					betastr += str(length-blen)+'-'+str(length-1)+' '
-					blen = 0
-				if alen > 0:
-					alfastr += str(length-alen)+'-'+str(length-1)+' '
-					alen = 0
-				alfal.append(alfastr)
-				betal.append(betastr)
-				gamal.append(gamastr)
-			glen = 0
-                        blen = 0
-                        alen = 0			
-			alfastr = ''
-			betastr = ''
-			gamastr = ''
-			length = 0
+		elif (int(chint[1]) >= int(interval[0])) and (int(interval[1]) >= int(zchint[0])):
+			differs += chint[0]+'-'+interval[0]+' '
+			while int(interval[1]) >= int(zchint[0]):
+				differs += chint[1]+'-'+zchint[0]+' '
+				a += 1
+				chint = cbind[a].split('-')
+				zchint = cbind[a+1].split('-')
+				if zchint == ['']:
+					for x in range(b,len(binds)):
+						differs += binds[x]+' '
+					return differs, notf
+			differs += zchint[0]+'-'+zchint[1]+' '
+			a += 1
+			b += 1
+
+		elif (int(interval[1]) >= int(chint[0])) and (int(chint[1]) >= int(zinterval[0])):
+			print 'chint', chint
+			print interval,'intervalai', zinterval
+			differs += placing(int(interval[0]),int(chint[0]))
+			while int(chint[1]) >= int(zinterval[0]):
+				differs += interval[1]+'-'+zinterval[0]+' '
+				b += 1
+				interval = binds[b].split('-')
+				zinterval = binds[b+1].split('-')
+				if zinterval == ['']:				## Jei paskutinis intervalas uzejo uz ribu.
+					for x in range(b,len(cbind)):
+						differs += cbind[x]
+					return differs, notf
+			differs += placing(int(chint[1]),int(interval[1]))
+		#	print bcolors.FAIL+differs+bcolors.RESET
+			a += 1
+			b += 1
+
+		elif cbind[a] != binds[b]:
+			mystr1, s = lyginu(cbind[a],cbind[a+1],binds[b],binds[b+1])
+			differs += mystr1
+			a += 1
+			b += 1
+			if s == 1:
+				return differs, notf
 		else:
-			for i in range(0,len(y)):
-				length += 1
-                	        if( y[i] == '-'):
-					if alen > 0:
-						alfastr += str(length-alen)+'-'+str(length-1)+' '
-						alen = 0
-					if blen > 0:
-						betastr += str(length-blen)+'-'+str(length-1)+' '
-						blen = 0
-					glen += 1
-                			output.write(bcolors.RESET)
-                		elif( y[i]=='E'):
-					blen += 1
-					if alen > 0:
-						alfastr += str(length-alen)+'-'+str(length-1)+' '
-						alen = 0
-					if glen > 0:
-						gamastr += str(length-glen)+'-'+str(length-1)+' '
-						glen = 0
-                	        	output.write(bcolors.YELLOW)
-                	       	else:
-					alen += 1
-					if blen > 0:
-						betastr += str(length-blen)+'-'+str(length-1)+' '
-                                                blen = 0
-					if glen > 0:
-						gamastr += str(length-glen)+'-'+str(length-1)+' '
-						glen = 0
-					output.write(bcolors.GREEN)
-	'''#Check 
-	for x in range(0,len(gamal)):
-		print 'printing', count
-		print baltlist[x].rstrip('\n')
-		print gamal[x]
-		print betal[x]
-		print alfal[x],'\n'
-	'''
-	# Write to output file *.colored
-	for x in range(0,len(gamal)):
-		output.write(baltlist[x])	
-		output.write(bcolors.FAIL+'kilpos '+bcolors.RESET+gamal[x])
-		if gamal[x] != gamal[0]:
-			output.write(bcolors.FAIL+' <---'+bcolors.RESET)
-		output.write('\n')
+#			print bcolors.FAIL+cbind[a]+bcolors.RESET
+			a += 1
+			b += 1
+                chint = cbind[a].split('-')
+                interval = binds[b].split('-')
 
-		output.write(bcolors.YELLOW+'beta '+betal[x]+bcolors.RESET)
-		if betal[x] != betal[0]:
-			output.write(bcolors.FAIL+' <---'+bcolors.RESET)
-		output.write('\n')
+def Changes(bindl,check,dval,name):
+	import re
+	print '---------------check:'+name.rstrip('\n')+'-------------------'
 
-		output.write(bcolors.GREEN+'alfa '+alfal[x]+bcolors.RESET)
-		if alfal[x] != alfal[0]:
-			output.write(bcolors.FAIL+' <---'+bcolors.RESET)
-		output.write('\n\n')
+	diff, empty= cloop(bindl,check,dval,name)
+	return diff, empty
 
-	Names = baltlist[1:]	
+def spalv(myfile,outch,measure):
+	line = myfile.readline()
+	lines = myfile.readlines()
+	Names = line
+	alfal = []
+	for x in lines:
+		alfal.append(x.rstrip('\n'))
+	
 #	print bcolors.FAIL+'kilpos '+bcolors.RESET
 	#NotfgamaLen, notfgempty ,DiffgamaLen,diffgempty = Changes(gamal,measure,count,Names)
-	
 	print bcolors.GREEN+'alfa '+bcolors.RESET
-	NotfalfaLen, notfaempty, DiffalfaLen, diffaempty = Changes(alfal,measure,count,Names)
-	print DiffalfaLen
+	Diff, empty = Changes(alfal[0],alfal[1],measure,Names)
+	print Diff
+	'''
 	#print bcolors.YELLOW+'beta '+bcolors.RESET
 	#NotfbetaLen, notfbempty, DiffbetaLen, diffbempty = Changes(betal,measure,count,Names)
 	#outdiff.write(bcolors.FAIL+"-----------------Main-"+str(count)+"-Diffs----------------------\n"+bcolors.RESET)
 	#if all(v is None for v in NotfgamaLen) and all(v is None for v in NotfalfaLen) and all(v is None for v in NotfbetaLen):
 #		outch.write("-----------------Main-Diffs----------------------\n")
 #	maximum = max(len(DiffgamaLen),len(DiffalfaLen),len(DiffbetaLen))
-	'''
 	for x in range(0,maximum):
 		z = 0
 		w = 0
@@ -324,22 +270,6 @@ fdssp = open('../atst/atst.dssp','r')
 fdnot = open('../atst/atst.notdssp','r')
 m = 0
 # int(raw_input('Panasumo ivertis: '))
-'''
-#   Atstovu atstovai
-atstout = open('atst.colored','w')
-atstdiff = open('atst.diff','w')
-atstch = open('atst.ch','w')
-atstout.write(bcolors.GREEN + '			Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
-spalv(fdssp,fdnot,atstout,0,atstdiff,atstch,1,m)
-print bcolors.FAIL+'skirtinga seka'+bcolors.RESET
-'''
-#   Grupes 
-for x in range(1,16):
-	f1 = open('../dssp/'+str(x),'r')
-	f2 = open('../notdssp/'+str(x),'r')
-	outdssp = open(str(x)+'.colored','w')
-	outdiff = open(str(x)+'.diff','w')
-	outch = open(str(x)+'.ch','w')
-	outdssp.write(bcolors.GREEN + '			Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
-	if x == 9: spalv(f1,f2,outdssp,x,outdiff,outch,0,m)
-
+inname = open('seka','r')
+outch = open('check.ch','w')
+spalv(inname,outch,m)
