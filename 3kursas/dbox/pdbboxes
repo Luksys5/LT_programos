@@ -1,0 +1,58 @@
+#!/usr/bin/perl
+#-------------------------------
+#$Author: Lukas_Tutkus $
+#$Date: 2015-03-09 22:18:48 +0200 (Pr, 09 Kov 2015) $
+#$Revision: 101 $
+#$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/dbox/pdbboxes $
+#$Id: pdbboxes 101 2015-03-09 20:18:48Z Lukas_Tutkus $
+#-------------------------------
+#*
+#	Perl script which reads input and check sum of vectors and outputs it to 	STDOUT.
+#*
+use Scalar::Util qw(looks_like_number); ## Subroutine for checking if char is numeric.
+use strict;
+use warnings;
+
+my $Master = '#$Id: pdbboxes 101 2015-03-09 20:18:48Z Lukas_Tutkus $'."\n";
+#print $Master;
+my $fname = '';
+my $count = 0; # ATOM and HETATM counter;
+while(@ARGV > 0){
+
+	my $fname = @ARGV > 0 ? shift(@ARGV) : "-";
+	open my $fh, $fname or die "Dying becouse can't open file: $fname $!";
+	my ($xmax,$xmin, $ymax,$ymin,$zmax,$zmin);
+
+	## Reading from pdb file $fname
+	while( my $line = <$fh> ){
+		chomp($line);
+		if ($line =~ m/^(ATOM|^HETATM)/){
+			$count = $count + 1;
+			my $xcord = substr($line,31,7);
+			if ($xcord =~ /^ *$/){
+				die "Found whitespace In x coordinate 31-38";
+			}
+			$xcord =~ s/ *//g;
+			if(!defined $xmax or $xcord > $xmax){$xmax = $xcord;}				
+			if(!defined $xmin or $xcord < $xmin){$xmin = $xcord;}
+			my $ycord = substr($line,39,7);
+			if ($ycord =~ /^ *$/){
+				die "Found whitespace in Y coordinate 39-46";
+			}
+			$ycord =~ s/ *//g;
+			if(!defined $ymin or $ycord < $ymin){$ymin = $ycord; }
+			if(!defined $ymax or $ycord > $ymax){$ymax = $ycord; }
+			my $zcord = substr($line,47,7);
+			if ($zcord =~ /^ *$/){
+				die "found whitespace In Z coordinate 47-54";
+			}
+			print $ymin." ".$ymax."\n";
+			$zcord =~ s/ *//g;
+			if(!defined $zmin or $zcord < $zmin){$zmin = $zcord; }
+			if (!defined $zmax or $zcord > $zmax){$zmax = $zcord; }
+		}
+	}
+	if($count == 0){die "No atoms found, maybe wrong file?"; }
+#	close($fh);
+}
+

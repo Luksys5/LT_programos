@@ -1,0 +1,6 @@
+#!/bin/sh
+./pdbboxes
+cat $1 | grep -E '^ATOM|^HETATM' | awk 'BEGIN {xmax = ""; ymax = ""; zmax = ""; xmin = ""; ymin = ""; zmin = "";}{if (xmax < $7 || xmax == ""){xmax=$7} if(xmin>$7 || xmin == ""){xmin=$7;} if(ymax < $8 || ymax == ""){ymax=$8;} if(ymin>$8 || ymin == ""){ymin=$8;} if(zmax < $9 || zmax == ""){zmax=$9;} if(zmin>$9 || zmin == ""){zmin=$9;} {print ymin, ymax;}}'
+#, xmin,ymax, ymin, zmax, zmin}'
+#END{{printf "%s ", xmax-xmin;}{printf "%s ", ymax-ymin}{printf "%s ", zmax-zmin;}}'
+#echo $1;
