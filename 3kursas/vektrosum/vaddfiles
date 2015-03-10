@@ -1,69 +1,68 @@
 #!/usr/bin/perl
 #-------------------------------
 #$Author: Lukas_Tutkus $
-#$Date: 2015-02-23 17:43:25 +0200 (Pr, 23 Vas 2015) $
-#$Revision: 49 $
+#$Date: 2015-02-23 21:04:05 +0200 (Pr, 23 Vas 2015) $
+#$Revision: 54 $
 #$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/vaddfiles $
-#$Id: vaddfiles 49 2015-02-23 15:43:25Z Lukas_Tutkus $
+#$Id: vaddfiles 104 2015-03-10 18:54:06Z Lukas_Tutkus $
 #-------------------------------
 #*
-#	Perl script
+#	Perl script which reads input and check sum of vectors and outputs it to STDOUT.
 #*
-sub klaida{
-	foreach $item (@_){
-		print $item."\n";
-	}
-	die "\n";
-}
-use IO::Handle;
+use Scalar::Util qw(looks_like_number); ## Subroutine for checking if char is numeric.
 use strict;
 use warnings;
-my $word = "";
-my $mystr = "# \$Id: vaddfiles 23 2015-02-10 17:22:21Z Lukas_Tutkus \$"."\n";
-print $mystr;
+
+my $Master = '#$Id: vaddfiles 104 2015-03-10 18:54:06Z Lukas_Tutkus $'."\n";
+print $Master;
+
 my @strings = ("");
 my $maxlength = 0;
-while( <> ) {
-	chomp;
-	my $LEN = length($_);
+
+my $fname = @ARGV > 0 ? shift(@ARGV) : "-";
+open my $fh, $fname or die "Dying becouse can't open file: $fname $!";
+lcfirst($!);
+
+## Reading from file
+while( my $line = <$fh> ) {
+	chomp($line);
+	my $LEN = length($line);
 	if ($maxlength < $LEN){$maxlength=$LEN;}
-	push @strings, "$_"
+	push @strings, "$line";
 }
-print "$maxlength\n";
+close($fh);
+
+## Spliting Line into characters
 while(@strings){
 	my $suma = 0;
 	my $count = 0;
-	$mystr = pop(@strings);
-	$mystr =~ s/^\s+//g;
+	my $mystr = pop(@strings);
+
+	$mystr =~ s/^\s+//g; ## Checking for whitespace.
 	$mystr =~ s/^\\r+//g;
-	$mystr =~ s/^\s+//g;
+	$mystr =~ s/ +/ /g;    ## Multiple spaces is substituted by one.
+	$mystr =~ s/\t/ /g; ## Tabs are replaced by space.
+
 	if($mystr eq ""){
 		print "";
 	}else{
 		my @values = split(" ",$mystr);
-        	foreach my $word (@values){
-#       	        print "$word\n";
-			if (($word =~ /^[+-]?\d+$/) || ($word  =~ /^[+-]?\d+\.\d+$/)){
+        	foreach my $char (@values){
+
+			### Checking if $char is number type 
+			if(looks_like_number($char)){
 				$count = $count + 1;
-				$suma = $suma + $word;
+				$suma = $suma + $char;	
 			}else{
-				klaida("./vaddfiles Sustojo ties eilute: ".__LINE__,"Programa naudojami numeriai, duota raide: ".$word);
+				die "Given char is not number."
 			}
-			
 		}
+		
+		## Checking if number quantity is even.
 		if (($count % 2) != 0 ){
-			klaida("./vaddfiles Sustojo ties eilute: ".__LINE__,"Duotas nelyginis komponenčių skaičius: $count")
+			die "Duotas nelyginis komponenčių skaičius: $count";
 		}else{	
-			if (length($mystr) == $maxlength){
-				print "$mystr suma: $suma\n";
-			}
-			else{
-				my $tuscias = " "x($maxlength+1-length($mystr));
-				$mystr = $mystr.$tuscias."suma: $suma\n";
-				print $mystr;	
-			}
+			print "$mystr suma: $suma\n";
 		}
 	}
 }	
-#print substr($mystr,0,1)."\n";
-#print $STR."\n";
