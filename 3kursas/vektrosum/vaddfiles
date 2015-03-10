@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+#-------------------------------
+#$Author: Lukas_Tutkus $
+#$Date: 2015-02-23 17:43:25 +0200 (Pr, 23 Vas 2015) $
+#$Revision: 49 $
+#$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/vaddfiles $
+#$Id: vaddfiles 49 2015-02-23 15:43:25Z Lukas_Tutkus $
+#-------------------------------
+#*
+#	Perl script
+#*
+sub klaida{
+	foreach $item (@_){
+		print $item."\n";
+	}
+	die "\n";
+}
+use IO::Handle;
+use strict;
+use warnings;
+my $word = "";
+my $mystr = "# \$Id: vaddfiles 23 2015-02-10 17:22:21Z Lukas_Tutkus \$"."\n";
+print $mystr;
+my @strings = ("");
+my $maxlength = 0;
+while( <> ) {
+	chomp;
+	my $LEN = length($_);
+	if ($maxlength < $LEN){$maxlength=$LEN;}
+	push @strings, "$_"
+}
+print "$maxlength\n";
+while(@strings){
+	my $suma = 0;
+	my $count = 0;
+	$mystr = pop(@strings);
+	$mystr =~ s/^\s+//g;
+	$mystr =~ s/^\\r+//g;
+	$mystr =~ s/^\s+//g;
+	if($mystr eq ""){
+		print "";
+	}else{
+		my @values = split(" ",$mystr);
+        	foreach my $word (@values){
+#       	        print "$word\n";
+			if (($word =~ /^[+-]?\d+$/) || ($word  =~ /^[+-]?\d+\.\d+$/)){
+				$count = $count + 1;
+				$suma = $suma + $word;
+			}else{
+				klaida("./vaddfiles Sustojo ties eilute: ".__LINE__,"Programa naudojami numeriai, duota raide: ".$word);
+			}
+			
+		}
+		if (($count % 2) != 0 ){
+			klaida("./vaddfiles Sustojo ties eilute: ".__LINE__,"Duotas nelyginis komponenčių skaičius: $count")
+		}else{	
+			if (length($mystr) == $maxlength){
+				print "$mystr suma: $suma\n";
+			}
+			else{
+				my $tuscias = " "x($maxlength+1-length($mystr));
+				$mystr = $mystr.$tuscias."suma: $suma\n";
+				print $mystr;	
+			}
+		}
+	}
+}	
+#print substr($mystr,0,1)."\n";
+#print $STR."\n";

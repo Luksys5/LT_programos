@@ -1,0 +1,11 @@
+#!/usr/bin/perl
+my $ffile = $ARGV[0];
+my $Sfile = $ARGV[1];
+open my $fh,"<",$ffile or die "can't read file$!\n";
+open my $fh2,"<",$Sfile or die "can't read file$!\n";
+local $/;
+my $doc = <$fh>;
+close($fh);
+my $doc2 = <$fh2>;
+close($fh2);
+print $doc.$doc2;
