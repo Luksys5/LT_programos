@@ -1,0 +1,2 @@
+zap;load "file:///home/luksys/Downloads/Baltymai/2O3B.cif";if (_loadScript = '' && defaultLoadScript == '' && _filetype == 'Pdb') { select protein or nucleic;cartoons Only;color structure; select *;}
+color cpk;calculate hbonds;hbonds 0.1;
