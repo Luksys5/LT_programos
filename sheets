@@ -1,0 +1,8 @@
+#!/bin/sh
+INPUT=$1
+if [ -z "$1" ] || [ "$1" = "-h" ]
+then
+	echo Usage: ./sheets protein.cif
+	exit
+fi
+cat $INPUT | grep -c "anti-parallel\|parallel" 
