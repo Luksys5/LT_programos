@@ -21,10 +21,10 @@ def lyginu(check, zcheck,interv,zinterv):
 	signal = 0
 	if int(chk[1]) <  int(ints[0]):
 		diff += placing(int(chk[0]),int(chk[1]),1)
-		return diff, 3 , 1, 0
+		return diff, 3, 1, 0
 	elif int(ints[1]) < int(chk[0]):
 		diff += placing(int(ints[0]),int(ints[1]),1)
-		return diff, 4,0 ,1
+		return diff, 4, 0, 1
 	else:
 		diff += placing(int(ints[0]),int(chk[0]),0)
 		diff += placing(int(ints[1]),int(chk[1]),0)
@@ -58,7 +58,7 @@ def cloop(cbind,binds, chval,name):
         x = y = 0       ## tas ats kas a,b tik naudojama funkcijai "lyginu".
         chint = cbind[a].split('-')       ## Tikrinimo intervalas.
         interval = binds[b].split('-')    ## Vienas is grupes atstovo intervalas.
-        
+        print binds
 	#return differs ,[]
 	s = 0
         while interval != [''] or chint != [''] :
@@ -75,6 +75,9 @@ def cloop(cbind,binds, chval,name):
 		if zinterval == [''] or zchint == ['']:
 			print "Tikrinama", chint
 			print "Intervalas", interval
+			print "Z-interval", zinterval
+			print "Z-Tikrinama", zchint
+			
 			'''	Tuo atveju jei intervalas tarp bruksnio yra tuscias ['']'''
 			if binds[b] == cbind[a]:
 				if zinterval == [''] and zchint != ['']:
@@ -89,11 +92,14 @@ def cloop(cbind,binds, chval,name):
 					elif int(interval[1]) < int(chint[0]):
 						differs += binds[b]+' '
 						differs += last(zinterval, chint,zchint)
-
+					else:
+						differs += placing(chint[0],interval[0],0)
+						differs += placing(chint[1],interval[1],0)
 				else:
 					if zinterval == [''] and zchint != ['']:
-						print "Tikrinama", chint
-                        			print "Intervalas", interval
+					#	print "Tikrinama", chint
+                        		#	print "Intervalas", interval
+					#	print "Z-Intervalas", zinterval
 						if int(chint[1]) >= int(interval[0]) and int(interval[1]) >= int(zchint[0]):
 							differs += placing(int(chint[0]),int(interval[0]),0)
 							differs += placing(int(chint[1]),int(zchint[0]),0)
@@ -104,25 +110,25 @@ def cloop(cbind,binds, chval,name):
 							differs += mystr1
 							a += x
 							b += y
+							chint = cbind[a].split('-')
+							interval = binds[b].split('-')
 							morethandat = 1
 							if s == 1:
 								for x in range(b+1, len(binds)):
 									differs += binds[x]+' ' 
 							elif s == 3:
 								while( a+1 < len(cbind)):
-									print 'check interval', cbind[a], binds[b]
-									
-									if int(interval[0]) < int(chint[0]) and int(chint[0]) < int(interval[1]):
-										differs += placing(int(chint[0]), int(interval[0]))
-										differs += placing(int(chint[1]), int(interval[1]))
+									print cbind[a]
+									print binds[b]
+									if int(interval[0]) <= int(chint[0]) and int(chint[0]) <= int(interval[1]):
+										differs += placing(int(interval[1]), int(chint[1]),0)
 										morethandat = 0
-									elif int(interval[0]) < int(chint[1]) and int(chint[1]) < int(interval[1]):
-										differs += placing(int(chint[0]), int(interval[0]))
-										differs += placing(int(chint[1]), int(interval[1]))
+									elif int(interval[0]) <= int(chint[1]) and int(chint[1]) <= int(interval[1]):
+										differs += placing(int(chint[0]), int(interval[0]),0)
 										morethandat = 0
 									elif int(interval[0]) <= int(chint[0]) and int(chint[1]) <= int(interval[1]):
-										differs += placing(int(chint[0]), int(interval[0]))
-										differs += placing(int(chint[1]), int(interval[1]))
+										differs += placing(int(chint[0]), int(interval[0]),0)
+										differs += placing(int(chint[1]), int(interval[1]),0)
 										morethandat = 0 
 									elif int(chint[0]) <= int(interval[0]) and int(interval[1]) <= int(chint[1]):
 										differs += placing(int(chint[0]), int(interval[0]),0)
@@ -132,7 +138,7 @@ def cloop(cbind,binds, chval,name):
 										differs += cbind[a]+' '
 									a += 1
 									chint = cbind[a].split('-')
-								if morethandat: differs += binds[b]+' '
+								#if morethandat: differs += binds[b]+' '
 							elif s == 4:
 								for x in range(a+1, len(cbind)):
 									differs += cbind[x]+' '
@@ -143,11 +149,18 @@ def cloop(cbind,binds, chval,name):
 							differs += placing(int(interval[1]),int(zinterval[0]),0)
 							differs += placing(int(chint[1]), int(zinterval[1]),0)
 						else:
+							print chint
+							print interval
 							mystr1, s, x, y = lyginu(cbind[a],cbind[a+1], binds[b], binds[b+1])
 							differs += mystr1
 							a += x
 							b += y
+							chint = cbind[a].split('-')
+							interval = binds[b].split('-')
 							morethandat = 1
+							print differs
+							print chint
+							print interval, s
 							if s == 2:
 								for x in range(a+1, len(cbind)):
 									differs += cbind[x]+' '
@@ -161,9 +174,11 @@ def cloop(cbind,binds, chval,name):
 										differs += placing(int(chint[0]), int(interval[0]),0)
 										differs += placing(int(chint[1]), int(interval[1]),0)
 										morethandat = 0
-								if morethandat: differs += cbind[a]+' '
+								#if morethandat: differs += cbind[a]+' '
 							elif s == 4:
-								for x in range(b+1, len(binds)):
+								## Pabaigt parasyt ar didesnis jei ne pridet
+								if int(interval[0]) > (chint[1]):
+								for x in range(b, len(binds)):
 									differs += binds[x]+' '
 					
 			return differs, notf 
