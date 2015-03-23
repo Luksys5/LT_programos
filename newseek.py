@@ -1,3 +1,10 @@
+def check_values(tikr, ztikr, interval, zinterval):
+	print "Tikrinimo intervalas", tikr
+	print "Tikrinamas Intervalas", interval
+	print "Kitas-tikr-intervalas", ztikr
+	print "Kitas-ZIntervalas", zinterval
+	return
+
 def minimum(one,two):
 	if two > one:
 		return str(one), str(two)
@@ -50,15 +57,13 @@ def last(op1, op2, opc):
 		differ += op2[0]+'-'+op2[1]+' '+op1[0]+'-'+op1[1]+' '
 	return differ
 def cloop(cbind,binds, chval,name, simpos):
-	a = b = 0  ## raides nurodancios pozicija intervalam paimti
+	a = b = 0    ## raides nurodancios pozicija intervalam paimti
         differs = '' ## Irasomi besiskiriantys intervalai, sekos
         notf = ''    ## Nerasti intervalai
 	s = 0
-	#print ' ------------------+Lyginama+'+name.rstrip('\n')+'+---------------------'
-        x = y = 0       ## tas ats kas a,b tik naudojama funkcijai "lyginu".
+        x = y = 0    ## tas ats kas a,b tik naudojama funkcijai "lyginu()".
         chint = cbind[a].split('-')       ## Tikrinimo intervalas.
         interval = binds[b].split('-')    ## Vienas is grupes atstovo intervalas.
-	#return differs ,[]
 	s = 0
         while interval != [''] or chint != [''] :
 		dvalue = 0
@@ -71,12 +76,13 @@ def cloop(cbind,binds, chval,name, simpos):
 			return differs, notf, simpos
 		zinterval = binds[b+1].split('-')
 		zchint = cbind[a+1].split('-')
-		#print "Tikrinama", chint
-		#print "Intervalas", interval
-		#print "Z-Intervalas", zinterval
-		#print "Z-check", zchint
 		
-		if (int(interval[1])-int(interval[0]) > 200):
+		#check_values(chint, zchint, interval, zinterval)
+		
+		if (abs(int(interval[1])-int(interval[0])) > 200):
+			check_values(chint, zchint, interval, zinterval)
+			print 'here'
+			print int(interval[1])
 			b+=1
 			simpos = int(interval[1])
 			while (int(chint[0]) <= int(interval[1])):
@@ -338,13 +344,21 @@ def Changes(bindl,dval,check, protas, simp):
         for x in groupseek:
 		count += 1
 		diffms = ''
+		mylist = x.split(' ')
+		
+		''' 			For Testing
 		tstchk = ['1-6', '9-12', '20-28', '35-37', '69-96', '113-114', '204-205', '206-207', '208-209', '']
 		tstlst = ['1-5', '18-100', '129-136', '150-167', '200-202', '304-305', '']
-		mylist = x.split(' ')
-		# 			For Testing
-		#print tstchk,'\n', tstlst diff, nfound = cloop(tstchk, tstlst, dval,'Test') 
-		#print checkseek,'\n', mylist			
-		diff, nfound, simp = cloop(checkseek, mylist,dval,protas[count-1], simp)
+		print tstchk,'\n', tstlst diff, nfound = cloop(tstchk, tstlst, dval,'Test') 
+		print checkseek,'\n', mylist
+		'''	
+		diff = ''
+		nfound = ''
+		if count == 4:
+			diff, nfound, simp = cloop(checkseek, mylist,dval,protas[count-1], simp)
+			print protas[count-1].rstrip('\n'), simp
+			print diff
+			return nfoundlenghts, nfoundval, DiffmsList, diffempty, simp
 		### checking if in diff seek difference between each seek element is major than measurement value
 		lengths = diff.split(' ')
 		z = 0
@@ -379,14 +393,16 @@ def Changes(bindl,dval,check, protas, simp):
 			nfoundval.append(1)
                 nfoundlenghts.append(nfoundlen)
         return nfoundlenghts, nfoundval, DiffmsList, diffempty, simp
+
 def finddiff(Nameslst, alfalst, betalst, gamalst, m, count):
 	print bcolors.FAIL, '----------- Atstovas + '+Nameslst[0].rstrip('\n')+' + nr'+str(count)+' --------------', bcolors.RESET
 	Nameslst = Nameslst[1:]
-	impos = 0
+	impos = 0 # Superimposition
 	nfgama, nfgempty ,DiffgamaLen, diffgempty, impos = Changes(gamalst, m, count,Nameslst, impos)
 	nfalfa, nfgempty, DiffalfaLen, diffaempty, impos = Changes(alfalst, m, count, Nameslst, impos)
 	nfbeta, nfbempty, DiffbetaLen, diffbempty, impos = Changes(betalst, m, count, Nameslst, impos)
 	
+	'''
 	for x in range(0,len(Nameslst)):
 		nonemptyline = diffgempty[x]+diffaempty[x]+diffbempty[x]
 		if nonemptyline > 0:
@@ -397,7 +413,9 @@ def finddiff(Nameslst, alfalst, betalst, gamalst, m, count):
 			print bcolors.GREEN, "alfa", DiffalfaLen[x], bcolors.RESET
 		if diffbempty[x] == 1:
 			print bcolors.YELLOW, "beta", DiffbetaLen[x], bcolors.RESET
+	'''
 	return	
+
 def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
         import os, subprocess
         lines = dssp.readlines()
@@ -467,7 +485,8 @@ def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
 	alfal.append(alfastr)
 	betal.append(betastr)
 	gamal.append(gamastr)
-	finddiff(baltlist, alfal, betal, gamal, measure, count)
+	if count == 12:
+		finddiff(baltlist, alfal, betal, gamal, measure, count)
         '''#Check 
         for x in range(0,len(alfal)):
                 print 'printing', count
@@ -505,7 +524,7 @@ class bcolors:
         RESET = '\033[0m'
 fdssp = open('../atst/atst.dssp','r')
 fdnot = open('../atst/atst.notdssp','r')
-m = 5
+m = 0
 # int(raw_input('Panasumo ivertis: '))
 
 #   Atstovu atstovai
