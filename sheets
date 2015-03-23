@@ -5,4 +5,4 @@ then
 	echo Usage: ./sheets protein.cif
 	exit
 fi
-cat $INPUT | grep -c "anti-parallel\|parallel" 
+cat $INPUT | grep -c "anti-parallel\|parallel\|mixed" 

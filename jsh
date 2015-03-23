@@ -23,7 +23,7 @@ jmol --nodisplay --script - <<EOF
 	select all;
 	color structure;
 	calculate hbonds;
-	hbonds 0.1;
+	hbonds 0.3;
 	center selected;
 	write png "${OUTPUT_FILE}"
 	cartoon only;
