@@ -141,7 +141,9 @@ def cloop(cbind,binds, chval, name):
 						if int(chint[1]) >= int(interval[0]) and int(interval[1]) >= int(zchint[0]):
 							differs += placing(int(chint[0]),int(interval[0]),0)
 							notf += cbind[a]+' '
+							i = 0
 							while int(interval[1]) >= int(zchint[0]):
+
 								differs += chint[1]+'-'+zchint[0]+' '
 								#notf += cbind[a]+' '
 								a += 1
@@ -206,11 +208,12 @@ def cloop(cbind,binds, chval, name):
 								notf += cbind[a]+' '							
 					
 					elif zchint == [''] and zinterval != ['']:
-						#check_values(chint, zchint, interval, zinterval)
 						if int(interval[1]) >= int(chint[0]) and int(chint[1]) >= int(zinterval[0]):
 							differs += placing(int(interval[0]),int(chint[0]),0)
 							notf += binds[b]+' '
+							i = 0
                 					while int(chint[1]) >= int(zinterval[0]):
+
 								differs += interval[1]+'-'+zinterval[0]+' '
 								#notf += binds[b]+' '
 								b += 1
@@ -305,7 +308,9 @@ def cloop(cbind,binds, chval, name):
 		elif (int(chint[1]) >= int(interval[0])) and (int(interval[1]) >= int(zchint[0])):
 			differs += placing(int(chint[0]),int(interval[0]),0)
 			notf += cbind[a]+' '
+			i = 0
 			while int(interval[1]) >= int(zchint[0]):
+				i += 1
 				differs += chint[1]+'-'+zchint[0]+' '
 				#notf += cbind[a]+' '
 				a += 1
@@ -327,6 +332,7 @@ def cloop(cbind,binds, chval, name):
 		elif (int(interval[1]) >= int(chint[0])) and (int(chint[1]) >= int(zinterval[0])):
 			differs += placing(int(interval[0]),int(chint[0]),0)
 			notf += binds[b]+' '
+			i = 0
 			while int(chint[1]) >= int(zinterval[0]):
 				differs += interval[1]+'-'+zinterval[0]+' '
 				#notf += binds[b]+' '
@@ -384,7 +390,7 @@ def Changes(bindl,dval,check, protas):
 			diff, nfound = cloop(tstchk, tstlst, dval,'Test') 
 		'''
 			#print checkseek
-			#print x
+		print "-------"+str(count)+'-a seka--------------------'
 		diff, nfound = cloop(checkseek, mylist,dval,protas[count-1])
 		
 		### checking if in diff seek difference between each seek element is major than measurement value
@@ -514,7 +520,7 @@ def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
                 print betal[x]
                 print alfal[x],'\n'
         '''
-        # Write to output file *.colored
+	# Write io output file *.colored
         for x in range(0,len(gamal)):
                 output.write(baltlist[x])
                 output.write(bcolors.FAIL+'kilpos '+bcolors.RESET+gamal[x])
