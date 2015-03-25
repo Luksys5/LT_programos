@@ -2,6 +2,8 @@ vim :%s/zodiz/zodis/gc    <-- Keicia kekviena zodiz i zodis patikrinant.
 vim :set hl search
 	/ieskomas_zodis		// Nuspalvinas ieskoma zodi
 vim 42G				// Nueina i 42 eilute
+:set paste			/ tada nukopini teksta su pele i kita vieta
+:set nopaste			// po sito indentuotos linijos bus~!
 >>5; <<5			// patraukia teksta i desne; kaire
 chmod -R 755 <-- Duoda teses visiem failam folderiam useriui rwx kitiem rw
 cp -avr Folderis/ KitasFold/  <-- kopijuoja failus ir folderius
