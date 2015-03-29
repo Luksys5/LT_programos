@@ -7,5 +7,5 @@ vim 42G				// Nueina i 42 eilute
 >>5; <<5			// patraukia teksta i desne; kaire
 chmod -R 755 <-- Duoda teses visiem failam folderiam useriui rwx kitiem rw
 cp -avr Folderis/ KitasFold/  <-- kopijuoja failus ir folderius
-du --summarize -b * | sort -k1   <------ Parodo daugiausiai uzimancius failus.
+du --summarize -b * | sort -k1   //daugiausiai uzimatys failai, bytes.
 
