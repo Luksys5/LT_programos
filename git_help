@@ -12,8 +12,9 @@ git push <-- nusiuncia i repozitorija faila(us)
 git pull <-- parsiuncia is dabartines sakos faila(us)
 git checkout --orphan <branchname> <-- sukuria nauja saka
 --------------------arba
-git branch -b "branchname"
+git checkout -b "branchname"
 rm -rf * | git rm -rf *
+git commit -a
 git push origin "branchname"
 Creates new branch with name "branchname"
 
