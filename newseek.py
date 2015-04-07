@@ -7,12 +7,32 @@ def print_to_STDOUT(Names, gama, gempty, alfa, aempty, beta, bempty, word, count
 			print bcolors.FAIL+"---------------"+word+"seeks------------------"+bcolors.RESET
 			print Names[x].rstrip('\n')
 			if gempty[x] == 1:
-				print bcolors.FAIL, "Kilpos"+bcolors.RESET, gama[x]
+				print bcolors.FAIL, "Kilpos\t"+bcolors.RESET, gama[x]
 			if aempty[x] == 1:
 				print bcolors.GREEN, "alfa", alfa[x], bcolors.RESET
 			if bempty[x] == 1:
 				print bcolors.YELLOW, "beta", beta[x], bcolors.RESET
 
+	return
+def print_to_File(Names, gama, gempty, alfa, aempty, beta, bempty, word, count, atst, loc, ms):
+	if count == 0:
+		outf = open(loc+'atst', 'w')
+	else:
+		outf = open(loc+str(count), 'w')
+	if atst != "":
+		outf.write(bcolors.FAIL+ '----------- Atstovas + '+atst+' + nr'+str(count)+' --measure--'+str(ms)+''+bcolors.RESET+ "\n")
+	for x in range(0,len(Names)):
+		nonemptyline = gempty[x]+aempty[x]+bempty[x]
+		if nonemptyline > 0:
+			outf.write(bcolors.FAIL+"---------------"+word+"seeks------------------"+bcolors.RESET+ "\n")
+			outf.write(Names[x])
+			if gempty[x] == 1:
+				outf.write(bcolors.FAIL + "Kilpos\t" + bcolors.RESET + gama[x]+'\n')
+			if aempty[x] == 1:
+				outf.write(bcolors.GREEN + "alfa\t" + alfa[x] + bcolors.RESET + '\n')
+			if bempty[x] == 1:
+				outf.write(bcolors.YELLOW + "beta\t" + beta[x] + bcolors.RESET+ '\n')
+	outf.close()
 	return
 def check_values(tikr, ztikr, interval, zinterval):
 	print "Checking", tikr
@@ -417,12 +437,13 @@ def finddiff(Nameslst, alfalst, betalst, gamalst, m, count):
 	nfgama, nfgempty, DiffgamaLen, diffgempty = Changes(gamalst, m, count,Nameslst)
 	nfalfa, nfaempty, DiffalfaLen, diffaempty = Changes(alfalst, m, count, Nameslst)
 	nfbeta, nfbempty, DiffbetaLen, diffbempty = Changes(betalst, m, count, Nameslst)
-	print_to_STDOUT(Nameslst[1:], DiffgamaLen, diffgempty, DiffalfaLen, diffaempty, DiffbetaLen, diffbempty, "Diference in ", count, Nameslst[0].rstrip('\n'))
-	print_to_STDOUT(Nameslst[1:], nfgama, nfgempty, nfalfa, nfaempty, nfbeta, nfbempty, "Not found ", count, "")
-	
+	#print_to_STDOUT(Nameslst[1:], DiffgamaLen, diffgempty, DiffalfaLen, diffaempty, DiffbetaLen, diffbempty, "Diference in ", count, Nameslst[0].rstrip('\n'))
+	#print_to_STDOUT(Nameslst[1:], nfgama, nfgempty, nfalfa, nfaempty, nfbeta, nfbempty, "Not found ", count, "")
+	print_to_File(Nameslst[1:], DiffgamaLen, diffgempty, DiffalfaLen, diffaempty, DiffbetaLen, diffbempty, "Diference in ", count, Nameslst[0].rstrip('\n'), 'diffiles/', m)
+	print_to_File(Nameslst[1:], nfgama, nfgempty, nfalfa, nfaempty, nfbeta, nfbempty, "Not found ", count, "", 'notffiles/', m)
 	return	
 
-def spalv(dssp,notdssp,output,count,outdiff,outch,flag,measure):
+def spalv(dssp, notdssp, output, count, flag, measure):
         import os, subprocess
         lines = dssp.readlines()
         betal = [] # Antrines beta str
@@ -529,26 +550,22 @@ class bcolors:
         GREEN = '\033[92m'
         YELLOW = '\033[93m'
         RESET = '\033[0m'
-fdssp = open('../atst/atst.dssp','r')
-fdnot = open('../atst/atst.notdssp','r')
-m = 5
-# int(raw_input('Panasumo ivertis: '))
+fdssp = open('../atst/atst.dssp', 'r')
+fdnot = open('../atst/atst.notdssp', 'r')
+#m = 2
+m = int(raw_input('Panasumo ivertis: '))
 
 #   Atstovu atstovai
-atstout = open('atst.colored','w')
-atstdiff = open('atst.diff','w')
-atstch = open('atst.ch','w')
+atstout = open('coolseek/atst', 'w')
 atstout.write(bcolors.GREEN + '                Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
-spalv(fdssp,fdnot,atstout,0,atstdiff,atstch,1,m)
-print bcolors.YELLOW+'\n\t\tNe-atstovu sekos\n'+bcolors.RESET
+spalv(fdssp, fdnot, atstout, 0, 1, m)
+#print bcolors.YELLOW+'\n\t\tNe-atstovu sekos\n'+bcolors.RESET
 
 ##   Grupes su atstovais
 for x in range(1,16):
-        f1 = open('../dssp/'+str(x),'r')
-        f2 = open('../notdssp/'+str(x),'r')
-        outdssp = open(str(x)+'.colored','w')
-        outdiff = open(str(x)+'.diff','w')
-        outch = open(str(x)+'.ch','w')
+        f1 = open('../dssp/'+str(x), 'r')
+        f2 = open('../notdssp/'+str(x), 'r')
+        outdssp = open('coolseek/'+str(x), 'w')
         outdssp.write(bcolors.GREEN + '                 Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
-        spalv(f1,f2,outdssp,x,outdiff,outch,0,m)
+        spalv(f1, f2, outdssp, x, 0, m)
 
