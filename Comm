@@ -8,4 +8,6 @@ vim 42G				// Nueina i 42 eilute
 chmod -R 755 <-- Duoda teses visiem failam folderiam useriui rwx kitiem rw
 cp -avr Folderis/ KitasFold/  <-- kopijuoja failus ir folderius
 du --summarize -b * | sort -k1   //daugiausiai uzimatys failai, bytes.
-
+crontab -e     
+	min, hour, day, month, weekday command
+	10   15     *     *     1       echo "something"        // kekviena pirmadieni 15:10 iskviecia duota programa 
