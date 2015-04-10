@@ -393,10 +393,10 @@ def Changes(bindl,dval,check, protas):
 			tstlst = ['1-5', '10-12', '15-23', '27-35', '47-216', '']
 			diff, nfound = cloop(tstchk, tstlst, 'Test') 
 			print tstchk, tstlst
-		print "-------"+str(count)+'-a seka--------------------'
+			print "-------"+str(count)+'-a seka--------------------'
 		'''
 		diff, nfound = cloop(checkseek, mylist, protas[count-1])
-		
+
 		### checking if difference between elements is major than measurement value
 		lengths = diff.split(' ')
 		z = 0
@@ -443,13 +443,13 @@ def finddiff(Nameslst, alfalst, betalst, gamalst, m, count):
 	print_to_File(Nameslst[1:], nfgama, nfgempty, nfalfa, nfaempty, nfbeta, nfbempty, "Not found ", count, "", 'notffiles/', m)
 	return	
 
-def spalv(dssp, notdssp, output, count, flag, measure):
+def spalv(notdssp, dssp, output, count, flag, measure):
         import os, subprocess
         lines = dssp.readlines()
         betal = [] # Antrines beta str
         alfal = [] # Antrines alfa str
         gamal = [] # kilpos
-        length = 0
+	length = 0
         baltlist = []
         glen = 0
         blen = 0
@@ -469,12 +469,12 @@ def spalv(dssp, notdssp, output, count, flag, measure):
                                 if alen > 0:
                                         alfastr += str(length-alen)+'-'+str(length-1)+' '
                                         alen = 0
-                                alfal.append(alfastr)
-                                betal.append(betastr)
-                                gamal.append(gamastr)
-                        glen = 0
-                        blen = 0
-                        alen = 0
+				alfal.append(alfastr)
+				betal.append(betastr)
+				gamal.append(gamastr)
+			glen = 0
+			blen = 0
+			alen = 0
                         alfastr = ''
                         betastr = ''
                         gamastr = ''
@@ -512,8 +512,8 @@ def spalv(dssp, notdssp, output, count, flag, measure):
 	alfal.append(alfastr)
 	betal.append(betastr)
 	gamal.append(gamastr)
-#	if count == 12:
-	finddiff(baltlist, alfal, betal, gamal, measure, count)
+	if count == 0:
+		finddiff(baltlist, alfal, betal, gamal, measure, count)
         
 	'''#Check 
         for x in range(0,len(alfal)):
