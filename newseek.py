@@ -19,11 +19,13 @@ def print_to_File(Names, gama, gempty, alfa, aempty, beta, bempty, word, count, 
 		outf = open(loc+'atst', 'w')
 	else:
 		outf = open(loc+str(count), 'w')
-	if atst != "":
-		outf.write(bcolors.FAIL+ '----------- Atstovas + '+atst+' + nr'+str(count)+' --measure--'+str(ms)+''+bcolors.RESET+ "\n")
+	s = 0
 	for x in range(0,len(Names)):
 		nonemptyline = gempty[x]+aempty[x]+bempty[x]
 		if nonemptyline > 0:
+			if s == 0: 
+				outf.write(bcolors.FAIL+ '----------- Atstovas + '+atst+' + nr'+str(count)+' --measure--'+str(ms)+''+bcolors.RESET+ "\n")
+			s = 1
 			outf.write(bcolors.FAIL+"---------------"+word+"seeks------------------"+bcolors.RESET+ "\n")
 			outf.write(Names[x])
 			if gempty[x] == 1:
@@ -512,8 +514,7 @@ def spalv(notdssp, dssp, output, count, flag, measure):
 	alfal.append(alfastr)
 	betal.append(betastr)
 	gamal.append(gamastr)
-	if count == 0:
-		finddiff(baltlist, alfal, betal, gamal, measure, count)
+	finddiff(baltlist, alfal, betal, gamal, measure, count)
         
 	'''#Check 
         for x in range(0,len(alfal)):
