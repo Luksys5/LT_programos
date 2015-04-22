@@ -113,7 +113,6 @@ def cloop(cbind,binds, name):
 			zchint = cbind[a+1].split('-')
 			if zchint == ['']:
 				return differs, notf
-	
         while interval != [''] or chint != [''] :
 		zinterval = binds[b+1].split('-')
 		zchint = cbind[a+1].split('-')
@@ -300,6 +299,14 @@ def cloop(cbind,binds, name):
 				a += 1
 				chint = cbind[a].split('-')
 				zchint = cbind[a+1].split('-')
+				if zchint == ['']:  #----# Jei paskutinis tikrinimo intervalas mazesnis uz lyginama
+                                       	differs += cbind[a]+' '
+					notf += cbind[a]+' '
+					for x in range(b,len(binds)):
+                                                differs += binds[x]+' '
+                                                notf += binds[x]+' '
+                                        return differs, notf
+				
 
 		# Tikrinimo intervalas didesni uz intervala. CHECK > INT
 		elif int(chint[0]) > int(zinterval[1]):		
@@ -398,7 +405,7 @@ def Changes(bindl,dval,check, protas):
 			print "-------"+str(count)+'-a seka--------------------'
 		'''
 		diff, nfound = cloop(checkseek, mylist, protas[count-1])
-
+		
 		### checking if difference between elements is major than measurement value
 		lengths = diff.split(' ')
 		z = 0
@@ -560,7 +567,6 @@ m = int(raw_input('Panasumo ivertis: '))
 atstout = open('coolseek/atst', 'w')
 atstout.write(bcolors.GREEN + '                Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
 spalv(fdssp, fdnot, atstout, 0, 1, m)
-#print bcolors.YELLOW+'\n\t\tNe-atstovu sekos\n'+bcolors.RESET
 
 ##   Grupes su atstovais
 for x in range(1,16):
@@ -569,4 +575,3 @@ for x in range(1,16):
         outdssp = open('coolseek/'+str(x), 'w')
         outdssp.write(bcolors.GREEN + '                 Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
         spalv(f1, f2, outdssp, x, 0, m)
-

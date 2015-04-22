@@ -1,0 +1,25 @@
+#!/bin/sh
+./$1 > "output1" 2> "error"
+N=1
+while [ "$N" = 1 ]
+do
+	./$1 > "output2" 2> "error"
+	DIFF=$(diff -H output1 output2)
+	if [ "$DIFF" != "" ]
+	then
+		cat "output2"
+		./$1 > "output1" 2> "error"
+	fi
+	ERROR=$(cat error)
+	if [ "$ERROR" != "" ]
+	then 
+		cat "error"
+		echo "Found error, if you wana stop enter N"
+		read mol
+		if [ "$mol" == "N" ]
+		then 
+			exit
+		fi
+	fi
+done
+
