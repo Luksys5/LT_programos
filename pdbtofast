@@ -1,0 +1,26 @@
+#!/bin/sh
+#cat $1 | grep "^ATOM" | awk '{sub(/[A-Z]/, "", $5);print $4, $5;}' \
+cat $1 | grep "^ATOM" | awk '{print $4}' \
+		| sed   's/LYS/K/; 
+			 s/ALA/A/;
+			 s/VAL/V/;
+			 s/ILE/I/;
+			 s/ARG/R/;
+			 s/ASN/N/;
+			 s/ASP/D/;
+			 s/CYS/C/;
+			 s/GLN/Q/;
+			 s/GLU/E/;
+			 s/GLY/G/;
+			 s/HIS/H/;
+			 s/LEU/L/;
+			 s/MET/M/;
+			 s/PHE/F/;
+			 s/PRO/P/;
+			 s/SER/S/;
+			 s/THR/T/;
+			 s/TRP/W/;
+			 s/TYR/Y/;' \
+		| uniq \
+		| tr -d '\n' \
+		| fold -w 60

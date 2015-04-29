@@ -1,0 +1,70 @@
+#!/usr/bin/python
+import re
+import sys
+def multiparsing(f1l, f2l, fhl):
+	i = 0
+	conjucted = ''
+	dssp = ''
+	last = len(fhl)
+	for x in range(0, len(f1l) ):
+		if f1l[x] == fhl[i]:
+			conjucted += f1l[x]
+			dssp += f2l[x]
+			i += 1
+		if i >= last : return dssp, conjucted, 1	
+
+	return dssp, conjucted, 0
+
+try :
+	file1 = re.sub(r'\.dssp$', '', sys.argv[1])
+except IndexError:
+	print "Usage: ./fasttodssp dssp.origin"
+	print "NO INPUT FOUND, File takes file called myout for fasta information"
+	exit()
+
+f1 = open(file1+".dssp", 'r')
+f2 = open(file1+".notdssp", 'r')
+fh = open('myout', 'r')
+f1lines = f1.readlines()
+f2lines = f2.readlines()
+fhlines = fh.readlines()
+last = (len(fhlines)-1)*60 + len(fhlines[len(fhlines)-1])
+f1multi = ''
+f2multi = ''
+fhmulti = ''
+for x in range(6, 11):
+	f1multi += f1lines[x].rstrip('\n')
+	f2multi += f2lines[x].rstrip('\n')
+for x in range(0, len(fhlines)):
+	fhmulti += fhlines[x].rstrip('\n')
+print f1multi
+nodssp, dssp, sz = multiparsing(f1multi, f2multi, fhmulti)
+print dssp
+z = 0
+fw1 = open('filehacker.dssp', 'w')
+fw2 = open('filehacker.nodssp', 'w')
+for x in range(0, 6):
+	fw1.write(f1lines[x])
+	fw2.write(f2lines[x])
+for x in range(0, len(dssp)):
+	z += 1
+	fw1.write(dssp[x])
+	fw2.write(nodssp[x])
+	if z % 60 == 0: 
+		fw1.write('\n')
+		fw2.write('\n')
+
+'''while(True):
+	line1 = f1.readline()
+	line2 = f2.readline()
+	lineh = fh.readline()
+	print line1
+	if not line1: break
+	else:
+		f1multi += line1
+		f2multi += line2
+		fhmulti += lineh
+print f1multi
+'''
+#size, mode = multiparsing(f1lines, f2lines, fhlines)
+#print "\n", size, mode
