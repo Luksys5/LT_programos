@@ -1,0 +1,25 @@
+#!/usr/bin/python
+import sys, re
+def read_start(f, out):
+	while(True):
+		myline = f.readline()
+		if not re.match('^ATOM', myline):
+			out.write(myline)	
+		else:
+			return
+if len(sys.argv) < 1:
+	print 'Use ./fa_to_pdb fasta pdb'
+	print "output is file new.pdb"
+	exit()
+dict = {'A': 'ALA', 'R': 'ARG', 'N': 'ASN', 'D': 'ASP', 'C': 'CYS', 'Q': 'GLN', 'E': 'GLU', 'G': 'GLY', 'H': 'HIS', 'I': 'ILE', 'L': 'LEU', 'K': 'LYS', 'M': 'MET', 'F': 'PHE', 'P': 'PRO', 'S': 'SER', 'T': 'THR', 'W': 'TRP', 'Y': 'TYR', 'V': 'VAL'}
+f = open(sys.argv[1], 'r')
+pdbf = open(sys.argv[2], 'r')
+newf = open('new.pdb', 'w')
+flines = f.readlines()
+read_start(pdbf, newf)
+'''for x in flines:
+	split_line = list(x)
+	for y in split_line:
+		if y in dict:
+			print dict[y]
+'''		
