@@ -1,0 +1,500 @@
+  100  ./temp fil2 
+  101  vim temp fil2 
+  102  ./temp fil2 
+  103  vim temp 
+  104  ./temp fil2 
+  105  vim temp 
+  106  ./temp fil2 
+  107  vim temp 
+  108  ./temp fil2 
+  109  vim temp fil2 
+  110  ./temp fil2 
+  111  vim temp 
+  112  ./temp fil2 
+  113  vim temp 
+  114  ./temp fil2
+  115  vim temp 
+  116  ./temp fil2
+  117  vim temp
+  118  cat fil2 
+  119  vim temp 
+  120  vim fil2 
+  121  ./temp fil2
+  122  vim temp 
+  123  ./temp fil2
+  124  vim temp 
+  125  vim temp 
+  126  ./temp fil2
+  127  vim temp 
+  128  ./temp fil2 
+  129  vim temp 
+  130  ./temp fil2 
+  131  vim temp fil2 
+  132  ./temp fil2
+  133  cat fil2
+  134  vim fil2 
+  135  vim temp 
+  136  vim vaddfiles 
+  137  ./vaddfiles fil2
+  138  ls
+  139  vim fil2 
+  140  ./vaddfiles fil2
+  141  vim fil2 
+  142  vim temp 
+  143  ./vaddfiles fil2
+  144  vim vaddfiles 
+  145  ./vaddfiles fil2
+  146  vim vaddfiles 
+  147  ./vaddfiles fil2
+  148  vim vaddfiles 
+  149  ./vaddfiles fil2
+  150  vim vaddfiles 
+  151  ./vaddfiles 
+  152  ./vaddfiles fil2
+  153  vim vaddfiles 
+  154  ./vaddfiles fil2
+  155  vim vaddfiles 
+  156  ./vaddfiles 
+  157  ./vaddfiles fil2
+  158  vim fil2 
+  159  vim vaddfiles 
+  160  ./vaddfiles fil2
+  161  vim vaddfiles 
+  162  ./vaddfiles fil2 
+  163  vim vaddfiles 
+  164  ./vaddfiles fil2
+  165  vim vaddfiles 
+  166  ./vaddfiles fil2
+  167  vim vaddfiles 
+  168  ./vaddfiles fil2
+  169  vim vaddfiles 
+  170  ./vaddfiles fil2 
+  171  vim vaddfiles 
+  172  vim vaddfiles 
+  173  ./vaddfiles fil2 
+  174  vim vaddfiles
+  175  ./vaddfiles fil2 
+  176  vim vaddfiles fil2 
+  177  vim temp 
+  178  vim temp 
+  179  ./temp fil2
+  180  vim temp 
+  181  ./temp fil2
+  182  vim temp 
+  183  ./temp fil2
+  184  vim fil2 
+  185  ./temp fil2
+  186  vim fil2 
+  187  vim vaddfiles 
+  188  vim temp 
+  189  ./temp fil2
+  190  vim temp 
+  191  vim temp 
+  192  ./temp fil2
+  193  vim temp 
+  194  vim temp 
+  195  ./temp fil2 
+  196  vadd
+  197  vim vaddfiles 
+  198  ./temp fil2
+  199  ./vaddfiles fil2
+  200  vim vaddfiles 
+  201  ./vaddfiles fil2
+  202  vim vaddfiles 
+  203  ./vaddfiles fil2
+  204  vim vaddfiles 
+  205  ./vaddfiles fil2
+  206  vim vaddfiles 
+  207  ./vaddfiles fil2 
+  208  vim vaddfiles 
+  209  ./vaddfiles fil2
+  210  vim fil2 
+  211  ./vaddfiles fil2 
+  212  ls
+  213  rm myhist.txt 
+  214  cat vektoriaiN.dat 
+  215  rm fil2 
+  216  ls
+  217  rm temp 
+  218  svn commit
+  219  svn add vektoriaiN.dat 
+  220  svn mysh 
+  221  svn add mysh 
+  222  svn commt
+  223  svn commit
+  224  man sbatch
+  225  ls
+  226  diff
+  227  a
+  228  d
+  229  ad;
+  230  ls
+  231  /usr/bin/
+  232  ls
+  233  vim /usr/bin/diff
+  234  nano /usr/bin/diff
+  235  ls
+  236  cat slapt
+  237  ls
+  238  cd Bioinfo3/
+  239  ls
+  240  cat mysh 
+  241  ./mysh 
+  242  ls
+  243  cat magic 
+  244  cat smth 
+  245  cat trunk\
+  246  cat trunk
+  247  cd trunk/
+  248  ls
+  249  cd ..
+  250  ls
+  251  rm magic smth mysh 
+  252  ls
+  253  cd trunk/
+  254  ls
+  255  vim vaddfiles 
+  256  ./vaddfiles vektoriaiN.dat 
+  257  vim v1.dat
+  258  vim v2.dat
+  259  vpaste
+  260  paste v1.dat v2.dat | ./vaddfiles 
+  261  vim vaddfiles 
+  262  vim vaddfiles 
+  263  vim vpaste
+  264  ls
+  265  cd Desktop/
+  266  vim cisteino_klaus
+  267  ls
+  268  cd ../Bioinfo3/
+  269  ls
+  270  cd trunk/
+  271  ls
+  272  vim vpaste 
+  273  chmod +x vpaste 
+  274  ./vpaste 
+  275  vim v1.dat 
+  276  ./vpaste 
+  277  vim vpaste 
+  278  ./vpaste 
+  279  vim vpaste 
+  280  ./vpaste 
+  281  vim vpaste 
+  282  ./vpaste 
+  283  vim vpaste 
+  284  ./vpaste 
+  285  vim vpaste 
+  286  ./vpaste 
+  287  vim vpaste 
+  288  ./vpaste 
+  289  vim vpaste 
+  290  ./vpaste 
+  291  vim vpaste 
+  292  ./vpaste 
+  293  ascii
+  294  vim vpaste 
+  295  ./vpaste 
+  296  vim v1.dat 
+  297  ./vpaste 
+  298  vim vpaste 
+  299  ./vpaste 
+  300  ls
+  301  ./vpaste | ./vaddfiles 
+  302  echo 1
+  303  echo binary
+  304  echo 111 (po pirmo baito parodo kiek liko baitu) 1110 xxxx  10yy yyyy 10zz zzzz      xxxx yyyy yyzz zzzz
+  305  echo 111 \(po pirmo baito parodo kiek liko baitu\) 1110 xxxx  10yy yyyy 10zz zzzz      xxxx yyyy yyzz zzzz
+  306  vim vpas
+  307  chmod +x vpas
+  308  vim vpas
+  309  ./vpas labas tu
+  310  vim vpas
+  311  ./vpas
+  312  ./vpas labs 
+  313  ./vpas labs tu
+  314  vim vpas
+  315  rm vpas
+  316  vim vpaste 
+  317  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  318  vim vpaste 
+  319  vim v1.dat 
+  320  vim vaddfiles 
+  321  vim vpaste 
+  322  ./vpaste v1.dat v2.dat 
+  323  vim vpaste 
+  324  ./vpaste v1.dat v2.dat 
+  325  vim vpaste 
+  326  ./vpaste v1.dat v2.dat 
+  327  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  328  vim vaddfiles 
+  329  ./vaddfiles 
+  330  vim vaddfiles 
+  331  ./vaddfiles 
+  332  vim vaddfiles 
+  333  ./vaddfiles v1.dat 
+  334  vim v1.dat 
+  335  ./vaddfiles v1.dat 
+  336  vim v1.dat 
+  337  vim vaddfiles 
+  338  ls
+  339  ./vpaste v1.dat v2.dat vpaste 
+  340  vim vpaste 
+  341  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  342  vim vaddfiles 
+  343  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  344  vim vaddfiles 
+  345  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  346  cat v1.dat 
+  347  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  348  vim vaddfiles 
+  349  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  350  cat v1.dat 
+  351  vim vaddfiles 
+  352  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  353  ls
+  354  vim vaddfiles 
+  355  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  356  vim vaddfiles 
+  357  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  358  vim vaddfiles 
+  359  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  360  vim v1.dat 
+  361  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  362  vim vaddfiles 
+  363  ls
+  364  vim v1.dat 
+  365  vim vaddfiles 
+  366  vim v1.dat 
+  367  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  368  vim vaddfiles 
+  369  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  370  vim vaddfiles 
+  371  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  372  vim vaddfiles 
+  373  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  374  vim vaddfiles 
+  375  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  376  vim vaddfiles 
+  377  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  378  vim vaddfiles 
+  379  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  380  vim vaddfiles 
+  381  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  382  vim vaddfiles 
+  383  ./vpaste v1.dat v2.dat | ./vaddfiles 
+  384  vim vaddfiles 
+  385  svn status
+  386  svn st
+  387  svn commit
+  388  ls
+  389  svn add vaddfiles 
+  390  cd ..
+  391  ls
+  392  cd Paleistuve/
+  393  ls
+  394  cd ..
+  395  ls
+  396  cd Paleistuve/
+  397  ls
+  398  cd ..
+  399  ls
+  400  svnadmin create /Repo
+  401  svn
+  402  ls -l
+  403  quota
+  404  git
+  405  ls
+  406  echo $$PATH
+  407  echo $PATH
+  408  ls -l /usr/bin/svn
+  409  ls -l /usr/bin/
+  410  ls -l /usr/bin/svn
+  411  hostname -f
+  412  ls
+  413  svn
+  414  cd Bioinfo3/
+  415  ls
+  416  cd trunk/
+  417  ls
+  418  svn add *
+  419  svn commit v1.dat v2.dat 
+  420  svn commit vpaste 
+  421  cd ../..
+  422  ls
+  423  cd project/
+  424  ls
+  425  cd darbine/
+  426  ls
+  427  cd trunk/
+  428  ls
+  429  cd ..
+  430  cd ..
+  431  ls
+  432  cd repoz/
+  433  l
+  434  ls
+  435  cd ..
+  436  ls
+  437  cd darbine/
+  438  ls
+  439  cd trunk/
+  440  ls
+  441  cd bin/
+  442  ls
+  443  cd ..
+  444  ls
+  445  cd ..
+  446  cd ..
+  447  ls
+  448  cd ..
+  449  ls
+  450  cd Bioinfo3/
+  451  ls
+  452  cd trunk/
+  453  ls
+  454  ls
+  455  svn st
+  456  svn commit
+  457  svn st
+  458  ls
+  459  cat vektoriaiN.dat 
+  460  ./vaddfiles vektoriaiN.dat 
+  461  vim vaddfiles 
+  462  vim v1.dat 
+  463  ls
+  464  ./vaddfiles v1.dat 
+  465  vim vaddfiles 
+  466  ./vaddfiles v1.dat 
+  467  vim vaddfiles 
+  468  ./vaddfiles v1.dat 
+  469  vim vaddfiles 
+  470  ./vaddfiles v1.dat 
+  471  vim vaddfiles 
+  472  ./vaddfiles v1.dat 
+  473  vim vaddfiles 
+  474  ./vaddfiles v1.dat 
+  475  vim vaddfiles 
+  476  ./vaddfiles v1.dat 
+  477  vim vaddfiles 
+  478  vim vpaste 
+  479  vim vaddfiles 
+  480  ./vaddfiles v1.dat 
+  481  vim vaddfiles 
+  482  ./vaddfiles v1.dat 
+  483  vim vaddfiles 
+  484  ./vaddfiles v1.dat 
+  485  vim vaddfiles 
+  486  ./vaddfiles v1.dat 
+  487  vim vaddfiles 
+  488  vim v1.dat 
+  489  ./vaddfiles v1.dat 
+  490  vim vaddfiles 
+  491  ./vaddfiles v1.dat 
+  492  vim vaddfiles 
+  493  ./vaddfiles 
+  494  ./vaddfiles v1.dat 
+  495  vim vaddfiles 
+  496  ./vaddfiles v1.dat 
+  497  vim vaddfiles 
+  498  svn commit
+  499  ssh uosis.mif.vu.lt
+  500  ls
+  501  cd Bioinfo3/
+  502  ls
+  503  cd trunk/
+  504  ls
+  505  cd /mif/stud3/2011/jusm0162/
+  506  ls
+  507  ls
+  508  ls
+  509  cd ..
+  510  ls
+  511  ls jusm0162/
+  512  cd jusm0162/Desktop
+  513  ls
+  514  cd ..
+  515  cd bioi
+  516  cd bioinfo
+  517  cd bio
+  518  cd Bio
+  519  cd Bioinformatika
+  520  cd Bioinformatika2011
+  521  cd ..
+  522  ls -got | cut -b 1,13-128
+  523  cd jusm0162/
+  524  ls -got | cut -b 1,13-128
+  525  echo "  ~/bin/myls  custom ls command   20081028"; 
+  526  echo "  ls";
+  527  echo "Listing of: $(pwd):"
+  528  echo "Listing of: $(pwd):"ls
+  529  echo "Listing of: $(pwd):" ls
+  530  echo "Listing of: $(pwd):"
+  531  ls -got | cut -b 1,13-128
+  532  ll
+  533  cd ../../2012/
+  534  ls
+  535  cd jusi
+  536  cd jusi1017/
+  537  ls
+  538  cd ..
+  539  cd ..
+  540  ls
+  541  cd 2011/jusm0162/
+  542  ls
+  543  ls -ld Di*
+  544  ls -ld di
+  545  ls -ld di*
+  546  ls -ld d*
+  547  ls -ld D*
+  548  ls -ld D*
+  549  ls -l D*
+  550  ls D*
+  551  ls -l
+  552  stat -c "%y"
+  553  stat -c "%y" *
+  554  ls
+  555  cd ..
+  556  ls
+  557  cd ../2012/
+  558  cd riza0673/
+  559  ls -ld
+  560  ls -ld *
+  561  ls -ld D*
+  562  ls -lg
+  563  ls -lD
+  564  ls -ld
+  565  ls
+  566  cd .
+  567  cd
+  568  ls
+  569  cat slapt 
+  570  ls
+  571  ls
+  572  ls
+  573  cd Bioinfo3/
+  574  ls
+  575  cd trunk/
+  576  ls
+  577  vim vaddfiles 
+  578  vim vaddfiles 
+  579  ./vaddfiles 
+  580  vim vaddfiles 
+  581  vim vaddfiles 
+  582  ./vaddfiles 
+  583  vim vaddfiles 
+  584  ./vaddfiles 
+  585  svn keywords=Id
+  586  ls
+  587  ./vaddfiles = svn:keywords=Id
+  588  svn:keywords $Id$ vaddfiles 
+  589  svn
+  590  history > myhist
+  591  vim myhist 
+  592  ls
+  593  git add myhist 
+  594  ls
+  595  svn add myhist
+  596  svn commit
+  597  ls
+  598  svn propset svn:keywords "Id" vaddfiles 
+  599  history > myhist 
