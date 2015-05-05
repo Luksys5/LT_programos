@@ -22,6 +22,7 @@ git rm --cached -r . <- istrina darb dir
 tik po add commit ir push komandu matoma pazanga tinklapyje
 
 git ls-remote --heads <- Shows all branches.
+
 #needfull commands
 git clone https://github.com/username/repository.git
 cd Repository
