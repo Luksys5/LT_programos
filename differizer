@@ -20,11 +20,15 @@ def align_structures(al1, al2):
 	al2_last_count = []
 	al1_last = ''
 	al2_last = ''
+	for x in al1:
+		sys.stdout.write(x)
+	print '\n'
+	for x in al2:
+		sys.stdout.write(x)
+	x = 0
 	while(True):
+		'''
 		## Checkong for starters or if list have new elements
-		print al1[x], al2[x]
-		print al1_last_count[x-1], al1_last_count[x-2]
-		print al2_last_count[x-1], al2_last_count[x-2]
 		if al1_last_count == [] or al1_last_count[len(al1_last_count)-2] != al1_last:
 			if al1_last_count != []:
 				start = str( al1_last_count[ len(al1_last_count)-1 ] )
@@ -42,6 +46,7 @@ def align_structures(al1, al2):
 	
 		al1_last = al1[x]
 		al2_last = al2[x]
+		'''
 		if al1[x] != al2[x]:
 			start = x+1
 			count = -1
@@ -56,29 +61,29 @@ def align_structures(al1, al2):
 		else:
 			x += 1
 		if x == len(al1): return diff, al1_last_count, al2_last_count
-		if x > 10: return diff, al1_last_count, al2_last_count
-def spalv(notdssp, dssp, output, count, flag, measure):    
-	line = dssp.readline()   
+		#if x > 10: return diff, al1_last_count, al2_last_count
+def spalv(struct, dssp, output, count, flag, measure):    
+	line = struct.readline()   
 	atst_str = ''
 	align_str = ''
 
 	## Reading secondary structure elements leader structure
 	while(True):
-		line = dssp.readline().rstrip('\n')
+		line = struct.readline().rstrip('\n')
 		if re.match('^>', line): break
 		atst_str += line
 	atst_l = list(atst_str)
 
 	## Reading other structures and aligning them 
 	while(True):
-		line = dssp.readline().rstrip('\n')
+		line = struct.readline().rstrip('\n')
 		if not line: break
 		if re.match('^>', line):
 			align_l = list(align_str)
-			difference, l1, l2 = align_structures(atst_str, align_str)	
-			#print difference
-			for z in l2:
-				print z
+			difference, l1, l2 = align_structures(atst_str, align_str)
+			print difference
+			#for z in l2:
+			#	print z
 			break
 			align_str = ''
 		else:
@@ -106,7 +111,7 @@ spalv(fdssp, fdnot, atstout, 0, 1, m)
 
 #   Atstovu atstovai
 fdssp = open('../atst/atst.dssp', 'r')
-fdnot = open('../atst/atst.notdssp', 'r')
+fdnot = open('../atst/atst.str', 'r')
 atstout = open('coolseek/atst', 'w')
 atstout.write(bcolors.GREEN + '                Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
 spalv(fdssp, fdnot, atstout, 0, 1, m)
