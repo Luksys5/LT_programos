@@ -1,0 +1,121 @@
+#!/usr/bin/python
+import os, subprocess
+import re, sys
+def check_values(tikr, ztikr, interval, zinterval):
+	print "Checking", tikr
+	print "Interval", interval
+	print "next Check", ztikr
+	print "next Interval", zinterval
+	return
+
+def minimum(one,two):
+	if two > one:
+		return str(one), str(two)
+	return str(two), str(one)
+
+def align_structures(al1, al2):
+	x = 0
+	diff = ''
+	al1_last_count = []
+	al2_last_count = []
+	al1_last = ''
+	al2_last = ''
+	while(True):
+		## Checkong for starters or if list have new elements
+		print al1[x], al2[x]
+		print al1_last_count[x-1], al1_last_count[x-2]
+		print al2_last_count[x-1], al2_last_count[x-2]
+		if al1_last_count == [] or al1_last_count[len(al1_last_count)-2] != al1_last:
+			if al1_last_count != []:
+				start = str( al1_last_count[ len(al1_last_count)-1 ] )
+				end = str(x)
+				al1_last_count[len(al1_last_count)-1] = start + '-' + end + ' '
+			al1_last_count.append( al1[x] )
+			al1_last_count.append( x+1 )
+		if al2_last_count == [] or al2_last_count[len(al2_last_count)-2] != al2_last:
+			if al2_last_count != []:
+				start = str(al2_last_count[ len(al2_last_count)-1 ])
+				end = str(x)
+				al2_last_count[ len(al2_last_count)-1 ] = start + '-' + end + ' '
+			al2_last_count.append( al2[x] )
+			al2_last_count.append( x+1 )
+	
+		al1_last = al1[x]
+		al2_last = al2[x]
+		if al1[x] != al2[x]:
+			start = x+1
+			count = -1
+			while( al1[x] != al2[x] ):
+				count += 1
+				x += 1
+				if x == len(al1):
+					diff += str(start)+'-'+str(count+start)+' '
+					return diff, al1_last_count, al2_last_count
+			diff += str(start)+'-'+str(count+start)+' '	
+			last = al1[x-1]
+		else:
+			x += 1
+		if x == len(al1): return diff, al1_last_count, al2_last_count
+		if x > 10: return diff, al1_last_count, al2_last_count
+def spalv(notdssp, dssp, output, count, flag, measure):    
+	line = dssp.readline()   
+	atst_str = ''
+	align_str = ''
+
+	## Reading secondary structure elements leader structure
+	while(True):
+		line = dssp.readline().rstrip('\n')
+		if re.match('^>', line): break
+		atst_str += line
+	atst_l = list(atst_str)
+
+	## Reading other structures and aligning them 
+	while(True):
+		line = dssp.readline().rstrip('\n')
+		if not line: break
+		if re.match('^>', line):
+			align_l = list(align_str)
+			difference, l1, l2 = align_structures(atst_str, align_str)	
+			#print difference
+			for z in l2:
+				print z
+			break
+			align_str = ''
+		else:
+			align_str += line
+class bcolors:
+        FAIL = '\033[91m'
+        BOLD = '\033[95m'
+        BLUE = '\033[94m'
+        GREEN = '\033[92m'
+        YELLOW = '\033[93m'
+        RESET = '\033[0m'
+m = 0
+#m = int(raw_input('Panasumo ivertis: '))
+'''Test
+fdssp = open('myf.dssp', 'r')
+fdnot = open('myf.nodssp', 'r')
+
+atstout = open('coolseek/atst', 'w')
+atstout.write(bcolors.GREEN + '                Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
+spalv(fdssp, fdnot, atstout, 0, 1, m)
+
+
+'''# Test End
+
+
+#   Atstovu atstovai
+fdssp = open('../atst/atst.dssp', 'r')
+fdnot = open('../atst/atst.notdssp', 'r')
+atstout = open('coolseek/atst', 'w')
+atstout.write(bcolors.GREEN + '                Alfa helix H '+ bcolors.YELLOW + ' Beta strand E '+ bcolors.RESET+' Bend -'+'\n')
+spalv(fdssp, fdnot, atstout, 0, 1, m)
+
+'''##   Grupes su atstovais
+for x in range(1,16):
+        f1 = open('../dssp/'+str(x), 'r')
+        f2 = open('../notdssp/'+str(x), 'r')
+        outdssp = open('coolseek/'+str(x), 'w')
+        outdssp.write(bcolors.GREEN + '                 Alfa helix '+ bcolors.YELLOW + ' Beta strand '+ bcolors.RESET+'\n')
+        spalv(f1, f2, outdssp, x, 0, m)
+'''
