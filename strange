@@ -10,41 +10,36 @@ def Final_diffcount(str1, str2):
 	#print str1, "\n",  str2
 	str1_Hsize = 0; str2_Hsize = 0
 	str1_Esize = 0; str2_Esize = 0
-	str1_Csize = 0; str2_Csize = 0
 	str_size = ''; str_diff = ''
 	size = ''; diff = ''
 	for i in range(0, len(str1) ):
 		if str1[i] == 'H':
 			str1_Hsize += 1
-			str1_Esize = 0
-			str1_Csize = 0
-					
+			if str2_Esize > 0 and str2[i] != 'E':
+				
+				size, diff = size_diff(str1_Esize, str2_Esize, i)
+				str2_Esize = 0; str1_Esize = 0
+			
 		elif str1[i] == 'E':
-			str1_Hsize = 0
-			str1_Esize += 1
-			str1_Csize = 0
+			str1_Esize += 1	
+			if str2_Hsize > 0 and str2[i] != 'H':
+				size, diff = size_diff(str1_Hsize, str2_Hsize, i)
+				str1_Hsize = 0;	str2_Hsize = 0	
+		
 		else:
-			str1_Csize += 1
-			if str1_Esize == 0 and str2_Esize > 0:
-				print 'nera Sheet '+str(i-str2_Esize)+'-'+str(i)
-			if str1_Csize > 4: str1_Hsize = 0; str1_Esize = 0
-
+			if str2_Hsize > 0 and str2[i] != 'H':
+				size, diff = size_diff(str1_Hsize, str2_Hsize, i)
+				str1_Hsize = 0; str2_Hsize = 0
+			
+			if str2_Esize > 0 and str2[i] != 'E':
+				size, diff = size_diff(str1_Esize, str2_Esize, i)
+				str2_Esize = 0; str1_Esize = 0	
+		str_size += size; str_diff += diff
 		if str2[i] == 'H':
 			str2_Hsize += 1
-			str2_Esize = 0
-			str2_Csize = 0
-
 		elif str2[i] == 'E':
-			str2_Hsize = 0
-			str2_Csize = 0
 			str2_Esize += 1
-		
-		else:
-			str2_Csize += 1 
-			if str2_Esize == 0 and str1_Esize > 0:
-				print 'nera Sheet '+str(i-str2_Esize)+'-'+str(i)
-			if str2_Csize == 0: str2_Hsize = 0; str2_Esize = 0
-		
+
 	return
 def align_structures(al1, al2):
 	diff = ''
@@ -85,8 +80,8 @@ def spalv(struct, dssp, output, count, flag, measure):
 		if re.match('^>', line):
 			align_l = list(align_str)
 			difference = align_structures(atst_str, align_str)
-			Final_diffcount(atst_str, align_str)
-			#print difference
+			diff = Final_diffcount(atst_str, align_str)
+			print difference
 			break
 			align_str = ''
 		else:
