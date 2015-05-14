@@ -5,41 +5,91 @@ import re
 import sys
 from itertools import cycle
 
-def align_size(one_structure, sec_structure):
-	size1 = []; size2 = []
-	sequence1 = 0; sequence2 = 0
-	running = True
-	end1 = 0; end2 = 0;
+def corresponds(el1, el2):
+	
+	if int(el2[0]) <= int(el1[0]) and int(el1[0]) < int(el2[1]):
+		return True
+	elif int(el2[0]) < int(el1[1]) and int(el1[1]) <= int(el2[1]):
+		return True
 
-	while(running):
-		number_at1 = one_structure[sequence1].split('-')
-		if (sequence1 + 1) != len(one_structure):
-			next_at1 = one_structure[sequence1+1].split('-')
-			end1 = 1
+	return False
 
-		number_at2 = sec_structure[sequence2].split('-')
-		if (sequence2 + 1) != len(sec_structure):
-			next_at2 = sec_structure[sequence2+1].split('-')
-			end2 = 0
-
-		if int(number_at1[1]) < int(number_at2[0]):
-			sequence1 += 1
-		elif int(number_at2[1]) < int(number_at1[0]):
-			sequence2 += 1
+def is_it_in(struct1, struct2):
+	
+	run = True
+	a = b = 0
+	new_struct1 = new_struct2 = []
+	Not_found_struct = ''
+	adding_struct1 = ''
+	adding_struct2 = ''
+	while(run):
+		if a+1 == len(struct1) or b+1 == len(struct2):
+                        run = False
+	
+		st_numb = struct1[a].split('-')
+		nd_numb = struct2[b].split('-')
+		
+		if corresponds(st_numb, nd_numb) or corresponds(nd_numb, st_numb,):
+			adding_struct1 += st_numb[0] + '-' + st_numb[1] + ' '
+			adding_struct2 += nd_numb[0] + '-' + nd_numb[1] + ' '
+			a += 1; b += 1
+	
 		else:
-			print number_at1, number_at2
-			if not end1	
-			sequence1 += 1; sequence2 += 1
-		if sequence1 == len(one_structure) or sequence2 == len(sec_structure):
-			return 	
-	return
+			if int(st_numb[1]) <= int(nd_numb[0]):
 
-def size_diff(structure1, structure2, i):
+				Not_found_struct += struct1[a]+' '
+				a += 1
+			
+			elif int(nd_numb[1]) <= int(st_numb[0]):
 
-	if structure1 == 0: print 'error '+str(i)
-	size = str(abs(structure2-structure1))+' '
-	diff = str(i)+'-'+str(i+structure2)+' '
-	return size, diff
+				Not_found_struct += struct2[b]+' '
+				b += 1
+	
+	newstruct1 = adding_struct1.split()
+	newstruct2 = adding_struct2.split()
+	
+	return newstruct1, newstruct2, Not_found_struct
+	
+def trunc_space(el_list):
+	
+	run = True
+	Not_found_struct = []
+	new_struct = el_list
+	elcycle = cycle(el_list)
+	nextel = elcycle.next()
+	which = 0
+	
+	while run:
+
+		st_el_interval = el_list[which].split('-')
+		nd_el_interval = el_list[which+1].split('-')
+
+		margin = abs(int(st_el_interval[1]) - int(nd_el_interval[0]))
+		if margin < 4:
+
+			interval_start = str(int(st_el_interval[0])+(margin/2))
+			interval_end = str(int(nd_el_interval[1])-(margin/2))
+			el_list[which] = interval_start+'-'+interval_end
+			el_list.remove(el_list[which+1])
+			which -= 1
+		which += 1
+		if which+1 == len(el_list):
+			return new_struct
+	
+	return new_struct
+
+def size_align(structure1, structure2):
+	size_diff = ''
+	
+	for value1, value2 in zip(structure1, structure2):
+		interval_vals1 = value1.split('-')
+		interval_vals2 = value2.split('-')
+		size1 = int(interval_vals1[1]) - int(interval_vals1[0])
+		size2 = int(interval_vals2[1]) - int(interval_vals2[0])
+		if abs(size2 - size1) > 4:
+			size_diff += value1+' '+value2+' '+str(abs(size2 - size1))
+
+	return size_diff
 
 def final_diffcount(structure1, structure2):
 
@@ -53,11 +103,14 @@ def final_diffcount(structure1, structure2):
 	last_struct1 = structure1[0]; last_struct2 = structure2[0]
 	for i,( struct_item1, struct_item2 ) in enumerate(zip( structure1, structure2 )):
 
+		## Searching differences betwwen two structures
 		if struct_item1 != struct_item2:
 			
 			struct_dict1[struct_item1] += 1; struct_dict2[struct_item2] += 1
 			last_item1 = struct_item1; last_item2 = struct_item2
 			cc += 1
+
+		## if found there two structures are same adding before found total difference 
 		else:
 			if cc > 0:
 				struct_diff += str(i+1-count_same1)+'-'+str(i+1)+' '
@@ -65,7 +118,8 @@ def final_diffcount(structure1, structure2):
 
 		count_same1 += 1
 		count_same2 += 1
-
+		
+		## Search end of structures and add it to dictionary
 		if last_struct1 != struct_item1:
 			struct_size1[last_struct1].append(str(i+1-count_same1)+'-'+str(i))
 			last_struct1 = struct_item1
@@ -75,14 +129,22 @@ def final_diffcount(structure1, structure2):
 			struct_size2[last_struct2].append(str(i+1-count_same2)+'-'+str(i))
 			last_struct2 = struct_item2
 			count_same2 = 0
-	
-	for key, val in struct_size1.iteritems():
-		align_size(struct_size2[key], val)
 
-	diff_list = struct_diff.split()
-	diff_list.append('')
-	struct_list1 = list(structure1); struct_list2 = list(structure2)
-	print struct_size1['H']
+	nfound_struct = {};
+	nfound_struct['E'] = []; nfound_struct['H'] = []; nfound_struct['-'] = []; 
+	
+	for key in ('E', 'H', '-'):
+		trunc_struct1 = trunc_space( struct_size2[key] )
+		trunc_struct2 = trunc_space( struct_size1[key] )
+		struct_size1[key], struct_size2[key], nfound_struct[key]  = is_it_in(trunc_struct1, trunc_struct2)
+		size_diff = size_align(struct_size1[key], struct_size2[key])
+		print size_diff
+	'''
+	for key, val in struct_size1.iteritems():
+		if key == '-':
+			for x, y in zip(val, struct_size2[key]):
+				print x, y
+	'''
 	return struct_diff
 	
 
