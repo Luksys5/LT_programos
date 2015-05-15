@@ -32,20 +32,26 @@ last = (len(fhlines)-1)*60 + len(fhlines[len(fhlines)-1])
 f1multi = ''
 f2multi = ''
 fhmulti = ''
+
 for x in range(6, 11):
 	f1multi += f1lines[x].rstrip('\n')
 	f2multi += f2lines[x].rstrip('\n')
+
 for x in range(0, len(fhlines)):
 	fhmulti += fhlines[x].rstrip('\n')
+
 print f1multi
 nodssp, dssp, sz = multiparsing(f1multi, f2multi, fhmulti)
 print dssp
 z = 0
+
 fw1 = open('filehacker.dssp', 'w')
 fw2 = open('filehacker.nodssp', 'w')
+
 for x in range(0, 6):
 	fw1.write(f1lines[x])
 	fw2.write(f2lines[x])
+
 for x in range(0, len(dssp)):
 	z += 1
 	fw1.write(dssp[x])

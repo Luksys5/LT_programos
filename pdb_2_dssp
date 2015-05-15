@@ -1,0 +1,52 @@
+#!/usr/bin/python
+import sys
+import os
+import subprocess
+import re
+
+if len(sys.argv) < 1:
+	print 'Use ./pdb_to_dssp dssp_file'
+	print "output is file dssp.new"
+	exit()
+fdssp = open(sys.argv[1], 'r')
+lines = fdssp.readlines()
+read = 0; dssp_line = ''
+
+for line in lines:
+	if read and not re.match('^>', line):
+		dssp_line += line.rstrip('\n')
+
+	if re.match('>', line):
+		read = 0
+
+	if re.match('>1t6l_A', line):
+		read = 1
+	
+os.system('./pdb_to_fa ../11czd_C_1t6l_A_dali.pdb')
+fa = open('../11czd_C_1t6l_A_dali.fa', 'r')
+fa_line = fa.readline()
+facount = 0; dscount = 0; run = True; last = 0
+fa_line = fa_line[:60]
+print fa_line
+while run:
+	if facount-last > 15:
+		facount = last
+		dscount += 1
+	if dssp_line[dscount] == '-':
+		sys.stdout.write('-')
+		dscount += 1
+		last = facount
+
+	if fa_line[facount] == dssp_line[dscount]:
+		last = facount
+		sys.stdout.write(dssp_line[dscount])
+		dscount += 1; facount += 1
+	else: facount += 1
+		
+	if dscount == len(dssp_line) or facount == len(fa_line): 
+		print facount, dscount, fa_line[facount-1], dssp_line[dscount]
+		run = False
+
+#while(count != len()
+#for dssp_char, fa_char in zip(dssp_lines, fa_lines):
+#	print dssp_char, fa_char
