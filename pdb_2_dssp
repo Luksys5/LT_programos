@@ -10,11 +10,11 @@ if len(sys.argv) < 1:
 	exit()
 fdssp = open(sys.argv[1], 'r')
 lines = fdssp.readlines()
-read = 0; dssp_line = ''
+read = 0; fa_lines = ''; dssp_lines = ''; run = True
 
 for line in lines:
 	if read and not re.match('^>', line):
-		dssp_line += line.rstrip('\n')
+		dssp_lines += line.rstrip('\n')
 
 	if re.match('>', line):
 		read = 0
@@ -22,31 +22,41 @@ for line in lines:
 	if re.match('>1t6l_A', line):
 		read = 1
 	
-os.system('./pdb_to_fa ../11czd_C_1t6l_A_dali.pdb')
-fa = open('../11czd_C_1t6l_A_dali.fa', 'r')
-fa_line = fa.readline()
-facount = 0; dscount = 0; run = True; last = 0
-fa_line = fa_line[:60]
-print fa_line
-while run:
-	if facount-last > 15:
-		facount = last
-		dscount += 1
-	if dssp_line[dscount] == '-':
-		sys.stdout.write('-')
-		dscount += 1
-		last = facount
+os.system('./pdbtofast 11czd_C_1t6l_A_dali.pdb > 1czd_C_1t6l_A.fa')
+fa = open('1czd_C_1t6l_A.fa', 'r')
+while(run):
+	line = fa.readline()
+	if not line: run = False
+	fa_lines += line.rstrip('\n')
+fa = 0; ds = 0; run = True; stuck = 0
+#fa_lines = fa_lines[:60]
+#dssp_lines = dssp_lines[:60]
 
-	if fa_line[facount] == dssp_line[dscount]:
-		last = facount
-		sys.stdout.write(dssp_line[dscount])
-		dscount += 1; facount += 1
-	else: facount += 1
+while run:
+	if dssp_lines[ds] == '-':
+		ds += 1
+		sys.stdout.write('-')	
+		stuck = 0
+
+	elif fa_lines[fa] == dssp_lines[ds]:
 		
-	if dscount == len(dssp_line) or facount == len(fa_line): 
-		print facount, dscount, fa_line[facount-1], dssp_line[dscount]
+		sys.stdout.write(dssp_lines[ds])
+		fa += 1; ds += 1
+		stuck = 0
+
+	elif stuck > 15:
+		ds += 1; fa -= 16		
+		stuck = 0
+	elif fa_lines[fa+1] == dssp_lines[ds+1] and fa_lines[fa+2] == dssp_lines[ds+2]:
+		fa += 1
+		ds += 1
+
+	else:
+		stuck += 1
+		fa += 1	
+
+	if ds+2 == len(dssp_lines) or fa+2 == len(fa_lines): 
 		run = False
 
-#while(count != len()
-#for dssp_char, fa_char in zip(dssp_lines, fa_lines):
-#	print dssp_char, fa_char
+print "\n"
+
