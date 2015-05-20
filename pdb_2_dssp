@@ -22,8 +22,8 @@ for line in lines:
 	if re.match('>1t6l_A', line):
 		read = 1
 	
-os.system('./pdbtofast 11czd_C_1t6l_A_dali.pdb > 1czd_C_1t6l_A.fa')
-fa = open('1czd_C_1t6l_A.fa', 'r')
+os.system('./pdb2f ../11czd_C_1t6l_A_dali.pdb')
+fa = open('../fastas/fa', 'r')
 while(run):
 	line = fa.readline()
 	if not line: run = False
@@ -31,8 +31,11 @@ while(run):
 fa = 0; ds = 0; run = True; stuck = 0
 #fa_lines = fa_lines[:60]
 #dssp_lines = dssp_lines[:60]
+#print fa_lines
+#print dssp_lines
 
 while run:
+	
 	if dssp_lines[ds] == '-':
 		ds += 1
 		sys.stdout.write('-')	
@@ -55,7 +58,7 @@ while run:
 		stuck += 1
 		fa += 1	
 
-	if ds+2 == len(dssp_lines) or fa+2 == len(fa_lines): 
+	if ds == len(dssp_lines) or fa == len(fa_lines): 
 		run = False
 
 print "\n"
