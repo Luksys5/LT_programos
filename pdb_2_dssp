@@ -3,15 +3,38 @@ import sys
 import os
 import subprocess
 import re
+def fatopdb(struct, pdbf):
+	fo = open(pdbf, 'r')
+	fw = open('newpdb', 'w')
+	lines = fo.readlines()
+	cc = 0;
+	#for x in struct:
+	fw.write(lines[0])
+	for line in lines:
+		try:
+			if (struct[cc]+1) < int(line[22:25]):
+				cc += 1
+		
+			if cc == len(struct):
+				fw.write(lines[-1])
+				return
+		
+			if (struct[cc]+1) == int(line[22:25]):
+				fw.write(line)
+		except ValueError:
+			print ''
+		
+	fw.write(lines[-1])
+	return
 
 if len(sys.argv) < 1:
 	print 'Use ./pdb_to_dssp dssp_file'
 	print "output is file dssp.new"
 	exit()
-fdssp = open(sys.argv[1], 'r')
-lines = fdssp.readlines()
+fdssp = open(dssp, 'r')
+dssp_lines = fdssp.readlines()
 read = 0; fa_lines = ''; dssp_lines = ''; run = True
-
+'''
 for line in lines:
 	if read and not re.match('^>', line):
 		dssp_lines += line.rstrip('\n')
@@ -21,18 +44,18 @@ for line in lines:
 
 	if re.match('>1t6l_A', line):
 		read = 1
-	
-os.system('./pdb2f ../11czd_C_1t6l_A_dali.pdb')
+'''
+pdbf = "../11czd_C_1t6l_A_dali.pdb"
+structfile = sys.argv[1]
+#fstruct = open(structfile[:-4]+"str",'r')
+os.system('./pdb2f '+pdbf)
 fa = open('../fastas/fa', 'r')
 while(run):
 	line = fa.readline()
 	if not line: run = False
 	fa_lines += line.rstrip('\n')
 fa = 0; ds = 0; run = True; stuck = 0
-#fa_lines = fa_lines[:60]
-#dssp_lines = dssp_lines[:60]
-#print fa_lines
-#print dssp_lines
+struct = []
 
 while run:
 	
@@ -42,7 +65,7 @@ while run:
 		stuck = 0
 
 	elif fa_lines[fa] == dssp_lines[ds]:
-		
+		struct.append(fa)
 		sys.stdout.write(dssp_lines[ds])
 		fa += 1; ds += 1
 		stuck = 0
@@ -50,11 +73,13 @@ while run:
 	elif stuck > 15:
 		ds += 1; fa -= 16		
 		stuck = 0
+
 	elif fa_lines[fa+1] == dssp_lines[ds+1] and fa_lines[fa+2] == dssp_lines[ds+2]:
-		fa += 1
-		ds += 1
+		fa += 1; ds += 1
+		#struct.append(fa-1)
 
 	else:
+		#struct.append(fa)
 		stuck += 1
 		fa += 1	
 
@@ -62,4 +87,5 @@ while run:
 		run = False
 
 print "\n"
-
+print struct
+fatopdb(struct, pdbf)
