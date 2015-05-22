@@ -74,104 +74,152 @@ def trunc_space(el_list):
 			which -= 1
 		which += 1
 		if which+1 == len(el_list):
-			return new_struct
+			return 
 	
-	return new_struct
+	return
 
 def size_align(structure1, structure2):
-	size_diff = ''
-	
+
+	size_diff = [];
 	for value1, value2 in zip(structure1, structure2):
 		interval_vals1 = value1.split('-')
 		interval_vals2 = value2.split('-')
 		size1 = int(interval_vals1[1]) - int(interval_vals1[0])
 		size2 = int(interval_vals2[1]) - int(interval_vals2[0])
+
 		if abs(size2 - size1) > 4:
-			size_diff += value1+' '+value2+' '+str(abs(size2 - size1))
+			size_diff.append(value1 + ' ' + str(abs(size2 - size1)))
 
 	return size_diff
+
+def save_alternative(structures, place):
+
+	return
 
 def final_diffcount(structure1, structure2):
 
 	struct_dict1 = {}; struct_dict2 = {}; struct_size1 = {}; struct_size2 = {}
-	struct_dict1['H'] = 0; struct_dict2['H'] = 0; struct_size1['H'] = []; struct_size2['H'] = []
-	struct_dict1['E'] = 0; struct_dict2['E'] = 0; struct_size1['E'] = []; struct_size2['E'] = []
-	struct_dict1['-'] = 0; struct_dict2['-'] = 0; struct_size1['-'] = []; struct_size2['-'] = []
-	cc = 0; struct_diff = ''
-	count_same1 = 0; count_same2 = 0
-	last_item1 = last_item2 = ''; last_number1 = last_number2 = 0
+	struct_dict1['H'] = []; struct_dict2['H'] = []
+	struct_dict1['E'] = []; struct_dict2['E'] = []
+	struct_dict1['-'] = []; struct_dict2['-'] = []
+	struct_diff = ''
+	last_item1 = structure1[0]; last_item2 = structure2[0];
+	count_same = count_struct1 = count_struct2 = 0 
+	last_number1 = last_number2 = 0
 	last_struct1 = structure1[0]; last_struct2 = structure2[0]
+	
 	for i,( struct_item1, struct_item2 ) in enumerate(zip( structure1, structure2 )):
+		
+		if last_item1 != struct_item1:
+			try:
+				struct_dict1[last_item1].append(str(i+1-count_struct1)+'-'+str(i)+' ')
+			except KeyError:
+				print "Error while reading, Key: "+last_item1
+			count_struct1 = 0
+		
+		if last_item2 != struct_item2:
+			try:
+				struct_dict2[last_item2].append(str(i+1-count_struct2)+'-'+str(i)+' ')
+			except KeyError:
+				print "Error while reading, Key: "+last_item2
+			count_struct2 = 0
 
 		## Searching differences betwwen two structures
 		if struct_item1 != struct_item2:
-			
-			struct_dict1[struct_item1] += 1; struct_dict2[struct_item2] += 1
-			last_item1 = struct_item1; last_item2 = struct_item2
-			cc += 1
-
-		## if found there two structures are same adding before found total difference 
+			count_same += 1
 		else:
-			if cc > 0:
-				struct_diff += str(i+1-count_same1)+'-'+str(i+1)+' '
-			struct_dict1[last_item1] = 0; struct_dict2[last_item2] = 0; cc = 0
+			if count_same != 0:
+				struct_diff += str(i+1-count_same)+'-'+str(i)+' '
+				count_same = 0
 
-		count_same1 += 1
-		count_same2 += 1
-		
-		## Search end of structures and add it to dictionary
-		if last_struct1 != struct_item1:
-			struct_size1[last_struct1].append(str(i+1-count_same1)+'-'+str(i))
-			last_struct1 = struct_item1
-			count_same1 = 0
-		
-		if last_struct2 != struct_item2:
-			struct_size2[last_struct2].append(str(i+1-count_same2)+'-'+str(i))
-			last_struct2 = struct_item2
-			count_same2 = 0
+		last_item1 = struct_item1; last_item2 = struct_item2
+		count_struct1 += 1; count_struct2 += 1;
 
-	nfound_struct = {};
-	nfound_struct['E'] = []; nfound_struct['H'] = []; nfound_struct['-'] = []; 
-	
+	size_diff1 = struct_dict1; size_diff2 = struct_dict2; size_diff = {}
+	## Searching structures differenece and size of it.Ex 17-23 and 15-29 result in => 17-23 8
 	for key in ('E', 'H', '-'):
-		trunc_struct1 = trunc_space( struct_size2[key] )
-		trunc_struct2 = trunc_space( struct_size1[key] )
-		struct_size1[key], struct_size2[key], nfound_struct[key]  = is_it_in(trunc_struct1, trunc_struct2)
-		size_diff = size_align(struct_size1[key], struct_size2[key])
+		trunc_space( size_diff2[key] )
+		trunc_space( size_diff1[key] )
+		size_diff1[key], size_diff2[key], Nfound_struct = is_it_in(size_diff1[key], size_diff2[key])
+		size_diff[key] = size_align(size_diff1[key], size_diff2[key])
 		print size_diff
-	'''
-	for key, val in struct_size1.iteritems():
-		if key == '-':
-			for x, y in zip(val, struct_size2[key]):
-				print x, y
-	'''
-	return struct_diff
+
+	save_alternative(size_diff, struct_diff)
+
+
+	return struct_diff, size_diff
 	
+
+def save_diff(diff_struct, sz_struct, atst_ds, align_ds, fa):
+	fa_fh = open("../../pdbs/fastas/"+fa+'_fa', 'r')
+	diff_list = diff_struct.split()
+	fa_line = fa_fh.readline()
+	print "sequence_place, sequence of aligned_struct, sequence of atst_struct, place of aligned structure"
+	
+	for diff in diff_list:
+		diff_nr = diff.split('-')
+		sys.stdout.write(diff+' ')
+		sys.stdout.write(align_ds[int(diff_nr[0])-1:int(diff_nr[1])] + ' ')
+		if diff == diff_list[len(diff_list)-1]:
+			sys.stdout.write( atst_ds[int(diff_nr[0])-1:int(diff_nr[1])] + '\n')
+		else:
+			sys.stdout.write( atst_ds[int(diff_nr[0])-1:int(diff_nr[1])] + ' ,')
+		
+		cc = 0
+		for i, fa_char in enumerate(fa_line):
+			if i < len(fa_line)-1 and fa_char == align_ds[int(diff_nr[0])-1] and fa_line[i+1] == align_ds[int(diff_nr[0])] and fa_line[i+2] == align_ds[int(diff_nr[0])+1]:
+				print i+1
+			cc += 1
+		if cc >= i:
+			print 'not found'
+	return 
+
 
 def spalv(struct, dssp, output, count, flag, measure):    
-	line = struct.readline()   
-	atst_structure = ''
-	align_structure = ''
+	struct_line = struct.readline().rstrip('\n')
+	name_align = ''
+	align_second = atst_second = ''
+	atst_structure = align_structure = ''
+	cc = 0
 	Struct_ali = {}; Struct_atst = {}; null_dict = {}
+
 	## Reading secondary structure elements leader structure
 	while(True):
-		line = struct.readline().rstrip('\n')
-		if line.startswith('>'): break
-		atst_structure += line
+		struct_line = struct.readline().rstrip('\n')
+		if struct_line.startswith('>'): break
+		atst_structure += struct_line
 	atst_l = list(atst_structure)
+
+	secondary_lines = dssp.readlines()
+	for lines in secondary_lines:
+		if lines.startswith('>'): 
+			cc += 1
+			if cc > 2: break
+			if cc == 1:
+				name_atst = lines.rstrip('\n') 
+			else:		
+				name_align = lines[1:].rstrip('\n')
+		else:
+			if cc == 1:
+				atst_second += lines
+			else:
+				align_second += lines
+
 
 	## Reading other structures and aligning them 
 	while(True):
-		line = struct.readline().rstrip('\n')
-		if not line: break
-		if line.startswith('>'):
+
+		struct_line = struct.readline().rstrip('\n')
+		if not struct_line or struct_line.startswith('>'):
 			align_l = list(align_structure)
-			final_diffcount(atst_structure, align_structure)
-			#print difference
+			diff, size = final_diffcount(atst_structure, align_structure)
+			#save_diff(diff, size, atst_second, align_second, name_atst[1:]+'_'+name_align)
 			break
 			align_structure = ''
+			if not struct_line: return
+			name_align = struct_line[1:]
 		else:
-			align_structure += line
+			align_structure += struct_line
 
 	return
 class Bcolors:
