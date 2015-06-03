@@ -78,9 +78,11 @@ def trunc_space(el_list):
 	
 	return
 
-def size_align(structure1, structure2):
+def size_align(structure1, structure2, second_atst, second_ali):
 
 	size_diff = [];
+	size_atst = ''; size_ali = '';
+
 	for value1, value2 in zip(structure1, structure2):
 		interval_vals1 = value1.split('-')
 		interval_vals2 = value2.split('-')
@@ -88,21 +90,34 @@ def size_align(structure1, structure2):
 		size2 = int(interval_vals2[1]) - int(interval_vals2[0])
 
 		if abs(size2 - size1) > 4:
-			size_diff.append(value1 + ' ' + str(abs(size2 - size1)))
 
+			## Adding the dssp with larger interval to array
+			if interval_vals2[1] > interval_vals1[1]:
+				value = value2
+				#size_atst = second_atst[ int(interval_vals2[0])-1 : int(interval_vals2[1]) ]
+				size_ali = second_ali[  int(interval_vals2[0])-1 : int(interval_vals2[1]) ]
+
+			else:
+				value = value1
+				#size_atst = second_atst[ int(interval_vals1[0])-1 : int(interval_vals1[1]) ] 
+				size_ali = second_ali[  int(interval_vals1[0])-1 : int(interval_vals1[1]) ] 
+			
+			size_diff.append(value + ' ' + size_ali + ' ' + str(abs(size2 - size1)))
+			
 	return size_diff
 
 def save_alternative(structures, place):
 
 	return
 
-def final_diffcount(structure1, structure2):
+def final_diffcount(structure1, structure2, second_atst, second_align):
 
 	struct_dict1 = {}; struct_dict2 = {}; struct_size1 = {}; struct_size2 = {}
 	struct_dict1['H'] = []; struct_dict2['H'] = []
 	struct_dict1['E'] = []; struct_dict2['E'] = []
 	struct_dict1['-'] = []; struct_dict2['-'] = []
 	struct_diff = ''
+	atst_second_diff = []; align_second_diff = []
 	last_item1 = structure1[0]; last_item2 = structure2[0];
 	count_same = count_struct1 = count_struct2 = 0 
 	last_number1 = last_number2 = 0
@@ -129,25 +144,28 @@ def final_diffcount(structure1, structure2):
 			count_same += 1
 		else:
 			if count_same != 0:
+				atst_second_diff.append(second_atst[(i-count_same):i])
+				align_second_diff.append(second_align[(i-count_same):i])
+				#align_second_diff += " "; atst_second_diff += " "
 				struct_diff += str(i+1-count_same)+'-'+str(i)+' '
 				count_same = 0
 
 		last_item1 = struct_item1; last_item2 = struct_item2
 		count_struct1 += 1; count_struct2 += 1;
-
+	
 	size_diff1 = struct_dict1; size_diff2 = struct_dict2; size_diff = {}
+	
 	## Searching structures differenece and size of it.Ex 17-23 and 15-29 result in => 17-23 8
 	for key in ('E', 'H', '-'):
-		trunc_space( size_diff2[key] )
-		trunc_space( size_diff1[key] )
+		trunc_space( size_diff2[key])
+		trunc_space( size_diff1[key])
 		size_diff1[key], size_diff2[key], Nfound_struct = is_it_in(size_diff1[key], size_diff2[key])
-		size_diff[key] = size_align(size_diff1[key], size_diff2[key])
-		print size_diff
-
+		size_diff[key] = size_align(size_diff1[key], size_diff2[key], second_atst, second_align)
+		print size_diff[key]
+		return struct_diff, size_diff, atst_second_diff, align_second_diff
+	
 	save_alternative(size_diff, struct_diff)
-
-
-	return struct_diff, size_diff
+	return struct_diff, size_diff, atst_second_diff, align_second_diff
 	
 
 def save_diff(diff_struct, sz_struct, atst_ds, align_ds, fa):
@@ -175,21 +193,24 @@ def save_diff(diff_struct, sz_struct, atst_ds, align_ds, fa):
 	return 
 
 
-def spalv(struct, dssp, output, count, flag, measure):    
+def spalv(struct, dssp, output, count, flag, measure): 
+	import sys   
 	struct_line = struct.readline().rstrip('\n')
-	name_align = ''
-	align_second = atst_second = ''
-	atst_structure = align_structure = ''
+	name_align = ''; name_atst = ''
+	second_atst = ''; second_align = ''
+	atst_structure = ''; align_structure = ''
 	cc = 0
 	Struct_ali = {}; Struct_atst = {}; null_dict = {}
-
-	## Reading secondary structure elements leader structure
+	
+	## Reading structure file
 	while(True):
 		struct_line = struct.readline().rstrip('\n')
 		if struct_line.startswith('>'): break
+		#print struct_line
 		atst_structure += struct_line
 	atst_l = list(atst_structure)
-
+	
+	## Reading dssp file
 	secondary_lines = dssp.readlines()
 	for lines in secondary_lines:
 		if lines.startswith('>'): 
@@ -201,26 +222,27 @@ def spalv(struct, dssp, output, count, flag, measure):
 				name_align = lines[1:].rstrip('\n')
 		else:
 			if cc == 1:
-				atst_second += lines
+				second_atst+= lines.rstrip('\n')
 			else:
-				align_second += lines
+				second_align += lines.rstrip('\n')
+	
 
-
-	## Reading other structures and aligning them 
+	'''## Reading and aligning other structures'''
 	while(True):
-
 		struct_line = struct.readline().rstrip('\n')
-		if not struct_line or struct_line.startswith('>'):
+		if struct_line.startswith('>') or not struct_line:
 			align_l = list(align_structure)
-			diff, size = final_diffcount(atst_structure, align_structure)
-			#save_diff(diff, size, atst_second, align_second, name_atst[1:]+'_'+name_align)
-			break
+			struct_diff, size, secdiff_atst, secdiff_align = final_diffcount(atst_structure, 
+			align_structure, second_atst, second_align)
+			#for x , y in zip(secdiff_atst, secdiff_align):
+			#	print x, y
+			return
 			align_structure = ''
-			if not struct_line: return
-			name_align = struct_line[1:]
+			if not struct_line: break
 		else:
 			align_structure += struct_line
-
+			#save_diff(diff, size, atst_second, align_second, name_atst[1:]+'_'+name_align)
+	
 	return
 class Bcolors:
         RED = '\033[91m'
