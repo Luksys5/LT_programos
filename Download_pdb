@@ -1,0 +1,10 @@
+#!/usr/bin/python
+import os, sys
+fr = open(sys.argv[1], 'r')
+lines = fr.readlines()
+for x in lines:
+	x = x.split('_')
+	x = x[0].rstrip("\n") + ".pdb"
+	print x
+	os.system("wget -O - http://www.pdb.org/pdb/files/" + x + " > pdbs/" + x)
+fr.close()
