@@ -1,0 +1,57 @@
+#!/usr/bin/python
+import re
+import os, sys
+def downloadNget(file_name, name):
+	os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+name)
+	f = open(name, 'r')
+	run = True
+	while(run):
+		line = f.readline()
+		if re.match('.*se_xrayResolution.*', line) or not line:
+			run = False
+
+		
+	line=f.readline().rstrip('\n')
+	Resolution = float(line)
+
+	os.system( 'rm '+name )
+	return Resolution
+
+fg = open('groups_names', 'r')
+fglines =  fg.readlines()
+Leader_names = []
+fw = open('grupiu_atstovai', 'w')
+fogR = open("file_of_group_resolutions", 'w')
+group_resolution = []
+Res_list= []
+i = 0
+for fgline in fglines:
+	fgline = fgline.rstrip('\n')
+	group_file = open(fgline, 'r')
+	group_lines = group_file.readlines()
+	
+	for line in group_lines:
+		line = line.split()[1]
+		Resolution = downloadNget(fgline, line[:4])	
+		if i == 1 :
+			if( min_resolution > Resolution ):
+				min_resolution = Resolution
+				min_line = line
+		
+		else:
+			min_resolution = Resolution
+			min_line = line
+			i = 1
+
+		if( Resolution-0.1 < min_resolution ):
+			Res_list.append((line, Resolution))
+
+	Leader_names.append(min_line.rstrip("\n"))
+	
+	fogR.write(fgline+"\n")
+	for x in Res_list: fogR.write( x[0]+' '+str(x[1])+"\n" )
+	fogR.write("\n") 
+	Res_list = []; i = 0
+
+for x in Leader_names:
+	fw.write(x)
