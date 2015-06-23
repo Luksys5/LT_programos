@@ -133,7 +133,7 @@ def size_align(structure1, structure2, second_atst, second_ali, measure):
 	return size_diff
 
 def save_alternative(struct_name, structures, second, size, place):
-	f = open(place, 'w')
+	f = open(place, 'a')
 	f.write(Bcolors.RED+struct_name+"\n")
 	for key in ('H', 'E', '-'):
 	
@@ -218,54 +218,53 @@ def final_diffcount(measure, structure1, structure2, second_atst, second_align):
 	
 	return struct_dict, size_dict, second_diff
 
-def spalv(struct, dssp, output, count, flag, measure): 
+def spalv(dssp, measure, place): 
 	import sys   
-	struct_line = struct.readline().rstrip('\n')
-	name_align = ''; name_atst = ''
-	second_atst = ''; second_align = ''
+	os.system("rm "+place)
+	fw = open(place, 'a')
+	fw.write(Bcolors.GREEN + '                Alfa helix H '+ Bcolors.YELLOW + 
+		' Beta strand E '+ Bcolors.RESET+' Bend -'+'\n')
+	
+	name_atst = dssp.readline()[1:7].rstrip('\n')
+	atst_dssp= ''; align_dssp= ''
 	atst_structure = ''; align_structure = ''
 	cc = 0
-	Struct_ali = {}; Struct_atst = {}; null_dict = {}
 	
-	## Reading structure file
+	## Reading atst dssp and structure 
 	while(True):
-		struct_line = struct.readline().rstrip('\n')
-		if struct_line.startswith('>'): break
-		#print struct_line
-		atst_structure += struct_line
-	atst_l = list(atst_structure)
-	
-	## Reading dssp file
-	secondary_lines = dssp.readlines()
-	for lines in secondary_lines:
-		if lines.startswith('>'): 
-			cc += 1
-			if cc > 2: break
-			if cc == 1:
-				name_atst = lines.rstrip('\n') 
-			else:		
-				name_align = lines[1:].rstrip('\n')
-		else:
-			if cc == 1:
-				second_atst+= lines.rstrip('\n')
-			else:
-				second_align += lines.rstrip('\n')
-	
+		dssp_line = dssp.readline().rstrip('\n')
+		if dssp_line.startswith('>'): 
+			if not dssp_line.startswith('>'+name_atst):
+				name_align = dssp_line[1:7] 
+				cc = 0
+				break
+			cc = 1
+			dssp_line = dssp.readline().rstrip('\n')
 
-	'''## Reading and aligning other structures'''
-	while(True):
-		struct_line = struct.readline().rstrip('\n')
-		if struct_line.startswith('>') or not struct_line:
-			align_l = list(align_structure)
-			struct_dict, size, secdiff = final_diffcount(measure, atst_structure, align_structure, second_atst, second_align)
-			save_alternative(name_atst+" VS "+name_align, struct_dict, secdiff, size, 'here')
-			return
-			align_structure = ''
-			if not struct_line: break
+		if cc == 0:
+			atst_structure += dssp_line
 		else:
-			align_structure += struct_line
+			atst_dssp += dssp_line
 	
-	return
+	## Reading align dssp and strucure 
+	while(True):
+                dssp_line = dssp.readline().rstrip('\n')
+		if dssp_line.startswith('>') or not dssp_line:
+			cc = 1
+			if not dssp_line.startswith('>'+name_align) or not dssp_line:
+				struct_diff, size, second_diff = final_diffcount(
+					measure, atst_structure, align_structure, 
+					atst_dssp, align_dssp)
+				save_alternative(name_atst+"VS"+name_align, struct_diff, second_diff, size, place)
+				if not dssp_line: return
+				name_align = dssp_line[1:7]	
+
+		elif cc == 0:
+			align_dssp += dssp_line
+		else:
+			align_structure += dssp_line	
+
+			
 class Bcolors:
         RED = '\033[91m'
         BOLD = '\033[95m'
@@ -274,31 +273,6 @@ class Bcolors:
         YELLOW = '\033[93m'
         RESET = '\033[0m'
 m = 3
-#m = int(raw_input('Panasumo ivertis: '))
-'''Test
-fdssp = open('myf.dssp', 'r')
-fstruct = open('myf.nodssp', 'r')
 
-atstout = open('coolseek/atst', 'w')
-atstout.write(Bcolors.GREEN + '                Alfa helix H '+ Bcolors.YELLOW + ' Beta strand E '+ Bcolors.RESET+' Bend -'+'\n')
-spalv(fdssp, fstruct, atstout, 0, 1, m)
-
-
-'''# Test End
-
-
-#   Atstovu atstovai
-fdssp = open('../atst/atst.dssp', 'r')
-fstruct = open('../atst/atst.str', 'r')
-atstout = open('coolseek/atst', 'w')
-atstout.write(Bcolors.GREEN + '                Alfa helix H '+ Bcolors.YELLOW + ' Beta strand E '+ Bcolors.RESET+' Bend -'+'\n')
-spalv(fstruct, fdssp, atstout, 0, 1, m)
-
-'''##   Grupes su atstovais
-for x in range(1,16):
-        f1 = open('../dssp/'+str(x), 'r')
-        f2 = open('../notdssp/'+str(x), 'r')
-        outdssp = open('coolseek/'+str(x), 'w')
-        outdssp.write(Bcolors.GREEN + '                 Alfa helix '+ Bcolors.YELLOW + ' Beta strand '+ Bcolors.RESET+'\n')
-        spalv(f1, f2, outdssp, x, 0, m)
-'''
+fdssp = open("../align_env/dali.ali")
+spalv(fdssp, m, 'coolseek/atst')
