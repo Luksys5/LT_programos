@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name ="description" content="Vesicular Content calculations">
+	<meta name="author" content="MIF 3 kurso bioinfromatikos studentas">
+	
+	<script src="../javascripts/json2.js" type="text/javascript"></script>
+	<script src="../javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script src="../javascripts/cookies.js" type="text/javascript"></script>
+	<script src="../javascripts/flickrshow-7.2.js" type="text/javascript"></script>
+	<title> Test </title>
+</head>
+<style type="text/css">
+	@import url("Vesiculewebpage_style.css");
+</style>
+<script>
+	$(document).ready(function(){
+		$('#nouser').hide();
+		$('#about').show();
+		$("#options").hide();
+		$('#login').height($('#top').height());
+		document.getElementById('name').style.height = $('#top').height()+'px';
+
+		// Prisijungimo lauko aukstis
+		$('#login').height($('#name').height());
+		$('#logo').height($('#name').height());
+		
+		// Calcs container height
+		var height = window.innerHeight;
+		newh = (height/10)*7;
+		document.getElementById('container').style.height = newh+'px';
+	
+		//Reklamos pirmots plotis
+		wcomm = $("#side").width();    	
+		$("#comm").css("width",wcomm+"px"); 
+		document.getElementById('container').style.height = newh+'px';
+		
+		// Hide all section except opening menu section
+		$(".section").not("#about").hide();
+		
+		// Change height of menu options buttons div
+		var btlen = $("#options").children().length;
+		brlen = $("#options").children('br').length;
+		if (brlen - btlen == 0){ sum = 1;}else{sum = Math.abs(brlen - btlen);}
+		$("#options").height((btlen-brlen)*50);
+	});
+</script>
+
+<script>
+	$( window ).resize(function() {
+		$('#login').height($('#imglogo').height());
+	});
+	window.onload = function() {
+		var chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+		if(chrome){
+			$("#Pastas").css("left", "4.5px");
+			$("#reg").css("left", "5px");
+			$("#reg").css("left", "22px");
+		}
+	};
+	function rezults()
+	{
+		try{
+			if(getCookie("mase") == null) checkCookie("mase",document.getElementsByName('Mass')[0].value);
+			if ($("#clicks").html() == ''){$("#clicks").html(1);}
+			else $("#clicks").html(parseInt($("#clicks").html())+1);			
+			var count = document.getElementsByName('quantity')[0].value;
+			for(var i = 0;i< count;i++){
+			checkCookie("Proc", document.getElementsByName("Proc"+i)[0].value);
+			checkCookie("Molw",document.getElementsByName("Molw"+i)[0].value);
+			checkCookie("Conc", document.getElementsByName("Conc"+i)[0].value);
+			checkCookie("name", document.getElementsByName("text"+i)[0].value);
+			}
+			if(count != $("#clicks").html()) document.getElementById("check2").reset();
+			else{
+				alert(getCookie("mase"));
+				var mystring = getCookie("Procent")+getCookie("Molsvor")+getCookie("koncent")+getCookie("mase");
+				var title=document.getElementsByName("title")[0].value;
+				var myurl = "http://localhost/skaiciuok.php"
+				$.ajax({
+					type: "GET",
+					url:myurl,
+					data: {Procent:getCookie("Proc"),
+					Molsvor:getCookie("Molw"),
+					koncent:getCookie("Conc"),
+					mase:getCookie("mase"),
+					name:getCookie("name")},
+				cache:false, 
+					async:false,
+					success: function(data) {
+					// the data variable contains all PHP output during this request
+						
+						$('#rezult1').html("<h2>"+"Experiment "+title+"</h2>"+data);
+						$('#rezult1').show();
+					}
+				});	
+			}
+		}
+		catch(err){
+			$("#error").html(err.message);
+		}
+		if(count == $("#clicks").html()){ del();}
+		return false;
+	}
+</script>
+<script type="text/javascript">
+	function toggleVisibility(newSection) {
+		$(".section").not("#" + newSection).hide();
+		if (newSection === 'calc1' || newSection === 'calc2' || newSection === 'calc3') {
+			if(newSection === 'calc1'){
+				$('#field').show();
+				$('#rezult1').show();
+				$("#VscHints").show();
+			}
+			$("#calcs").show();
+			$("#options").show();
+		}
+		else{
+			$('#break').hide();
+		}	
+		$("#" + newSection).show();
+	}
+	function showfirst(){
+		$("#field").show();
+		try{
+			$("#fieldx").hide();
+		}catch(err){
+		
+		}
+	}
+	function showother(){	
+		$("#field").hide();
+		$("#fieldx").show();
+		$("#proceed").height($("#back").height());
+		$("#proceed").width($("#back").width());
+		tableCreate();
+		return false;
+	}
+	function tableCreate(){
+	//sukuriamas 2'as laukas, kuriame talpinami visi inputai ir textai.
+	myExperiment = document.getElementsByName('title')[0].value;
+	var tonext =  document.getElementsByName('quantity')[0].value;
+	var tbdy = document.getElementById('fieldx');
+	var newnode = document.createElement('div');
+	tbdy.innerHTML='';
+	newnode.innerHTML = '<h3>'+myExperiment+'</h3>';
+	tbdy.appendChild(newnode);
+	for(var j = 0; j < tonext; j++){
+		for(var i = 0; i<4; i++){
+			var space = document.createElement('div');
+			space.innerHTML = "<br>"
+			var input = document.createElement('input');
+			var mybr = document.createElement('br');
+			mybr.setAttribute("style","line-height:1.40em;");
+			if (i == 0){
+				var t = document.createTextNode((i+1)*(j+1)+" Lipid");
+				tbdy.appendChild(t);
+				tbdy.appendChild(space);
+				var t = document.createTextNode("Lipid's name ");
+				input.setAttribute("type", "text");
+				input.setAttribute("style", "width:100px;position:absolute;left:220px;");
+				input.setAttribute("name", "text"+j);
+			}else{
+				input.setAttribute("type", "number");
+				input.setAttribute("step", "0.01");
+				input.setAttribute("min", "0");
+				if (i == 1){
+					input.setAttribute("max", "100");	
+					var t = document.createTextNode("Percentage of the lipid in vesicle ");		
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Proc"+j);
+				}
+				if (i == 2){
+					input.setAttribute("max", "100");
+					var t = document.createTextNode("Molecular weight ");
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Molw"+j);
+				}
+				if (i == 3){
+					var t = document.createTextNode("Concentration of the lipid solution ");
+					input.setAttribute("max", "1000");
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Conc"+j);
+					
+				}
+					
+			}	
+			
+			input.setAttribute("form", "check2");
+			input.setAttribute("required", "true");
+			tbdy.appendChild(t);
+			tbdy.appendChild(input);
+			tbdy.appendChild(mybr);
+			
+		}
+	
+	}
+	//buttonas atgal grazina
+	butt = document.createElement("button");
+	butt.setAttribute("onclick", "showfirst()");
+	butt.setAttribute("style", "position:relative;float:left;width:80px;");
+	butt.innerHTML = 'Show first!';
+	//submit mygtukas
+	inp = document.createElement("input");
+	inp.setAttribute("type", "submit");
+	inp.setAttribute("id", "proceed");
+	inp.setAttribute("form", "check2");
+	inp.setAttribute("style", "position:absolute;float:left;left:85px;width:80px;height:30px;");
+	inp.setAttribute("value", "Proceed");
+	//viska sudedu i 'div' calc1
+	tbdy.appendChild(inp);
+	tbdy.appendChild(butt);
+	$("#fieldx").show();
+}
+</script>
+<script> <!-- sudeti reiksmes i masyva po kekvieno mygtuko klickinimo ir siusti masyva i ta skaiciuok.php --> 
+	function getuser(){
+		slapt= document.getElementsByName('slapt')[0].value;
+		Past = document.getElementById('Pastas').value;
+		var myurl = "http://localhost/Mysqli_tsk/exists.php/?q="+Past;
+		$.ajax({
+			url: myurl,
+			async: false,
+			success: function(responseText) {
+				$('#LoggedIn').html(responseText);
+			},
+		});
+		if( $("#nouser").is(":visible")){
+			alert("Signed");
+			return false;
+		}
+		alert("No user found " + Past)
+		return false
+	}
+	function del(){		
+		if (getCookie("Procent")){ 
+			delCookie("Procent");
+			delCookie("Molsvor");
+			delCookie("mase");
+			delCookie("koncent");
+			delCookie("name");
+	}
+
+	document.getElementById("check2").reset();
+	document.getElementById("check").reset();
+	showfirst();
+	$("#clicks").html('');	
+	
+	}
+</script>
+<script>
+	function logged(){
+		var slapt1 = document.getElementsByName('slapt')[0].value;
+		var slapt2 = document.getElementsByName('slapt2')[0].value;
+		var Past = document.getElementById('Pastas').value;
+		var myurl = "http://localhost/Mysqli_tsk/logon.php?q="+Past;
+		$.ajax({
+			url: myurl,
+			async: false,
+			success: function(responseText) {
+				$('#txtHint').html(responseText);
+			},
+		});
+		var bool = document.getElementById('txtHint').innerHTML;
+		document.getElementById('txtHint').innerHTML=Past+" already exists";
+	}
+</script>
+<script text="Javascript">
+	function makeblur(blurvalue){
+		
+		$(".blur").css({
+			'filter'         : blurvalue,
+			'-webkit-filter' : blurvalue,
+			'-moz-filter'    : blurvalue,
+			'-o-filter'      : blurvalue,
+			'-ms-filter'     : blurvalue
+		});
+				
+		$("#Fuserbox").show();
+		return false;
+	}
+</script>
+<script>
+	function checknsend(){
+		var Past = document.getElementsByName('fPastas')[0].value;
+		var myurl = "http://localhost/Mysqli_tsk/ChecknSend.php?q="+Past;
+		$.ajax({
+			url: myurl,
+			async: false,
+			success: function(responseText) {
+				$('#REZ').html(responseText);
+			},
+		});
+		var bool = $('#REZ').html();
+		$.trim(bool);
+		alert(bool);
+
+
+
+		}
+</script>
+<body>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/lt_LT/sdk.js#xfbml=1&version=v2.0";
+		fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'facebook-jssdk'));
+	</script>
+	<div id="top" class="blur">
+		<div id="logo"><img id = "imglogo" src="../pict/logo.png"></div>
+		<div id="name"><h3>Vesicule Calculations ©#$</h3></div>
+		<div id="login" class="logintext">
+			<form onsubmit="return getuser();" name="tables" 
+				id = 'logform' action="http://localhost/VesCalc/loginas.html" method="post">  
+				E-Mail <br>
+				<input type="email" id = 'Pastas'>
+				<br>Password:</br>
+				<input type='password' name='slapt' required/>
+				<br>
+			</form>
+			<input type="submit" value="Sign In " form = "logform" class="SignReg"> 
+			<button class="SignReg" onclick = "window.location.href='Registracija.html'">Register</button>
+			</br>
+			<button id = "Forgot" onclick="makeblur('blur(5px)')" >Forgot password?</button>
+		</div>			
+	</div> 
+	<div id="container" class="blur">
+		<div id="menu" >
+			<b>
+			<br>
+			<button class='menu' onmouseover="toggleVisibility('about');return false;" >  Home </button><br>
+			</br>
+
+			<button class='menu' onmouseover="$('#options').show();$('#break').show();return false;">Calcs</button>
+			<br></br>
+	
+			<div id="options"  class = "section menu">
+				<button class="option" href = "#" onmouseover="toggleVisibility('calc1');">Vsc</button><br></br>
+				<button class="option" href = "#" onmouseover="toggleVisibility('calc2');">LpV</button><br></br>
+				<button class="option" href = "#" onmouseover="toggleVisibility('calc3');">VW</button>
+			</div>
+
+			<button id ="butt"  class='menu' onmouseover="toggleVisibility('contacts'); return false;" >Contacts </button>
+			<br></br>
+
+			<button id = "profile-button" class = 'menu' onmouseover="toggleVisibility('profile');">Profile</button>
+			</br><br>
+
+			<div class="fb-like" data-href="http://www.google.com" data-layout="box_count"
+					     data-action="like" data-show-faces="true" 
+					     data-share="true" data-send="true">
+			</div>	
+		</div>
+
+		<div id="about" class="section">
+                        <p>This web page was created to save researchers time by 
+			making calculations for liposome preparation and their properties more convenient.
+		<br><p>Here you will find three types of calculations which allows you to: 
+		<br><p>1) Calculate volumes of lipid solutions (unlimited number of different lipids solutions) required to prepare certain composition of liposomes.
+		<br><p>2) Calculate molecular weight of any composition and size liposome.
+		<br><p>3) Calculate number of lipids per liposome of any composition and size. 
+		Which allows you to decide how much of a certain lipid, protein or any other 
+		molecule to add into the lipid mixture during liposome preparation to have a single 
+		copy of it percertain size of liposome.
+		<br><p>Working with this toolkit you will find an extra option (10 dollars/year) 
+		to make your own personalised library of lipid info - once lipidname and its 
+		properties are entered it will be saved and next time you will not need to 
+		spend time to enter all that information.
+		</p>
+                </div>
+		<div id = 'calcs' class='section'>
+			<form id="check" onsubmit="return showother();"></form>
+			<form id="check2" onsubmit="return rezults();" ></form>
+			<div id="calc1" class="section " ><h2>Vesicles Content Calculator</h2>
+				<div id="field" class="section">
+					Number of lipids <input type="number" form="check" style="width:50px; position:absolute; left:170px;" name="quantity" min="1" max="10" required/><br>
+					Final volume of solution <input type="number" step="0.01" form="check" style="width:50px; position:absolute; left:170px;" name="Volume" min="1" max="50" required/><br>
+					Final mass of solution <input type="number" step="0.01" form="check" style="width:50px; position:absolute; left:170px;" name="Mass" min="1" max="50" required/><br>
+					Title of experiment <input type="text" form="check" style="width:100px; position:absolute; left:170px;" name="title" required><br>
+					<input type = "submit" class="sub" form="check" value="Next">
+					<button id='reset' class="sub" onclick="del()">RESET</button>
+				</div>
+				<div id="fieldx" class="section"></div>
+			</div>
+
+			<div id="VscHints" class="section "><h3>Hints</h3><br>Number of lipids - how many lipid's to create<br></div>
+			<div id="rezult1" class="section" >Rezai</div>
+		</div>
+		
+		<div id="contacts" class = "section">
+			Marius : ??
+			Lukas : //
+		</div>
+
+		<div id = 'profile' class = "section">
+			Profilis
+			<div id="profile" >
+				
+			</div>
+		</div>
+
+		
+		<div id ="side" >
+			<img class="advert" id = "comm" src="../pict/htmlimg.jpg" style="min-width:100%;min-height:50%;display: block;" alt = "htmlimg2" >
+			<img class="advert" src="../pict/Firefox.jpg" style="max-width:50%;min-height:50%;display: inline;" alt = "htmlimg2" >
+			<img class="advert" src="../pict/chrome.jpg" style="min-height:50%;max-width:50%;;display:inline;float:left;max-width:50%;" alt = "htmlimg2" >
+		</div>
+			
+	</div>
+	<div id = "bot" class = "blur">
+		<h4>Copyright ©Luksys Tm.</h4>
+	</div>
+	<div id = "REZ"></div>
+	<form id ="Fuserbox" class ='section' onsubmit="return checknsend()" action"">
+		<h4>Resend passord to your email
+			<br>E:mail
+			<input type="email" name ="fPastas" ></input>
+			<input type = "submit" value ="Send"></input>
+		</h4>
+	</form>
+	<div id="LoggedIn"></div>
+</body>
+</html>

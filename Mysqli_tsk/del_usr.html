@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>dmbz</title>
+	<meta charset="utf-8">
+	<meta name="description" content="Reklaminis stendas.">
+	<script src="../javascripts/jquery-1.11.1.js" type="text/javascript"></script>
+</head>
+
+<script>
+	function loadXMLDoc()
+	{
+		$.ajax({url:"http://localhost/alltables.php",
+			success:function(result){
+				alert('neveikia');
+				$("#divx").html(result);
+			}
+		});
+	}
+</script>
+<body>
+	<form name="insert" action="insert_usr.php" method="post">
+                <div id="Yra1">
+                        <div id='divy'>dropit</div>
+                        Vartotojo, kuri norite ikelti <br>
+			Vardas&nbsp;<input type="text" name="name"><br>
+			Pavarde&nbsp; <input type="text" name="surname"><br>
+			Pastas&nbsp; <input type="text" name="mail"><br>
+			Slaptazodis&nbsp; <input type="text" name="passw"><br>
+                        <input type="submit" value="Ideti">
+                </div>
+        </form>
+        <form name="delete" action="delete_user.php" method="post">
+                <div id="Yra2">
+                        <div id='divx'>dropit</div>
+                        Vartotojo, kuri norite istrinti id:
+                        <input type="number" name="id">
+                        <input type="submit" value="Istrinti">
+                </div>
+        </form>
+
+
+</body>
+</html>
+

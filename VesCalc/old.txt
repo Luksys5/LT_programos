@@ -1,0 +1,6 @@
+<!--<br>
+                                <button class="option" href = "#" onclick="toggleVisibility('calc2');return false;" style="width:80%"> LpV</button><br>
+                                <br>
+                                <button class="option" href = "#" onclick="toggleVisibility('calc3');return false;" style="width:80%"> VW</button><br>
+                                <br-->
+

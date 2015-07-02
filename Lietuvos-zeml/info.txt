@@ -1,0 +1,102 @@
+Vilnius	530 732	
+Kaunas	348 506	
+Klaipëda	178 380	
+Ðiauliai	122 236
+Alytus	67 443	
+Marijampolë	45 268	
+Maþeikiai	40 035	
+Jonava	33 450	
+Utena	31 700	
+Këdainiai	29 602	
+Telðiai	28 567	
+Visaginas	26 144	
+Tauragë	27 027	
+Ukmergë	26 768	
+Plungë	21 800	
+Kretinga	20 416	
+Ðilutë	20 043	
+Radviliðkis	19 278	
+Palanga	16 704	
+Druskininkai	16 224	
+Rokiðkis	15 635	
+Gargþdai	14 942	
+Birþai	14 251	
+Elektrënai	13 142	
+Kurðënai	13 473	
+Jurbarkas	12 756	
+Garliava	12 505	
+Vilkaviðkis	12 554	
+Raseiniai	12 090	
+Lentvaris	11 727	
+Anykðèiai	11 149	
+Naujoji Akmenë	10 810	
+Grigiðkës	11 440	
+Prienai	10 774
+Joniðkis	10 828
+Kelmë		10 109	
+Varëna	10 184	
+Kaiðiadorys	9 387
+Pasvalys	8 241
+Kupiðkis	7 846	
+Zarasai	7 855
+Skuodas	7 307	
+Kazlø Rûda	7 285	
+Ðirvintos	7 022	
+Molëtai	6 824	
+Ðalèininkai	6 576	
+Ðakiai	6 401
+Ðvenèionëliai	6 376	
+Pabradë	6 364
+Kybartai	6 306	
+Ignalina	6 353	
+Ðilalë	5 935
+Pakruojis	5 772	
+Nemenèinë	5 478	
+Ðvenèionys	5 314	
+Trakai	5 319
+Vievis	5 200	
+Kalvarija	4 907
+Lazdijai	4 828	
+Rietavas	3 669	
+Þieþmariai	3 790	
+Eiðiðkës	3 615
+Ariogala	3 574	
+Ðeduva	3 205	
+Venta	2 987	2 867	
+Birðtonas	2 868	
+Neringa	2 230	
+Akmenë	3 019
+Tytuvënai	2 616
+Rudiðkës	2 466	
+Vilkija	2 315
+Pagëgiai	2 199	
+Vieksniai	2 109	
+Þagare	2 034
+Skaudvilë	2 009	
+Eþerelis	2 002
+Gelgaudiðkis	1 953	
+Kudirkos Naumiestis	1 869	
+Simnas	1 845	
+Salantai	1 811	
+Linkuva	1 674
+Ramygala	1 699	
+Priekulë	1 587	
+Veisiejai	1 624	
+Daugai	1 392	
+Joniðkëlis	1 354	
+Jieznas	1 390
+Obeliai	1 254	
+Virbalis	1 273
+Varniai	1 305	
+Seda	1 245	
+Vabalninkas	1 189	
+Subaèius	1 132	
+Baltoji Vokë	1 107	
+Dukstas	963	
+Pandëlys	908	
+Dusetos	819	
+Uþventis	874	
+Kavarskas	744	
+Smalininkai	629	
+Troðkûnai	508	
+Panemunë	312	

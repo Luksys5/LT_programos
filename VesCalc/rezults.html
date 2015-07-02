@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		
+		<script src="javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="javascripts/cookies.js" type="text/javascript"></script>
+		<title> Test </title>
+	</head>
+<script>
+	function rezults(){
+		info = [];
+		info[0] = "Hi";
+		info[1] = "Hell'o";
+		var myurl = "http://localhost/skaiciuok.php";
+		$.ajax({
+			type: "GET",
+			data: {info:info},
+			url: myurl,
+			success: function(msg){
+				$('#rez').html(msg);
+			}
+		});
+	}
+</script> 
+<body onload="rezults()">
+	<div id="rez"></div>
+</body>
+</html>

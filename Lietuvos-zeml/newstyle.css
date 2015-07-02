@@ -1,0 +1,64 @@
+#container
+{
+    height:210px;
+    width:500px;
+    position:relative;
+}
+#paveikslo1
+{    
+    position:absolute;
+    left:0;
+    top:0;
+    left:10px;
+    top:50px;
+}
+#paveikslo2
+{
+   position:absolute;
+    left:0;
+    top:0;
+    z-index:0;
+    left:10px;
+    top:50px;
+}
+#paveikslo3
+{
+   position:absolute;
+    left:0;
+    top:0;
+    z-index:1;
+    left:10px;
+    top:50px;
+}
+#paveikslo4
+{
+   position:absolute;
+    left:0;
+    top:0;
+    z-index:2;
+    left:10px;
+    top:50px;
+}
+#paveikslo5
+{
+   position:absolute;
+    left:0;
+    top:0;
+    z-index:3;
+    left:10px;
+    top:50px;
+}
+#text
+{
+    position:absolute;    
+    color:black;
+    font-size:24px;
+    font-weight:bold;
+    
+}
+.box img {
+    -webkit-transition:1s;
+}
+.box img.clicked{
+    margin-left:50px;
+ }

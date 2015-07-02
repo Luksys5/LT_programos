@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name ="description" content="Vesicular Content calculations">
+	<meta name="author" content="MIF 3 kurso bioinfromatikos studentas">
+	
+	<script src="../javascripts/json2.js" type="text/javascript"></script>
+	<script src="../javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+	<script src="../javascripts/cookies.js" type="text/javascript"></script>
+	<script src="../javascripts/flickrshow-7.2.js" type="text/javascript"></script>
+	<title> Test </title>
+</head>
+<style type="text/css">
+	@import url("test.css");
+</style>
+<script>
+	$(document).ready(function(){
+		$('#about').show();
+		$('#login').height($('#top').height());
+		document.getElementById('name').style.height = $('#top').height()+'px';
+		$('#logo').height($('#name').height());
+		$('#login').height($('#name').height());  	//Prisijungimo lauko dydis
+		//document.getElementById('logo').style.left=15+'px';
+		var height = window.innerHeight;
+		newh = (height/10)*7;			// Sunki aritmetika
+		$("#options").hide();
+		wcomm = $("#side").width();    		//Reklamos pirmots plotis
+		$("#comm").css("width",wcomm+"px"); 
+		document.getElementById('container').style.height = newh+'px';
+		$(".section").not("#about").hide();
+	});
+</script>
+<script>
+	$( window ).resize(function() {
+		$('#login').height($('#imglogo').height());
+	});
+	window.onload = function() {
+		var chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+		if(chrome){
+			document.getElementsByName('Pastas')[0].style.left = '4.5px';
+			document.getElementById('reg').style.left = '5px';
+			document.getElementById('reg').style.height = '22px';
+		}
+	};
+	function rezults()
+	{
+		try{
+			if(getCookie("mase") == null) checkCookie("mase",document.getElementsByName('Mass')[0].value);
+			if ($("#clicks").html() == ''){$("#clicks").html(1);}
+			else $("#clicks").html(parseInt($("#clicks").html())+1);			
+			var count = document.getElementsByName('quantity')[0].value;
+			for(var i = 0;i< count;i++){
+			checkCookie("Proc", document.getElementsByName("Proc"+i)[0].value);
+			checkCookie("Molw",document.getElementsByName("Molw"+i)[0].value);
+			checkCookie("Conc", document.getElementsByName("Conc"+i)[0].value);
+			checkCookie("name", document.getElementsByName("text"+i)[0].value);
+			}
+			if(count != $("#clicks").html()) document.getElementById("check2").reset();
+			else{
+				alert(getCookie("mase"));
+				var mystring = getCookie("Procent")+getCookie("Molsvor")+getCookie("koncent")+getCookie("mase");
+				var title=document.getElementsByName("title")[0].value;
+				var myurl = "http://localhost/Mysqli_tsk/skaiciuok.php"
+				$.ajax({
+					type: "GET",
+					url:myurl,
+					data: {Procent:getCookie("Proc"),
+					Molsvor:getCookie("Molw"),
+					koncent:getCookie("Conc"),
+					mase:getCookie("mase"),
+					name:getCookie("name")},
+				cache:false, 
+					async:false,
+					success: function(data) {
+					// the data variable contains all PHP output during this request
+						
+						$('#rezult1').html("<h2>"+"Experiment "+title+"</h2>"+data);
+						$('#rezult1').show();
+					}
+				});	
+			}
+		}
+		catch(err){
+			$("#error").html(err.message);
+		}
+		if(count == $("#clicks").html()){ del();}
+		return false;
+	}
+</script>
+<script type="text/javascript">
+	function toggleVisibility(newSection) {
+		$(".section").not("#" + newSection).hide();
+		if (newSection === 'calc1' || newSection === 'calc2' || newSection === 'calc3') {
+			$("#calcs").show();
+			if(newSection === 'calc1'){
+				var Width = $('#calcs').width()-$('#calc1').width();
+				//var Width = $('#calcs').width() - $('#calc1').width();
+				//alert(Width);
+				$('.fields').show();
+				//$('#Hints').width(Width);
+			}
+			$("#options").show();
+			$("#aprasas").show();
+			//$("#rezult1").hide();
+		}
+		else{
+			$('#break').hide();
+		}
+		$("#" + newSection).show();
+		$("#reklama").show();
+	}
+	function showfirst(){
+		$("#field").show();
+		try{
+			$("#fieldx").hide();
+		}catch(err){
+		
+		}
+	}
+	function showother(){	
+		$("#field").hide();
+		$("#fieldx").show();
+		$("#proceed").height($("#back").height());
+		$("#proceed").width($("#back").width());
+		tableCreate();
+		return false;
+	}
+	function tableCreate(){
+	//sukuriamas 2'as laukas, kuriame talpinami visi inputai ir textai.
+	myExperiment = document.getElementsByName('title')[0].value;
+	var tonext =  document.getElementsByName('quantity')[0].value;
+	var tbdy = document.getElementById('fieldx');
+	var newnode = document.createElement('div');
+	tbdy.innerHTML='';
+	newnode.innerHTML = '<h3>'+myExperiment+'</h3>';
+	tbdy.appendChild(newnode);
+	for(var j = 0; j < tonext; j++){
+		for(var i = 0; i<4; i++){
+			var space = document.createElement('div');
+			space.innerHTML = "<br>"
+			var input = document.createElement('input');
+			var mybr = document.createElement('br');
+			mybr.setAttribute("style","line-height:1.40em;");
+			if (i == 0){
+				var t = document.createTextNode((i+1)*(j+1)+" Lipid");
+				tbdy.appendChild(t);
+				tbdy.appendChild(space);
+				var t = document.createTextNode("Lipid's name ");
+				input.setAttribute("type", "text");
+				input.setAttribute("style", "width:100px;position:absolute;left:220px;");
+				input.setAttribute("name", "text"+j);
+			}else{
+				input.setAttribute("type", "number");
+				input.setAttribute("step", "0.01");
+				input.setAttribute("min", "0");
+				if (i == 1){
+					input.setAttribute("max", "100");	
+					var t = document.createTextNode("Percentage of the lipid in vesicle ");		
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Proc"+j);
+				}
+				if (i == 2){
+					input.setAttribute("max", "100");
+					var t = document.createTextNode("Molecular weight ");
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Molw"+j);
+				}
+				if (i == 3){
+					var t = document.createTextNode("Concentration of the lipid solution ");
+					input.setAttribute("max", "1000");
+					input.setAttribute("style", "width:50px;position:absolute;left:220px;");
+					input.setAttribute("name", "Conc"+j);
+					
+				}
+					
+			}	
+			
+			input.setAttribute("form", "check2");
+			input.setAttribute("required", "true");
+			tbdy.appendChild(t);
+			tbdy.appendChild(input);
+			tbdy.appendChild(mybr);
+			
+		}
+	
+	}
+	//buttonas atgal grazina
+	butt = document.createElement("button");
+	butt.setAttribute("onclick", "showfirst()");
+	butt.setAttribute("style", "position:relative;float:left;width:80px;");
+	butt.innerHTML = 'Show first!';
+	//submit mygtukas
+	inp = document.createElement("input");
+	inp.setAttribute("type", "submit");
+	inp.setAttribute("id", "proceed");
+	inp.setAttribute("form", "check2");
+	inp.setAttribute("style", "position:absolute;float:left;left:85px;width:80px;height:30px;");
+	inp.setAttribute("value", "Proceed");
+	//viska sudedu i 'div' calc1
+	tbdy.appendChild(inp);
+	tbdy.appendChild(butt);
+	$("#fieldx").show();
+}
+</script>
+<script> <!-- sudeti reiksmes i masyva po kekvieno mygtuko klickinimo ir siusti masyva i ta skaiciuok.php --> 
+	function getuser(){
+		slapt= document.getElementsByName('slapt')[0].value;
+		Past = document.getElementsByName('Pastas')[0].value;
+		var myurl = "http://localhost/Mysqli_tsk/exists.php/?q="+Past;
+		$.ajax({
+			url: myurl,
+			async: false,
+			success: function(responseText) {
+				if(responseText == 'false'){
+					$('#nouser').show();
+				}else{
+					checkCookie("Pastas", Past);
+					$('#nouser').hide();
+				}
+			},
+		});
+		if( $("#nouser").is(":visible")){
+			return false;
+		}
+		return true;
+	}
+	function del(){		
+		if (getCookie("Procent")){ 
+			delCookie("Procent");
+			delCookie("Molsvor");
+			delCookie("mase");
+			delCookie("koncent");
+			delCookie("name");
+	}
+
+	document.getElementById("check2").reset();
+	document.getElementById("check").reset();
+	showfirst();
+	$("#clicks").html('');	
+	
+	}
+</script>
+<body>
+	<div id="fb-root"></div>
+	<script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/lt_LT/sdk.js#xfbml=1&version=v2.0";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+	</script>
+	<!--img src="green.jpg" id="img" alt="no background" /--> 
+	<div id="top">
+		<div id="logo"><img id = "imglogo" src="logo.png"></div>
+		<div id="name"><h3>Vesicule Calculations ©#$</h3></div>
+		<div id="login" class="logintext">
+			<form style="top:30px" onsubmit="return getuser();" name="tables" id = 'logform' action="http://localhost/Vescalc/loginas.html" method="post">  
+				E-Mail:&nbsp;&nbsp;&nbsp;
+				<input type="email" name='Pastas' style="position:relative;width:40%"> <!--left:8px; required/>-->
+				<button id="reg" onclick = "window.location.href='Registracija.html'" style="position:relative;width: 66px;">Register</button><!--left:8px;>Register</button>-->
+				<br>Password:
+				<input type='password' name='slapt'  style="position:relative;width:40%;" required/>
+				<input type="submit" value="Sign In " style="position:relative;width:66px;"><br> 
+			</form>
+		</div>			
+	</div> 
+	<div id="container">
+		<div id="menu" class="down">
+			<b>
+			<br>
+			<button onclick="toggleVisibility('about');return false;" >  Home </button><br>
+			</br>
+			<button  onclick="$('#options').show();$('#break').show();return false;" >Calcs </button></br><br>
+				<div id="options" style="left:10px;" class = "section">
+				<button class="option" href = "#" onclick="toggleVisibility('calc1');del();" style="width:80%"> Vsc</button><br>
+				<br>
+				<button class="option" href = "#" onclick="toggleVisibility('calc2');return false;" style="width:80%"> LpV</button><br>
+				<br>
+				<button class="option" href = "#" onclick="toggleVisibility('calc3');return false;" style="width:80%"> VW</button><br>
+			<br>
+			</div>
+			<button onclick="toggleVisibility('support'); return false;">Support </button><br>
+			<br>
+			<button id ="butt" onclick="toggleVisibility('contacts'); return false;" >Contacts </button>
+			</br><br>
+			<div class="fb-like" data-href="http://www.google.com" data-layout="box_count" data-action="like" data-show-faces="true" data-share="true" data-send="true"></div>	
+		</div>
+		<div id ="side" class="down">
+			<img id = "comm" src="htmlimg.jpg" style="min-width:100%;min-height:50%;display: block;" alt = "htmlimg2" >
+			<img src="Firefox.jpg" style="position:relative;max-width:50%;min-height:50%;display: inline;" alt = "htmlimg2" >
+			<img src="chrome.jpg" style="position:relative;min-height:50%;max-width:50%;;display:inline;float:left;max-width:50%;" alt = "htmlimg2" >
+		</div>
+
+		<div id="about" class="section">
+			This web page was created to save researchers time by making calculations 
+			<br>for liposome preparation and their properties more convenient.
+			<br>Here you will find three types of calculations which allows you to: 
+			<br><br>1) Calculate volumes of lipid solutions (unlimited number of different lipids solutions)</br>
+			required to prepare certain composition of liposomes.<br>
+			<br>
+			2) Calculate molecular weight of any composition and size liposome.<br>
+			<br>
+			3) Calculate number of lipids per liposome of any composition and size.Which allows you to decide
+			<br> how much of a certain lipid, protein or any other molecule to add into the lipid mixture 
+			<br>during liposome preparation to have a single copy of it percertain size of liposome.<br>
+			<br>
+			Working with this toolkit you will find an extra option (10 dollars/year) to make your<br>
+			own personalised library of lipid info - once lipidname and its properties are entered<br>
+			it will be saved and next time you will not need to spend time to enter all that <br>
+			information. <br>
+			
+		</div>
+		<div id="calcs" class="section ">
+			<form id="check" onsubmit="return showother();"></form>
+			<form id="check2" onsubmit="return rezults();" ></form>
+			<div id="calc1" class="section down" ><h2>Vesicles Content Calculator</h2>
+				<div id="field" class="section">
+					Number of lipids <input type="number" form="check" style="width:50px;position:absolute;left:161px;" name="quantity" min="1" max="10" required/><br>
+					Final volume of solution <input type="number" step="0.01" form="check" style="width:50px;position:absolute;left:161px;	" name="Volume" min="1" max="50" required/><br>
+					Final mass of solution <input type="number" step="0.01" form="check" style="width:50px;position:absolute;left:161px;" name="Mass" min="1" max="50" required/><br>
+					Title of experiment <input type="text" form="check" style="width:100px;position:absolute;left:161px;" name="title" required><br>
+					<input type = "submit" class="sub" form="check" value="Next">
+				</div>
+				<div id="fieldx" class="section">
+				</div>
+			</div>
+			<!--<div id="Hints" class="section down"><h3>Hints</h3><br>Number of lipids - how many lipid's to create<br></div>
+			-->
+			<div id="Hints">tell me something
+			</div>
+			<div id='error'></div>
+			<div id='clicks' class="section"></div>
+			<!--div id="rezult1">Rezai</div-->
+			<div id="calc2" class="section down"><h2>Lipid's Per Vesicle</h2>
+	
+			</div>
+			<div id="calc3" class="section down"><h2>Vesicle weight</h2>
+				
+			<!--<div id="rezult3">Rezai</div>-->
+			</div>
+		</div>			
+		<div id="support" class="section down">
+		donoras
+		</div>
+	
+		<div id="contacts" class="section down">
+		contacts
+		</div>
+	</div>
+	<div id = "bot">
+		<h4 style="position:relative;">Copyright ©Luksys Tm.</h4>
+	</div>
+
+</body>
+</html>
