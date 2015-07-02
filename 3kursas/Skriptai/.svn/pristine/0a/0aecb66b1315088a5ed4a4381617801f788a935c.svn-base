@@ -1,0 +1,63 @@
+#! /bin/sh
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2005/03/25 07:24:01 $ 
+#$Locker: saulius $
+#$Revision: 1.4 $
+#$Source: /home/saulius/src/sort-sources/RCS/sort-sources,v $
+#$State: Exp $
+#------------------------------------------------------------------------------
+#*
+#   Sort Cannon G6 images automatically into separate subdirectories
+#   named after image exif creation dates.
+#**
+
+set -ue
+
+EXT_LIST=".jpg .thm .JPG .THM"
+
+if type exiftime > /dev/null 2>&1
+then
+    function exif_time()
+    {
+        exiftime -tc -s" " $1 \
+        | grep '^Image Created' \
+        | awk '{print $3}' \
+        | sed 's/:/-/g'
+    }
+elif type exif.py > /dev/null 2>&1
+then
+    function exif_time()
+    {
+        exif.py -tc -s" " $1 \
+        | grep '^ *DateTime:' \
+        | awk '{print $3}' \
+        | awk -F= '{print $2}' \
+        | sed 's/:/-/g'
+    }
+else
+    echo "$0: Can find neither 'exiftime' nor 'exif.py' -- need them to get image date" >&2
+    echo "$0: this is the fatal error for me -- terminating now" >&2
+    exit 1
+fi
+
+for ext in $EXT_LIST
+do
+    if [ "$(echo *${ext})" != "*${ext}" ]
+    then
+	for i in *${ext}
+	  do
+	  D=$(exif_time $i)
+	  B=`basename $i ${ext}`
+	  S=`dirname $i`
+
+	  SND="${S}/$(echo $B | sed 's/^..._/snd_/').wav"
+
+	  test -d ${D} || mkdir ${D}
+
+	  mv -v ${S}/${B}.* ${D}/
+	  test -f ${SND} && mv -v ${SND} ${D}
+	done
+    fi
+done
+

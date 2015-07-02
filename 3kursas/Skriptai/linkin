@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -ue
+
+find . -name "$2" | \
+xargs -n1 -i sh -c "cmp -s $1 '{}' && echo '{}'" | \
+xargs -n1 -i sh -xc "rm '{}' ; ln $1 '{}'"

@@ -1,0 +1,158 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2014-07-02 17:43:36 +0300 (Tr, 02 Lie 2014) $ 
+#$Revision: 462 $
+#$URL: svn://saulius-grazulis.lt/scripts/mktexdepend $
+#------------------------------------------------------------------------------
+#*
+# create dependencies for TeX files
+#**
+
+use strict;
+use File::Basename;
+
+$\ = "\n";
+
+my @main_recursive = ();
+my $main_target;
+
+sub find_file($)
+{
+    my ($file_base) = @_;
+
+    my @inputs = map { -d $_ ? $_ : () } split( ":", $ENV{TEXINPUTS} );
+    my $inputs = join( " ", @inputs );
+    $inputs = "." unless $inputs;
+
+    my $include_file;
+    if( $file_base !~ m,/,) {
+	$include_file = `find ${inputs} -name "$file_base" | sort | head -n1`;
+    } else {
+	$include_file = $file_base;
+    }
+
+    if( !defined $include_file || $include_file eq "" ) {
+        $include_file = $file_base;
+    } else {
+        chomp( $include_file );
+    }
+    return $include_file;
+}
+
+while(<>) {
+    next if /^\s*%|^\s*$/;
+
+    my $basename = File::Basename::basename( $ARGV, ".tex", ".ltx" );
+    $main_target= "${basename}.dvi";
+
+    if( /\\(input|include)\{([^\}\#]*)\.(tex|pstex_t)\}/ ) {
+        my $file = find_file( "$2.$3" );
+	print "${main_target}: $file";
+	push( @main_recursive, "$file" ); 
+    }
+    elsif( /\\(input|include)\{([^\}\#]*)\}/ ) {
+        my $file = find_file( "$2.tex" );
+	print "${main_target}: $file";
+	push( @main_recursive, "$file" ); 
+    }
+    elsif( /\\(verbatiminput)\{([^\}\#]*)\}/ ) {
+        my $file = find_file( "$2" );
+	print "${main_target}: $file";
+    }
+    if( /\\(bibliography)\{([^\}\#]*)\}|
+         \\(referencelist)\[([^\]\#]*)\]/x ) {
+	my @bibliographies =
+            map { find_file( "$_.bib" ) }
+            split( /\s*,\s*/, defined $2 ? $2 : $4 );
+	print "${main_target}: ${basename}.bbl";
+	for (@bibliographies) {
+	    print "${basename}.bbl: $_";
+	}
+    }
+    if( /figure=([^\}\#,]*)[\},]/ ) {
+        my $file = find_file( $1 );
+        print "${main_target}: ${file}";
+    }
+    if( /\\includegraphics.*\{([^\}\#]*)\}/ ) {
+        my $file = find_file( $1 );
+	print "${main_target}: ${file}";
+    }
+
+    if( eof ) {
+	for (@main_recursive) {
+	    recursive_depend( $ARGV, $main_target, $_ );
+	}
+	@main_recursive = ();
+    }
+}
+
+if( @main_recursive ) {
+    for (@main_recursive) {
+	recursive_depend( $ARGV, $main_target, $_ );
+    }
+}
+
+#------------------------------------------------------------------------------
+
+sub recursive_depend
+{
+    my $main_file = $_[0];
+    my $target = $_[1];
+    my $filename = $_[2];
+
+    my $basename = File::Basename::basename( $filename, ".tex" );
+    ## my $target= "${basename}.dvi";
+
+    my @recursive = ();
+
+    open(FILE, $filename) or do{
+	warn( "$0: could not open file '$filename'\n" .
+	      "(included from '$main_file') " .
+	      "for input:\n$!" );
+	return;
+    };
+
+    while( <FILE> ) {
+	next if /^\s*%|^\s*$/;
+	if( /\\(input|include)\{([^\}\#]*)\.(tex|pstex_t)\}/ ) {
+	    my $file = find_file( $2 . $3 );
+	    print "${target}: ${file}";
+	    push( @recursive, "${file}" ); 
+        }
+	elsif( /\\(input|include)\{([^\}\#]*)\}/ ) {
+	    my $file = find_file( $2 . ".tex" );
+	    print "${target}: ${file}";
+	    push( @recursive, "${file}" ); 
+	}
+        elsif( /\\(verbatiminput)\{([^\}\#]*)\}/ ) {
+            my $file = find_file( "$2" );
+            print "${main_target}: $file";
+        }
+	if( /\\(bibliography)\{([^\}\#]*)\}|
+             \\(referencelist)\[([^\]\#]*)\]/x ) {
+	    my $file = find_file( (defined $2 ? $2 : $4) . ".bib" );
+	    print "${target}: ${basename}.bbl";
+	    print "${basename}.bbl: ${file}";
+	}
+	if( /figure=([^\}\#,]*)[\},]/ ) {
+	    my $file = find_file( $1 );
+	    print "${target}: ${file}";
+	}
+	if( /\\includegraphics.*\{([^\}\#]*)\}/ ) {
+	    my $file = find_file( $1 );
+	    print "${target}: ${file}";
+	    if( $file =~ /(.*)\.gz$/ ) {
+		my $bb_file = $1 . ".bb";
+		print "${target}: ${bb_file}";
+	    }
+	}
+    }
+    close(FILE);
+    for (@recursive) {
+	recursive_depend( $filename, $target, $_ );
+    }
+}

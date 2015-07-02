@@ -1,0 +1,16 @@
+#!/bin/sh 
+set +u
+
+while [ "$1" != "" ]
+do
+   BASE=`basename $1 .dat`
+   cat > gnu.$$.inp  <<- EOF
+	set data style lines
+	plot "$1", `awk '!/^#/{print $3, $4, $5, $6, $7}' $BASE.fit`
+	pause -1
+	EOF
+
+   gnuplot gnu.$$.inp
+   rm gnu.$$.inp
+   shift
+done

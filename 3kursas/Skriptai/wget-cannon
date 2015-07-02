@@ -1,0 +1,427 @@
+#! /bin/sh
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2006-02-22 13:02:30 +0200 (Wed, 22 Feb 2006) $ 
+#$Revision: 6 $
+#$URL: svn+ssh://lokys.ibt.lt/home/saulius/svn-repositories/wget-cannon/wget-cannon $
+#------------------------------------------------------------------------------
+#*
+#   With a single Unix command, download all images from a specified
+#   mailbox and directory on the Canon iR2270 scanner.
+#**
+
+TMP_DIR="${tmp}"
+
+set -ue
+## set -x
+
+script() { echo "# $*"; cat; }
+setvar() { eval $1="'$3'"; }
+
+setvar Id = '$Id: wget-cannon 6 2006-02-22 11:02:30Z saulius $'
+
+setvar FILES  = ""
+setvar SERVER = "192.168.2.244"
+setvar MBOX   = ""
+setvar SUBDIR = ""
+setvar USER_ID  = ""
+setvar PASSWORD = ""
+
+setvar BASENAME = "`basename $0`"
+
+setvar DEBUG = false
+setvar KEEP  = false
+
+setvar LIST  = false
+setvar ALL   = false
+
+#
+# Executable files:
+#
+wget="wget"
+awk=awk
+grep=grep
+sed=sed
+date=date
+perl=perl
+seq=seq
+
+#** OPTIONS:
+#**  ...
+#**  --help                   print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+      -a|--all|--al|--a)
+            ALL=true
+	    ;;
+      -a-|--not-all|--not-al|--not-a)
+            ALL=false
+	    ;;
+      -d|--debug|--debu|--deb|--de|--d)
+            DEBUG=true;
+	    ;;
+      -d-|--no-debug|--no-debu|--no-deb|--no-de|--no-d)
+            DEBUG=false;
+	    ;;
+      -k|--keep|--kee|--ke|--k)
+            KEEP=true;
+	    ;;
+      -k-|--no-keep|--no-kee|--no-ke|--no-k)
+            KEEP=false;
+	    ;;
+      -l|--list|--lis|--li|--l)
+            LIST=true
+	    ;;
+      -l-|--no-list|--no-lis|--no-li|--no-l)
+            LIST=false
+	    ;;
+      -u|--user-id|--user-i|--user|--use|--us|--u)
+	    USER_ID="$2"
+	    shift
+	    ;;
+      -p|--password|--passwor|--passwo|--passw|--pass|\
+      --pas|--pa|--p)
+	    PASSWORD="$2"
+	    shift
+	    ;;
+      --download|--downloa|--downlo|--downl|--down|--dow|--do|--d)
+            LIST=false
+	    ;;
+      -B|--box|--bo|--b)
+            MBOX="$2"
+	    shift
+	    ;;
+      --mbox|--mbo|--mb)
+            MBOX="$2"
+	    shift
+	    ;;
+      -M|--mailbox|--mailbo|--mailb|--mail|--mai|--ma|--m)
+            MBOX="$2"
+	    shift
+	    ;;
+      -S|--server|--serve|--serv|--ser|--se|--s)
+            SERVER="$2"
+	    shift
+	    ;;
+      --subdir|--subdi|--subd|--sub|--su|--s)
+            SUBDIR="$2"
+	    shift
+	    ;;
+      --help|--hel|--he|--h)
+	    echo $Id
+	    echo
+	    echo "Usage:"
+	    echo "    `basename $0` [options] nati.mtz deri.mtz"
+            awk '/#\*/,/#\*\*/{sub("^ *#[*]?[*]?", ""); print $0}' $0
+	    exit
+	    ;;      
+      -*) echo "`basename $0`: unknown option $1" >&2 ; exit 1 ;;
+      *)  FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+eval set -- "${FILES}"
+
+if [ $# -lt 1 -a ! $LIST = true -a ! $ALL = true ]
+then
+    echo "${BASENAME}: need one ir more Canon document to download" \
+         "on the cmd line, or --all/--list options" >&2
+    exit 1
+fi
+
+case "${SERVER}" in
+    http://*) ;;
+    //*) SERVER="http:${SERVER}" ;;
+    *)   SERVER="http://${SERVER}" ;;
+esac
+
+test -z "${TMP_DIR}" && TMP_DIR="."
+TMP_DIR="${TMP_DIR}/tmp-${BASENAME}-$$"
+mkdir "${TMP_DIR}"
+
+setvar TMP_COOKIES  = "${TMP_DIR}/cookies.txt"
+setvar TMP_COOKIE   = "${TMP_DIR}/set-cookie.html"
+
+setvar TMP_MAIN     = "${TMP_DIR}/01main-page.html"
+setvar TMP_FRAME    = "${TMP_DIR}/02main-frame.html"
+setvar TMP_INDEX    = "${TMP_DIR}/03main-index.html"
+setvar TMP_BODY     = "${TMP_DIR}/04main-body.html"
+setvar TMP_TOPINDEX = "${TMP_DIR}/05main-top-index.html"
+
+setvar TMP_BOXFRAME     = "${TMP_DIR}/06box-frame.html"
+setvar TMP_BOXCGI       = "${TMP_DIR}/07box-cgi.html"
+setvar TMP_BOXINDEX     = "${TMP_DIR}/09box-index.html"
+setvar TMP_BOX_IDX_CGI  = "${TMP_DIR}/10box-index-cgi.html"
+setvar TMP_USER_BOX     = "${TMP_DIR}/11user-box.html"
+setvar TMP_USER_BOX_CGI = "${TMP_DIR}/12user-box-cgi.html"
+setvar TMP_USER_BOX_HEADER = "${TMP_DIR}/13user-box-header.html"
+
+setvar TMP_LOGIN    = "${TMP_DIR}/login.html"
+setvar TMP_BOX_LIST = "${TMP_DIR}/box-list.html"
+
+if [ -n "${USER_ID}" ]
+then
+    wget="${wget} --user=${USER_ID}"
+fi
+
+if [ -n "${PASSWORD}" ]
+then
+    wget="${wget} --password=${PASSWORD}"
+fi
+
+if [ $DEBUG = true ]
+then
+    set -x;
+fi
+
+#
+# First, lets get a session cookie:
+#
+
+${wget} \
+    --quiet \
+    --save-headers \
+    -O ${TMP_COOKIE} \
+    "${SERVER}"
+
+COOKIE=$(${grep} "^Set-Cookie:" ${TMP_COOKIE} \
+         | ${awk} '{print $2}' \
+         | ${sed} -e 's/;$//' )
+
+#
+# Get some preparatory pages, so that the Canon server does
+# not refuse us to serve "mailbox" index:
+#
+
+SECONDS=$(${date} +%s)00
+
+## ${wget} \
+##     --quiet \
+##     --cookies=off \
+##     --header "Cookie: ${COOKIE}" \
+##     -O ${TMP_MAIN} \
+##     "${SERVER}/en/_top.htm"
+
+${wget} \
+    --quiet \
+    --keep-session-cookies \
+    --save-cookies=${TMP_COOKIES} \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_MAIN} \
+    "${SERVER}/en/_top.htm"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_FRAME} \
+    "${SERVER}/frame.cgi?PageFlag=t_frame.tpl&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_INDEX} \
+    "${SERVER}/en/pages/t_ixdmy.htm"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BODY} \
+    "${SERVER}/en/pages/void.htm"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_TOPINDEX} \
+    "${SERVER}/top_index.cgi?PageFlag=t_ix00.tpl&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BOXFRAME} \
+    "${SERVER}/en/pages/b_frame.htm?Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BOXCGI} \
+    "${SERVER}/frame.cgi?PageFlag=b_frame.tpl&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BOXINDEX} \
+    "${SERVER}/en/pages/b_ixdmy.htm"
+
+SECONDS=$(${date} +%s)00
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BOX_IDX_CGI} \
+    "${SERVER}/box_index.cgi?PageFlag=b_ix30.tpl&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_USER_BOX} \
+    "${SERVER}/en/pages/b_ubody.htm?Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --keep-session-cookies \
+    --load-cookies=${TMP_COOKIES} \
+    --save-cookies=${TMP_COOKIES} \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_USER_BOX_CGI} \
+    "${SERVER}/bpbl.cgi?BoxKind=UserBox&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --keep-session-cookies \
+    --load-cookies=${TMP_COOKIES} \
+    --save-cookies=${TMP_COOKIES} \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_USER_BOX_HEADER} \
+    "${SERVER}/bheader.cgi?BOX_No=${MBOX}&Dummy=${SECONDS}"
+
+#
+# Now, get the listing of the box, to find out document numbers:
+#
+
+${wget} \
+    --quiet \
+    --keep-session-cookies \
+    --load-cookies=${TMP_COOKIES} \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_LOGIN} \
+    "${SERVER}/blogin.cgi?BOX_No=${MBOX}&Cookie=&Dummy=${SECONDS}"
+
+## cat ${TMP_LOGIN} | tee ${OUTPUT_DIR}/`basename ${TMP_LOGIN}`
+
+SECONDS=$(${date} +%s)00
+
+## ${wget} \
+##     --quiet \
+##     --cookies=off \
+##     --header "Cookie: ${COOKIE}" \
+##     -O ${TMP_BOX_LIST} \
+##     "${SERVER}/bheader.cgi?BOX_No=${MBOX}&Dummy=${SECONDS}"
+
+${wget} \
+    --quiet \
+    --cookies=off \
+    --header "Cookie: ${COOKIE}" \
+    -O ${TMP_BOX_LIST} \
+    "${SERVER}/bdocs.cgi?BOX_No=${MBOX}&DocStart=1&DIDS=&Dummy=${SECONDS}"
+
+## cat ${TMP_BOX_LIST} | tee ${OUTPUT_DIR}/`basename ${TMP_BOX_LIST}`
+
+#
+# See if only a listing is requested:
+#
+
+if [ $LIST = true ]
+then
+    ${perl} \
+	-ne "m/doc_pages\('([0-9]+?)'\).*<b>(.*?)<\/b>/; \
+	     print \$1, \" \", \$2, \"\n\"" \
+	${TMP_BOX_LIST} \
+    | uniq \
+    | grep -vE '^ *$'
+    if [ $KEEP = false ]; then rm -rf "${TMP_DIR}"; fi
+    exit 0
+fi
+
+if [ $ALL = true ]
+then
+    FILES="`${perl} \
+	          -ne \"m/doc_pages\('([0-9]+?)'\).*<b>(.*?)<\/b>/; \
+	               print \\\"'\\\", \\\$2, \\\"'\\\", \\\"\\n\\\"\" \
+	      ${TMP_BOX_LIST} \
+	      | grep -vE \"^( *|'')\$\" \
+              | uniq \
+	      | tr \"\\n\" \" \" \
+              `"
+    eval set -- "${FILES}"
+    ## echo ${FILES}
+    ## exit
+fi
+
+if [ $# -lt 1 ]
+then
+    echo "$0: Mbox is empty"
+    exit 0
+fi
+
+#
+# Now, download the requested documents:
+#
+
+for DOCUMENT
+do
+
+OUTPUT_DIR="${DOCUMENT}/${SUBDIR}"
+
+test -d "${DOCUMENT}" && mv "${DOCUMENT}"  "${DOCUMENT}~"
+mkdir -p "${OUTPUT_DIR}"
+
+#
+# Find out the document ID and the page span:
+#
+
+DOC_ID=$(${grep} "<b>${DOCUMENT}</b>" ${TMP_BOX_LIST} \
+         | ${perl} \
+               -ne "m/doc_pages\('([0-9]+?)'\)/; print \$1" )
+
+PAGES=$(${grep} "<b>${DOCUMENT}</b>" ${TMP_BOX_LIST} \
+        | ${perl} \
+              -ne "m/name=\"DocPages\" value=\"([0-9]+)\"/; print \$1" )
+
+## echo ${DOC_ID}
+## echo ${PAGES}
+
+#
+# Finally, donload all pages:
+#
+
+if [ ${PAGES} -lt 10 ]
+then
+    FORMAT="%01g"
+elif [ ${PAGES} -lt 100 ]
+then
+    FORMAT="%02g"
+elif [ ${PAGES} -lt 1000 ]
+then
+    FORMAT="%03g"
+else
+    FORMAT="%04g"
+fi
+
+for p in `${seq} --format "${FORMAT}" 1 ${PAGES}`
+do
+
+  ${wget} \
+      --verbose \
+      --cookies=off \
+      --header "Cookie: ${COOKIE}" \
+      -O ${OUTPUT_DIR}/page${p}.jbg \
+      "${SERVER}/image.jpg?B=${MBOX}&D=${DOC_ID}&P=${p}&M=MV&EFLG=false&Dummy=${SECONDS}"
+    
+done
+
+done
+# end for DOCUMENT
+
+if [ $KEEP = false ]; then rm -rf "${TMP_DIR}"; fi

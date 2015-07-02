@@ -1,0 +1,116 @@
+#!/usr/bin/perl -w
+use strict;
+use warnings;
+use POSIX;
+open my $fh, "<" , $ARGV[0] or die "Can't open file"; 
+my @lines = map{ chomp; $_ } <$fh>;
+my ( $median, $n, $mean_diff, $mean_dist, $mean_vdw,
+	$var_dist, $var_vdw, $var_diff, $std_diff,
+	$std_dist, $std_vdw, $vdw_dist, $cov,
+	$third_moment, $fourth_moment ) = 0;
+
+foreach my $line (@lines) {
+	$n += 1;
+	$mean_dist += (split(" ", $line))[1];
+	$mean_vdw += (split(" ", $line))[2];
+	$mean_diff += (split(" ", $line))[3];
+}
+
+$mean_diff = $mean_diff/$n;
+$mean_dist = $mean_dist/$n;
+$mean_vdw = $mean_vdw/$n;
+
+my ( $min_struct, $max_struct, $min, $max );
+foreach my $line (@lines) {
+	
+	my $diff = (split(" ", $line))[3];
+	my $dist = (split(" ", $line))[1];
+	my $vdw = (split(" ", $line))[2];
+	
+	$var_dist += ( $dist - $mean_dist)*( $dist - $mean_dist ); 
+	$var_vdw += ( $vdw - $mean_vdw)*( $vdw - $mean_vdw );
+	$var_diff += ( $diff - $mean_diff)*( $diff - $mean_diff );
+	
+	$third_moment += ( $diff*$diff*$diff );
+	$fourth_moment += ( $diff*$diff*$diff*$diff );
+        
+	$cov += (( $dist - $mean_dist )*( $vdw - $mean_vdw ))/$n;
+#	if((!defined $min) || ($min > $diff)){
+#		$min = $diff;
+#		$min_struct = (split(" ", $line))[4];
+#	}
+#	if((!defined $max) || ($max < $diff)){
+#                $max = $diff;
+#                $max_struct = (split(" ", $line))[4];
+#        }
+
+}
+#print "Max ".$max_struct."\n"."Min ".$min_struct."\n";
+
+if( ceil($n/2) == ($n/2) ){
+	my $line = $lines[($n/2)-1];
+	my $next_line = $lines[($n/2)];
+	$median = ( (split(" ", $line))[3] + (split(" ", $next_line))[3] )/2;
+
+}else{  
+	my $line = $lines[ceil($n/2)];
+	$median = (split(" ", $line))[3]; 
+}
+
+## Kvartiles
+## Apatine
+my $line = $lines[ceil($n/4)];
+my $low_quart = (split(" ", $line))[3];
+
+## Virsutine
+$line = $lines[ceil($n*3/4)]; 
+my $upp_quart = (split(" ", $line))[3];
+
+## 3-4 momentai
+$third_moment = $third_moment/$n;
+$fourth_moment = $fourth_moment/$n;
+
+## Dispersijos
+$var_diff = $var_diff/($n-1);
+$var_dist = $var_dist/($n-1);
+$var_vdw = $var_vdw/($n-1);
+
+## Standartiniai nuokrypiai
+$std_diff = sqrt($var_diff);
+$std_dist = sqrt($var_dist);
+$std_vdw = sqrt($var_vdw);
+
+## Paskutines reiksmes
+my $vdw_last = (split(" ", $lines[$n-1]))[2];
+my $dist_last= (split(" ", $lines[$n-1]))[1];
+my $diff_last= (split(" ", $lines[$n-1]))[3];
+
+my $vdw_first  = (split(" ", $lines[0]))[2];
+my $dist_first = (split(" ", $lines[0]))[1];
+my $diff_first = (split(" ", $lines[0]))[3];
+
+## Z scores
+my $z_vdw_l  = ( $vdw_last  - $mean_vdw  )/$std_vdw;
+my $z_dist_l = ( $dist_last - $mean_dist )/$std_dist;
+my $z_diff_l = ( $diff_last - $mean_diff )/$std_diff;
+
+my $z_vdw_f  = ( $vdw_first  - $mean_vdw  )/$std_vdw;
+my $z_dist_f = ( $dist_first - $mean_dist )/$std_dist;
+my $z_diff_f = ( $diff_first - $mean_diff )/$std_diff;
+
+print "Z-score vdw".$z_vdw_f." ".$z_vdw_l."\n";
+print "Z-score vdw".$z_dist_f." ".$z_dist_l."\n";
+print "Z-score vdw".$z_diff_f." ".$z_diff_l."\n";
+
+## Naujas ciklas Zvalue apskaiciavimui kuriam reikia std ir var
+
+my $Correlation = $cov/($std_dist * $std_vdw);
+print "Koreliacija ".$Correlation."\n";
+
+print "atstumo, Van der Waals spindulio, skirtumo\n";
+print "Vidurkis ".$mean_dist." ".$mean_vdw." ".$mean_diff."\n";
+print "Dispersija ".$var_dist." ".$var_vdw." ".$var_diff."\n";
+print "Std nuokrypis ".$std_dist." ".$std_vdw." ".$std_diff."\n";
+print "atstumo ir Van der Waals skirtumo\n";
+print "Mediana ".$median."\n apatine kvart ".$low_quart."\nVirsutine kvart ".$upp_quart."\n";
+print "3, 4 momentai ".$third_moment." ".$fourth_moment."\n";

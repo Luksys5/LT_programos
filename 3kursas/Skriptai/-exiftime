@@ -1,0 +1,8 @@
+#!/bin/sh
+
+exiftime \
+	-tc -s" " \
+	${1+"$@"} \
+| grep '^Image Created' \
+| awk '{print $3}' \
+| sed 's/:/./g'

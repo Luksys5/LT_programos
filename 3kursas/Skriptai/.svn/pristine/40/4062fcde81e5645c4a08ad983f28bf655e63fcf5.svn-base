@@ -1,0 +1,497 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2005-09-07 22:02:19 +0300 (Wed, 07 Sep 2005) $ 
+#$Revision: 67 $
+#$URL: svn+ssh://kolibris.ibt.lt/home/saulius/svn-repositories/wikitext/wikihtml $
+#------------------------------------------------------------------------------
+#*
+#  Convert Wiki-like text markup to HTML.
+#**
+
+use strict;
+
+$/ = "";
+
+my %default_settings = (
+    centering       => 0, # 1 indicates current paragraph must be centered
+    attrib          => "",
+);
+
+my %settings = %default_settings;
+
+my %default_list_state = (
+    in_list         => 0,
+    list_symbol     => "",
+    list_type       => "",
+    list_end        => "",
+    list_re         => ".",
+);
+
+my %list_state = %default_list_state;
+
+my @list_stack = ();
+
+while(<>) {
+    &process_paragraph( $_, \%settings, \%list_state, \*ARGV );
+}
+
+if( $list_state{in_list} ) {
+    $_ = &finish_list( $_, \%settings, \%list_state );
+}
+
+sub process_paragraph
+{
+    my ($text,$settings,$list_state,$FILE) = @_;
+    local $_ = $text;
+
+    chomp;
+
+    # Discard comments:
+
+    s/\#\#.*?\n|\#\#.*$//gm;
+
+    # Discard empty lines:
+
+    return if /^\s*$/;
+
+    # Finish a previously started list:
+
+    if( $_ !~ /^\s*\[\[($list_state->{list_re})\]\]/ &&
+	$list_state->{in_list} ) {
+	$_ = &finish_list( $_, $settings, $list_state );
+    }
+
+    # Discard old attributes:
+
+    %{$settings} = %default_settings;
+
+    # Check centering:
+
+    if( /^\s\s+[^\s]/ && !/^[^\s]/m ) {
+	$_ = &process_centering( $_, $settings, $list_state );
+    }
+
+    # Verbatim text:
+
+    if( /^\<\<([^\s]*)$/m ) {
+	my $text = &process_verbatim( $_, $settings, $list_state, $FILE );
+	print "<pre>\n${text}</pre>\n\n";
+	return;
+    }
+
+    # Formatting elements -- boldface, italic, etc.:
+
+    $_ = &process_formatting( $_, $settings, $list_state );
+
+    # Quotations:
+
+    if( /\"\"(.*?)\"\"/s ) {
+	$_ = &process_quotations( $_, $settings, $list_state );
+    }
+
+    # Headers:
+
+    if( /\=\=(\=*)(.*?)\=\=(\=*)/sg ) {
+	$_ = &process_headings( $_, $settings, $list_state );
+    }
+
+    # Tables:
+
+    if( /^\s*(\|\||\:\:)/ ) {
+	$_ = &process_embedded_list( $_, $settings, $list_state );
+	$_ = &process_table( $_, $settings, $list_state );
+    }
+
+    # Lists:
+
+    if( /^\s*\[\[(.+?)\]\](.*)$/s ) {
+	$_ = &process_list( $_, $settings, $list_state );
+    }
+
+    # Process escaped symbols:
+
+    $_ = &process_escaped( $_, $settings, $list_state );
+
+    if( defined $settings{paragraph} ) {
+	print $_;
+    } else {
+	print "<p$settings{attrib}>\n", $_, "\n</p>\n\n";
+	## if( $settings{attrib} ) {
+	##     print "<p$settings{attrib}>\n", $_, "\n</p>\n\n";
+	## } else {
+	##     print "<p align=\"justify\">\n", $_, "\n</p>\n\n";
+	## }
+    }
+}
+
+sub finish_list
+{
+    my ($text,$settings,$list_state) = @_;
+
+    my $li;
+    my $level = $list_state->{list_level};
+    while( $level > 0 ) {
+    	$li = $level == 1 ? "" : "</li>";
+    	$level --;
+    	print "  " x $level . "</$list_state{list_end}>$li\n";
+    }
+    print "\n";
+
+    ## print "</$list_state{list_end}>\n\n";
+    %{$list_state} = %default_list_state;
+
+    return $text;
+}
+
+sub process_centering
+{
+    my ($text,$settings,$list_state) = @_;
+
+    $settings->{attrib} .= " align=\"center\"" unless $settings->{centering};
+    $settings->{centering} = 1;
+
+    return $text;
+}
+
+sub process_verbatim
+{
+    my ($text,$settings,$list_state,$FILE) = @_;
+
+    $text =~ /^\<\<([^\s]*)$/m;
+
+    my $mark = $1;
+
+    $text = $'; # '
+    $text =~ s/^\n//m;
+
+    local $/ = "\n";
+    while( $text !~ /^${mark}\>\>$/m && !eof($FILE) ) {
+	$text .= <$FILE>;
+    }
+    $text =~ s/^${mark}\>\>\n*$//m;
+
+    return $text;
+}
+
+sub process_formatting
+{
+    my ($text,$settings,$list_state) = @_;
+    local $_ = $text;
+
+    # Triple-character marks must be process first:
+
+    s/\-\-\-\-+/<hr \/>/sg;
+
+    s/\;\;\;/\&nbsp\;/sg;
+    s/\-\-\-/\&mdash\;/sg;
+    s/\\\\\\/<br \/>\n/sg;   # Triple backslash "\\\" is changed to "</br>"
+
+    # Double-character marks:
+
+    while( /\@\@(.*?)\s*\|\s*(.*?)\@\@/sm ) {
+	my $text = $1;
+	my $href = $2;
+	$href =~ s,/,\\/,g;
+	s/\@\@(.*?)\s*\|\s*(.*?)\@\@/<a href=\"$href\">$text<\/a>/s;
+    }
+
+    while( /\@\@(.*?)\@\@/ ) {
+	my $href = $1;
+	$href =~ s,/,\\/,g;
+	s/\@\@(.*?)\@\@/<a href=\"$href\">$href<\/a>/sg;
+    }
+
+    s/\*\*(.*?)\*\*/<b>$1<\/b>/sg;
+    s/\/\/(.*?)\/\//<i>$1<\/i>/sg;
+    s/\_\_(.*?)\_\_/<u>$1<\/u>/sg;
+    s/\?\?(.*?)\?\?/<strike>$1<\/strike>/sg;
+    s/\%\%(.*?)\%\%/<tt>$1<\/tt>/sg;
+    s/\+\+(.*?)\+\+/<big>$1<\/big>/sg;
+    s/\,\,(.*?)\,\,/<small>$1<\/small>/sg;
+    s/\^\^(.*?)\^\^/<sup>$1<\/sup>/sg;
+    s/\.\.(.*?)\.\./<sub>$1<\/sub>/sg;
+    s/\.\.(.*?)\.\^(.*?)\^\^/<sub>$1<\/sub><sup>$2<\/sup>/sg;
+    s/\^\^(.*?)\^\.(.*?)\.\./<sup>$1<\/sup><sub>$2<\/sub>/sg;
+    s/\!\!(.*?)\!\!/<span style="color:#FF0000;">$1<\/span>/sg;
+
+    s/(\{\{)/<font color="red">$1<\/font>/sg;
+    s/(\}\})/<font color="red">$1<\/font>/sg;
+    s/(\$\$)/<font color="red">$1<\/font>/sg;
+    s/(\`\`)/<font color="red">$1<\/font>/sg;
+    s/(\&\&)/<font color="red">&amp;&amp;<\/font>/g;
+
+    s/\-\-/\&ndash;/sg;
+    s/([^\s]+)\~\~([^\s]+)/<nobr>$1-$2<\/nobr>/sg;
+
+    # Finally, remove remaining zero-space delimiters:
+
+    s/;;//g;
+
+    return $_;
+}
+
+sub process_quotations
+{
+    my ($text,$settings,$list_state) = @_;
+    local $_ = $text;
+
+    if( /^\"\"\n(.*)\n\"\"$/s ) {
+	s/^\"\"\n(.*)\n\"\"\n*$/<blockquote>\n$1\n<\/blockquote>\n\n/s;
+	$settings->{paragraph} = "blockquote";
+    } else {
+	s/\"\"(.*?)\"\"/<q>$1<\/q>/sg;
+    }
+
+    return $_;
+}
+
+sub process_headings
+{
+    my ($text,$settings,$list_state) = @_;
+    local $_ = $text;
+
+    if( /\=\=(\=+)(.*?)\=\=(\=*)/sg ) {
+	my $l;
+	s/\=\=(\=*)(.*?)\=\=(\=*)/
+	    "<h" . (($l = length($1)+1) <= 6? $l : 6) .
+	    "$settings{attrib}>$2<\/h" .
+	    ($l <= 6? $l : 6) . ">"/esg;
+    } else {
+	s/\=\=(.*?)\=\=/<h1$settings{attrib}>$1<\/h1>/sg;
+    }
+
+    $settings->{paragraph} = "heading";
+
+    return "$_\n\n";
+}
+
+sub process_escaped
+{
+    local ($_) = @_;
+
+    s/\\([^a-zA-Z0-9])/$1/g;
+
+    return $_;
+}
+
+sub process_table
+{
+    my ($text,$settings,$list_state) = @_;
+
+    my $table = "<table border=1>\n";
+
+    while( $text ) {
+	my $row;
+	if( $text =~ m/^(.*?)(\|\|*|\:\:*)\s*\n\s*(\|\|*|\:\:*)/s ) {
+	    $row = $1 . $2;
+	    $text = $3 . $'; # '
+	} elsif( $text =~ m/^(.*?)(\|\|*|\:\:*)\s*$/s ) {
+	    $row = $1 . $2;
+	    $text = "";
+	} else {
+	    $row = "";
+	    $text = "";
+	}
+	while( $row =~ m/\:\:(\:+)(.*?)\:\:\:*/s ) {
+	    $row =~ s/\:\:(\:+)(.*?)(\:\:\:*)/
+		"<th colspan=".(length($1)+1).">".$2."<\/th>".$3/esg;
+	}
+	while( $row =~ m/\|\|(\|+)(.*?)\|\|\|*/s ) {
+	    $row =~ s/\|\|(\|+)(.*?)(\|\|\|*)/
+		"<td colspan=".(length($1)+1).">".$2."<\/td>".$3/esg;
+	}
+	while( $row =~ m/\:\:(.*?)\:\:\:*/s ) {
+	    $row =~ s/\:\:(.*?)(\:\:\:*)/\n<th>$1<\/th>$2/sg;
+	}
+	while( $row =~ m/\|\|(.*?)\|\|\|*/s ) {
+	    $row =~ s/\|\|(.*?)(\|\|\|*)/\n<td>$1<\/td>$2/sg;
+	}
+	$row =~ s/(\||\:)+$//g;
+
+	$table .= "<tr>$row\n</tr>\n";
+    }
+
+    $table .= "</table>\n\n";
+    $settings->{paragraph} = "table";
+    return $table;
+}
+
+sub set_list_type
+{
+    my ( $list_symbol, $list_state ) = @_;
+
+    $list_state->{list_symbol} = $list_symbol;
+
+    if( $list_state->{list_symbol} =~ "-+" ) {
+	$list_state->{list_type} = "ul";
+	$list_state->{list_end} = "ul";
+	$list_state->{list_re} = "[-.]+";
+    } elsif( $list_state->{list_symbol} =~ /[0-9.]+/ ) {
+	$list_state->{list_type} = "ol";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[0-9.]+";
+    } elsif( $list_state->{list_symbol} =~ /[IVCM]+/ ) {
+	$list_state->{list_type} = "ol type=\"I\"";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[iIvV.]+";
+    } elsif( $list_state->{list_symbol} =~ /[ivcm]+/ ) {
+	$list_state->{list_type} = "ol type=\"i\"";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[iIvV.]+";
+    } elsif( $list_state->{list_symbol} =~ /[a-z]+/ ) {
+	$list_state->{list_type} = "ol type=\"a\"";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[a-z.]+";
+    } elsif( $list_state->{list_symbol} =~ /[A-Z]+/ ) {
+	$list_state->{list_type} = "ol type=\"A\"";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[A-Z.]+";
+    } else {
+	print STDERR "$0: unknown list type $list_state->{list_symbol}, " .
+	    "defaulting to numbered list\n";
+	$list_state->{list_type} = "ol";
+	$list_state->{list_end} = "ol";
+	$list_state->{list_re} = "[0-9.]+";
+    }
+}
+
+sub set_list_level
+{
+    my ( $list_symbol, $list_state ) = @_;
+    my $list = "";
+    my $list_level;
+    my $level_symbol;
+
+    $level_symbol = $list_symbol;
+    $level_symbol =~ s/[^.]//g; # leave only dot ('.') characters
+    $list_level = length($level_symbol) + 1;
+
+    if( !$list_state->{in_list} ) {
+	$list_state->{in_list} = 1;
+	$list_state->{list_symbol} = $list_symbol;
+	&set_list_type( $list_symbol, $list_state );
+	$list = "<$list_state{list_type}>\n";
+    } else {
+	if( $list_level > $list_state->{list_level} ) {
+	    push( @list_stack, { %{$list_state} } );
+	    &set_list_type( $list_symbol, $list_state );
+	    my $level = $list_state->{list_level};
+	    while( $level < $list_level ) {
+		$list .= "  " x $level . "<$list_state{list_type}>\n";
+		$level ++;
+	    }
+	} elsif( $list_level < $list_state->{list_level} ) {
+	    my $level = $list_state->{list_level};
+	    while( $level > $list_level ) {
+		$level --;
+		$list .= "  " x $level . "</$list_state{list_end}>\n";
+	    }
+	    my $popped_state = pop( @list_stack );
+	    %{$list_state} = %{$popped_state};
+	    if( $list_level > $list_state->{list_level} ) {
+		push( @list_stack, { %{$list_state} } );
+		&set_list_type( $list_symbol, $list_state );
+		my $level = $list_state->{list_level};
+		while( $level < $list_level ) {
+		    $list = "  " x $level . "<$list_state{list_type}>\n";
+		    $level ++;
+		}
+	    }
+	}
+    }
+    $list_state->{list_level} = $list_level;
+    return $list;
+}
+
+sub process_list
+{
+    my ($text,$settings,$list_state) = @_;
+    my $list_symbol;
+    my $list = "";
+
+    $text =~ /^\s*\[\[(.+?)\]\](.*)$/s;
+    $list_symbol = $1;
+
+    $list = &set_list_level( $list_symbol, $list_state );
+    $settings->{paragraph} = "list";
+
+    while( $text ) {
+	my ($pre, $list_symbol, $item_text, $next_list, $post );
+
+    	if( $text =~ /^\s*\[\[($list_state->{list_re})\]\](.*?)\s*
+                      (\[\[$list_state->{list_re}\]\])/smx ) {
+	    $pre = $`; #`
+	    $list_symbol = $1;
+	    $item_text = $2;
+	    $next_list = $3;
+	    $post = $'; #'
+	    $text = $next_list . $post;
+    	} elsif( $text =~ /^\s*\[\[($list_state->{list_re})\]\](.*?)$/sm ) {
+	    $pre = $`; #`
+	    $list_symbol = $1;
+	    $item_text = $2;
+	    $next_list = undef;
+	    $post = undef; #'
+	    $text = undef;
+	} else {
+	    $item_text = $text;
+	    $text = undef;
+	}
+	if( $list_symbol ) {
+	    $list .= &set_list_level( $list_symbol, $list_state );
+	}
+	$list .= "  " x $list_state->{list_level} . "<li>$item_text</li>\n";
+    }
+    
+    return $list;
+
+    ## $text =~ s/\s*\[\[($list_state->{list_re})\]\]/
+    ##            "<\/li>\n" . "  " x $list_level . "<li>"/xeg;
+
+    ## return $list . "  " x $list_level . "<li>$text</li>\n";
+}
+
+sub process_embedded_list
+{
+    my ($text,$settings,$list_state) = @_;
+    my ($mid, $pre, $post);
+    my $list;
+    my $list_symbol;
+
+    while( $text ) {
+	if( $text =~ /\[\[(-+|[a-zA-Z.]+|[0-9.]+)\]\](.*)$/s ) {
+	    $list_symbol = $1;
+	    &set_list_type( $list_symbol, $list_state );
+	}
+
+	if( $text =~ /(\[\[$list_state->{list_re}\]\][^\|\:]*)/ms ) {
+	    $pre = $`; #`
+	    $post = $'; #'
+	    $mid = $1;
+
+	    my $items;
+	    while( $mid ) {
+		if( $mid =~ /(\[\[$list_state->{list_re}\]\])([^\[\|\:]*)/ms ) {
+		    $items .= $` . "       <li>" . $2 . "       <\/li>\n";
+		}
+		$mid = $'; #'
+	    }
+
+	    $list .= $pre .
+		"    <$list_state->{list_type}>\n" .
+		$items .
+		"    </$list_state->{list_end}>\n";
+
+	    $text = $post;
+	} else {
+	    $list .= $text;
+	    $text = undef;
+	}
+    }
+
+    return $list;
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+test -z "${XLESS_FONT}" && \
+    XLESS_FONT="7x13"
+
+##    XLESS_FONT="9x15"
+
+xterm -bg white -fg black -geometry 139x40 -T "$@" -fn $XLESS_FONT -e less "$@"

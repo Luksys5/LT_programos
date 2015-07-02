@@ -1,0 +1,15 @@
+#!/usr/ucb/sh
+
+while [ "$1" != "" ]
+do
+   FILE=`basename $1 | sed -e 's/\.[^\./]*$//'`
+   if [ -e $FILE.bb -o -e $FILE.Z ]
+   then
+      echo will not overwrite $FILE.bb or $FILE.Z, skipping
+   else
+      tiff2ps $1 | compress > $FILE.Z
+      zcat $FILE.Z | head -1 > $FILE.bb
+      zcat $FILE.Z | grep BoundingBox >> $FILE.bb
+   fi
+   shift   
+done

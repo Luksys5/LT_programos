@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -ue
+## set -x
+
+REMOTE_SERVER=delfinas
+
+BASENAME=`basename $0`
+
+case $BASENAME in
+    *-*) REMOTE_SERVER=`echo $BASENAME | awk -F- '{print $2}'` ;;
+esac
+
+set -x
+
+rsync \
+    --rsh=ssh \
+    --archive \
+    --verbose \
+    --delete \
+    --backup \
+    --backup-dir=wastebasket/ \
+    ${HOME}/{.bashrc,.alias,.emacs,.profile,.bash_profile,.dircolours.rc} \
+    ${REMOTE_SERVER}: \
+${1+"$@"}
+
+rsync \
+    --rsh=ssh \
+    --archive \
+    --verbose \
+    --backup \
+    --backup-dir=wastebasket/ \
+    ${HOME}/scripts \
+    ${REMOTE_SERVER}: \
+${1+"$@"}

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -u
+
+export SUMMARY=/dev/null
+
+mosflm <<EOF
+image $1
+run
+EOF
+
+rm -f mosflm.lp

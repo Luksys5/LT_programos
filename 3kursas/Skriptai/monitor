@@ -1,0 +1,8 @@
+#!/bin/csh -f
+
+set echo_style=both
+
+while(1)
+   echo -n `ls -l "$1" | awk '{print $9"  "$5"   "}'`"\r"
+   sleep 2
+end

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+awk '/LSQ Line Gradient/ {print -$5}' ${1+"$@"}

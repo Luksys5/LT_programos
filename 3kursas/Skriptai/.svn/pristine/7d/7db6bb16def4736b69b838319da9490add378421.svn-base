@@ -1,0 +1,20 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$ 
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+#   Saves contents of STDIN to temp file and launches command, specified
+#   by command line parameters, appending the name of temp file as the
+#   last command line parameter.
+#**
+
+EXT=tmp
+TMPFILE=/tmp/tmp-$(basename $0)-$$.${EXT}
+
+cat /dev/stdin > ${TMPFILE}
+$* ${TMPFILE}
+sleep 2
+rm ${TMPFILE}

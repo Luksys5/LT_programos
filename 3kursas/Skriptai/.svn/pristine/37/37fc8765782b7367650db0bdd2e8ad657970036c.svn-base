@@ -1,0 +1,64 @@
+#!/bin/sh
+#set -x
+set +u
+set -e
+
+TURN=-90
+
+while [ "$1" != "" ]
+do
+   case $1 in
+     "-width")  shift; WIDTH="\epsfxsize=$1" ;;
+     "-height") shift; HEIGHT="\epsfysize=$1" ;;
+     "-turn" )  shift; TURN=$1 ;;
+     "-text" )  shift; TEXT="$1" ;;
+     *) if [ "$IN_FILE" = "" ]; then IN_FILE=$1; 
+        else OUT_FILE=`basename $1 .ps`; 
+        fi ;; 
+   esac
+   shift
+done
+
+test -z "$OUT_FILE" && OUT_FILE=`basename $IN_FILE .ps`.annotated
+
+cat > $OUT_FILE.tex << eof-cat
+\documentclass[12pt]{article}
+\pagestyle{empty}
+\usepackage{rotating}
+\usepackage{epsfig}
+\usepackage{here}
+
+% These command tell TeX not to be so choosy about were to put 
+% figures, and allows to pack as many figures into the page
+% as you want
+
+\renewcommand{\topfraction}{1}
+\renewcommand{\bottomfraction}{1}
+\renewcommand{\textfraction}{0}
+\setcounter{topnumber}{100}
+\setcounter{bottomnumber}{100}
+\setcounter{totalnumber}{100}
+
+\begin{document}
+
+\begin{figure}[hb]
+
+$WIDTH
+$HEIGHT
+\centerline
+{
+\begin{turn}{$TURN}
+\\epsffile{$IN_FILE}
+\\end{turn}
+}
+\caption[]{$TEXT}
+\\end{figure}
+
+\\end{document}
+eof-cat
+
+latex $OUT_FILE.tex
+dvips $OUT_FILE.dvi -D600 -o $OUT_FILE.ps
+
+rm -f $OUT_FILE.tex $OUT_FILE.dvi
+rm -f $OUT_FILE.aux $OUT_FILE.log texput.log

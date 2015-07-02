@@ -1,0 +1,87 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2005-07-13 09:49:16 +0300 (Wed, 13 Jul 2005) $
+#$Revision: 6 $
+#$URL: svn+ssh://kolibris.ibt.lt/home/saulius/svn-repositories/svnscripts/svn-set-text-time $
+#------------------------------------------------------------------------------
+
+SCRIPT=false
+FORCE=false
+
+FILES=""
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+        -f|--force|--forc|--for|--fo|--f)
+            FORCE=true
+            ;;
+        -f-|--no-force|--no-forc|--no-for|--no-fo|--no-f)
+            FORCE=false
+            ;;
+        --script|--scrip|--scri|--scr|--sc|--s)
+            SCRIPT=true
+	    ;;
+        --run|--ru|--r)
+            SCRIPT=false
+	    ;;
+        -*) echo "$0: unknown option '$1'" >&2
+            exit 1
+	    ;;
+        *)  FILES="'$1' ${FILES}"
+    esac
+    shift
+done
+
+if [ -z "${FILES}" ]
+then
+    echo "$0: please specify at least one file to process on the command line" >&2
+    exit 1
+fi
+
+eval set -- "${FILES}"
+
+for file
+do
+
+set -e
+
+if [[ "$file" == *.svn* ]]
+then
+    exit 0
+fi
+
+if [ $FORCE = true ] || svn proplist "$file" | grep -q svn:text-time
+then
+    svn_time=`svn proplist -v "$file" | awk '/svn:text-time/{print $3}'`
+    ls_longtime=`(
+	export TZ=UTC
+	ls -ld --time-style="+%Y-%m-%dT%H:%M:%S" "$file" | awk '{print $6}'
+    )`
+    ls_microseconds=`(
+	export TZ=UTC
+	ls -ld --time-style="+%N" "$file" | awk '{printf "%06d\n", $6/1000}'
+    )`
+    ls_time="${ls_longtime}.${ls_microseconds}Z"
+    if [ "${ls_time}" != "${svn_time}" ]
+    then
+        cmd1="svn propset svn:text-time \"${ls_time}\" \"$file\""
+        cmd2="svn proplist -v \"$file\""
+        if [ "$SCRIPT" = false ]
+        then
+            eval $cmd1
+            eval $cmd2
+	else
+            echo $cmd1
+            echo $cmd2
+        fi
+        ## echo "text-time \"${ls_time}\""
+        ## echo "replaces  \"${svn_time}\" on \"$file\""
+        ## echo ""
+    fi
+fi
+
+done
+
+test $SCRIPT = true && echo "*** the specified files ${1+\"$@\"} not modified"

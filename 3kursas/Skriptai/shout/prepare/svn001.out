@@ -1,0 +1,21 @@
+Checked out revision 0.
+work
+This is a .setup script.
+Its purpose is to finish automatic (non-interactive) setup of the
+working directory.
+A         setup
+A         setup/file.txt
+A         setup/.setup
+
+.
+..
+.setup
+.svn
+file.txt
+
+=== setup/file.txt ===
+This is a simple text file.
+At revision 1.
+
+=== Subversion log message: ===
+Adding the newly created working directory 'setup' from template 'setup'.

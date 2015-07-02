@@ -1,0 +1,87 @@
+#------------------------------------------------------------------------
+#$Author$
+#$Date$
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------
+
+.PHONY: all test tests listdiff out outputs
+
+all: tests
+
+test tests: shtests
+
+listdiff: shlistdiff
+
+out outputs: shoutputs
+
+#------------------------------------------------------------------------------
+
+.PHONY: clean cleanAll cleandiff
+
+clean: shclean
+
+cleanAll: clean
+
+cleandiff: shcleandiff
+
+cleandepend: shcleandepend
+
+#------------------------------------------------------------------------------
+#
+# The shell-driven tests
+#
+
+SHELL_TSTDIR = shtests
+SHELL_OUTDIR = ./shout
+
+SHELL_TESTS   = ${wildcard ${SHELL_TSTDIR}/*/*.sh}
+SHELL_RADIXES = ${subst ${SHELL_TSTDIR}/,, ${SHELL_TESTS}}
+SHELL_OUTPUTS = ${addprefix ${SHELL_OUTDIR}/, ${SHELL_RADIXES:%.sh=%.out}}
+SHELL_DIFFS   = ${addprefix ${SHELL_OUTDIR}/, ${SHELL_RADIXES:%.sh=%.diff}}
+## SHELL_BASES   = ${notdir ${SHELL_TESTS}}
+SHELL_DEPEND  = ${SHELL_RADIXES:%.sh=.depend/%.d}
+
+ifneq ("${SHELL_DEPEND}","")
+    include ${SHELL_DEPEND}
+endif
+
+.PHONY: shoutputs
+
+shoutputs: ${SHELL_OUTPUTS}
+
+.PHONY: shtest shtests
+
+shtest shtests: ${SHELL_DIFFS}
+
+${SHELL_OUTDIR}/%.out: ${SHELL_TSTDIR}/%.sh
+	-@test -f $@ || echo "$@:"
+	-@test -f $@ || ( mkdir -p ${dir $@}; $< 2>&1 ) | tee $@
+	-@touch $@
+
+${SHELL_OUTDIR}/%.diff: ${SHELL_TSTDIR}/%.sh
+	-@printf "%-30s " "$<:" ; \
+	$< 2>&1 | diff ${SHELL_OUTDIR}/$*.out - > $@ ; \
+	if [ $$? = 0 ]; then echo "OK"; else echo "FAILED:"; cat $@; fi
+
+.depend/%.d: ${SHELL_TSTDIR}/%.sh
+	mkdir -p ${dir $@}
+	./bin/mktestdepend $< > $@
+
+#------------------------------------------------------------------------------
+
+.PHONY: shlistdiff
+.PHONY: shcleandepend shcleandiff shclean
+
+shlistdiff: # test
+	@-( test -d ${SHELL_OUTDIR} && \
+	    ls -l ${SHELL_OUTDIR}/*/*.diff | awk '{if( $$5 > 0 ) print}' ) || \
+	    true
+
+shcleandepend:
+	rm -f ${SHELL_DEPEND}
+
+shcleandiff:
+	rm -rf ${SHELL_DIFFS}
+
+shclean: shcleandiff shcleandepend

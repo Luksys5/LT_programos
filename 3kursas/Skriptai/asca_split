@@ -1,0 +1,49 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: $ 
+#$Locker: saulius $
+#$Revision: 1.0 $
+#$Source: $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+use strict;
+
+my @lines = ();
+my $filename;
+my $count = 1;
+
+while(<>) {
+    if( /^\f$/ ) {
+	next;
+    }
+    if( /^From:/ ) {
+	$filename = undef;
+    }
+    if( /^Subj:/ ) {
+	if( /ASCA-.....-(W....)/ ) {
+	    $filename = lc($1) . ".asca";
+	} else {
+	    $filename = $count . ".mail";
+	    $count ++;
+	}
+	print STDERR "$filename\n";
+	close STDOUT
+	    or die( "could not close stdout: $!" );
+	open( STDOUT, ">$filename" )
+	    or die( "could not open file '$filename' for writing: $!" );
+	print @lines;
+	@lines = ();
+    }
+    if( !defined $filename ) {
+	push( @lines, $_ );
+	next;
+    }
+    print;
+}
+
+close STDOUT;

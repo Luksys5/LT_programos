@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#
+# Occasionally, RB (resource/request broker) ends up in a state when
+# edg-job-submit needs much longer to return the jobs ID, and jobs are
+# indefinitely stuck in the state "Waiting". This seems to be related
+# to the JRA1 Middleware - Bugs: bug #9194, see
+# https://savannah.cern.ch/bugs/?func=detailitem&item_id=9194 (found
+# by google:"edg_wll_LogMatch failed for https:", where the search
+# message has been taken from the
+# /var/edgwl/workload_manager/log/events.log describing the failed
+# job). As described in this bug, some information was missing from
+# the RB logs and edg-job-status output. The solution described there
+# was to restart WMS services on the RB.
+#
+# In the IBT test "Griddy", the first time such situation happened was
+# when we were transfering our CE behind the firewall, connecting it
+# to the UPS and giving it an external IP address -- activities,
+# during which CE was unavailable. Could it be that the missing CE
+# (and no other CE's available) caused RB to go mad?
+#
+# In my case, restarting just the 'edg-wl-wm' service on the RB not
+# work, but restarting all edg-* services on the RB did the job. The
+# current script does exactely this.
+#
+# Saulius Grazulis, 2005.11.26
+#
+
+for i in /etc/init.d/edg-*
+do
+  (
+      set -x
+      $i restart
+  )
+done

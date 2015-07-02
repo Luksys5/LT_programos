@@ -1,0 +1,142 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$ 
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+#  Generate a short random suffix ("salt")
+#
+#  USAGE:
+#      $0 --options
+#**
+
+use strict;
+use warnings;
+
+my @lower = ('a'..'z');
+my @upper = ('A'..'z');
+my @digit = ('0'..'9');
+my @uhex  = (@digit, 'A'..'F');
+my @lhex  = (@digit, 'a'..'f');
+
+my @alpha  = (@lower, @upper);
+my @lownum = (@lower, @digit);
+my @upnum  = (@upper, @digit);
+my @alphanum = (@alpha, @digit);
+
+my $format = "AdAd"; # Other possibilities: l, L, d, D, n, N, x, X
+my $length = 4;
+my $use_ssl = 1;
+
+my @files;
+
+for my $i (0..$#ARGV) {
+    local $_ = $ARGV[$i];
+    if( /^(-l|--length|--lengt|--leng|--len|--le|--l)/ ) {
+        $length = $ARGV[++$i];
+        ## print $length, "\n";
+        next;
+    }
+    if( /^(-f|--format|--forma|--form|--for|--fo|--f)/ ) {
+        $format = $ARGV[++$i];
+        ## print $format, "\n";
+        next;
+    }
+    if( /^(--use-ssl|--use-ss|--use-s|--use|--us|--u)/ ) {
+        $use_ssl = 1;
+        next;
+    }
+    if( /^(--no-ssl|--no-ss|--no-s)/ ) {
+        $use_ssl = 0;
+        next;
+    }
+    if( /^(--help|--hel|--he|--h)/ ) {
+        open(SELF, $0) or die;
+        local $\ = "\n";
+        while( <SELF> ) {
+            s/\$0/$0/g;
+            print $1 if (/^\#\*/../^\#\*\*/) && /^\#\*?\*?(.*)$/;
+        }
+        close(SELF);
+        exit
+    }
+    if( /^--/ ) {
+        die "unknwon option '$_'";
+    } else {
+        push( @files, $_ );
+    }
+}
+
+my @ARGV = @files;
+
+my $seed;
+my $openssl = `bash -c 'type -p openssl' 2> /dev/null`;
+
+$openssl =~ s/\s*$//g;
+
+my @format = split( "", $format );
+my @randbytes;
+
+if( $use_ssl ) {
+    if( $openssl ) {
+        @randbytes = unpack( "C$length", `$openssl rand $length` );
+    } else {
+        die "could not find 'openssl' implementation -- install one or " .
+            "try '--no-ssl' instead (less secure!)";
+    }
+} else {
+    $seed = time();
+    srand( $seed );
+    for (1..$length) { push(@randbytes, int(rand(255))) }
+}
+
+## $, = " ";
+## $\ = "\n";
+## print @randbytes;
+
+my $suffix = "";
+
+my $flength = int(@format);
+for my $i (0..$#randbytes) {
+    my $b = $randbytes[$i];
+    my $char;
+    for (($format[$i % $flength])) {
+        $char = $upper[$b % @upper] and next if /A/;
+        $char = $lower[$b % @lower] and next if /a/;
+        $char = $alpha[$b % @alpha] and next if /l/;
+        if( /d|D/ ) {
+            $char = $digit[$b % @digit];
+            next
+        }
+        if( /x/ ) {
+            $char = $lhex[$b % @lhex];
+            next
+        }
+        if( /X/ ) {
+            $char = $uhex[$b % @uhex];
+            next
+        }
+        if( /n/ ) {
+            $char = $lownum[$b % @lownum];
+            next
+        }
+        if( /N/ ) {
+            $char = $upnum[$b % @upnum];
+            next
+        }
+        if( /L/ ) {
+            $char = $alphanum[$b % @alphanum];
+            next
+        }
+        die "unsupported format character '$format[$i % $flength]' " .
+            "at index $i ";
+    }
+    $suffix .= $char;
+}
+
+print $suffix, "\n";

@@ -1,0 +1,10 @@
+#!/usr/ucb/sh 
+
+while [ "$1" != "" ]
+do
+   grep '^[a-zA-Z01-9_]*:[^ ]*$' $1 >> fasta.patterns
+shift
+done
+
+mv fasta.patterns fasta.patterns~
+sort fasta.patterns~ | uniq > fasta.patterns

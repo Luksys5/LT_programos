@@ -1,0 +1,58 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+
+use File::Namer;
+use GetOptions;
+
+$::Id = '$Id: forall,v 1.2 1997/10/12 16:00:15 grazulis Exp grazulis $';
+
+my $script_only = 0;
+my $arg_number  = 1;
+my $all_at_once = 0;
+my $verbose = 1;
+
+getOptions({
+    "-a" => sub { $all_at_once = 1 }, "--all-arguments" => "-a",
+    "-n" => \arg_number,              "--number"        => "-n",
+    "-q" => sub { $verbose = 0 },     "--quite"         => "-q",
+    "-q-"=> sub { $verbose = 1 },     "--verbose"       => "-q-",
+    "-V" => sub { print "$::Id\n"; 
+                  exit },             "--version"       => "-V",
+
+    "--script-only" => sub{ $script_only = 1 },
+    "--run"         => sub{ $script_only = 0 },
+    "--help"        => sub{ usage(); exit },
+    "--usage"       => sub{ usage(); exit },
+    "--version"     => sub{ print "$::Id\n"; exit },
+});
+
+my $command = pop(@ARGV);
+my $exe;
+
+my $count = 1; 
+if($command =~ /[%\#]/) {
+#   study $command;
+   foreach (@ARGV) {
+       my ($dirname, $corename, $extension) = File::Namer::parse($_);
+       $exe = $command;
+       $exe =~ s/(^|[^\\])%b/$1$corename$extension/g;
+       $exe =~ s/(^|[^\\])%c/$1$corename/g;
+       $exe =~ s/(^|[^\\])%e/$1$extension/g;
+       $exe =~ s/(^|[^\\])%d/$1$dirname/g;
+       $exe =~ s/(^|[^\\])%f/$1$_/g;
+       $exe =~ s/(^|[^\\])%#/$count/g;
+       $exe =~ s/(^|[^\\])%/$1$corename/g;
+       $exe =~ s/\\%/%/g;
+       print STDERR "$exe\n" if $verbose or $script_only;
+       system "$exe" unless $script_only;
+       $count ++;
+   }
+} else {
+   foreach (@ARGV) {
+       $exe = "$command $_";
+       print STDERR "$exe\n" if $verbose or $script_only;
+       system "$exe" unless $script_only;
+   }
+}

@@ -1,0 +1,41 @@
+#!/usr/bin/awk -f
+#
+# extract labels from bibtex file and generate list
+# .bib --> .tex
+
+BEGIN{
+i=0;j=0
+printf("\\\documentclass[11pt]{report}\n")
+printf("\\usepackage{dina4}\n")
+printf("\\begin{document}\n\n\n")
+}
+
+{
+if($0 ~ /^@/)
+  {
+  sub(/.*\{ */, "",$0)
+  sub(/ *,/, "",$0)
+  STRING[i]=sprintf(" \\cite{%s}\\\\\n",$0)
+  i++
+  }
+}
+
+END{
+for(j=i;j>=0;--j)
+  {
+  print STRING[j]
+  }
+  
+sub( "\.[^\./]*$", "", FILENAME); # remove extension from the file name
+## printf("\n\n\\nocite{TitlesOn}\n")
+printf("\\bibliographystyle{"STYLE"}\n")
+printf("\\bibliography{"FILENAME"}\n\n")
+printf("\\\end{document}\n")
+}
+
+
+
+
+
+
+

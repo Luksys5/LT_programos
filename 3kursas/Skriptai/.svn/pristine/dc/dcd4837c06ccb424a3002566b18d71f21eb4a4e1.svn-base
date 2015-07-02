@@ -1,0 +1,203 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$ 
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+# Read all FictionBook (*.fb2) files provided on the command line and
+# generate BibTex bibliographies from their metadata.
+#
+# Usage:
+#     $0 *.fb2 > bibliography.bib
+#     $0 < book.fb2 > book-bibliography.bib
+#**
+
+use strict;
+use warnings;
+
+use Encode qw( decode );
+use File::Basename qw( basename );
+
+my @files;
+
+for my $i (0..$#ARGV) {
+    local $_ = $ARGV[$i];
+    if( /^(--help|--hel|--he|--h)/ ) {
+        open(SELF, $0) or die;
+        local $\ = "\n";
+        while( <SELF> ) {
+            s/\$0/$0/g;
+            print $1 if (/^\#\*/../^\#\*\*/) && /^\#\*?\*?(.*)$/;
+        }
+        close(SELF);
+        exit
+    }
+    if( /^--/ ) {
+        die "unknwon option '$_'";
+    } else {
+        push( @files, $_ );
+    }
+}
+
+my @ARGV = @files;
+
+binmode( STDOUT, "utf8" );
+
+print "% Encoding: UTF8\n\n";
+
+for my $fb2_file (@ARGV) {
+    open( FB2, $fb2_file ) || do {
+        warn( "Could not open file '$fb2_file' for input - ", lc($!) );
+        next;
+    };
+    binmode( FB2 );
+    # "Slurp" the whole .fb2 file, raw octets:
+    local $/ = undef;
+    my $contents = <FB2>;
+
+    my $encoding = "utf-8";
+    if( $contents =~ /<\?xml\s+.*?\s+encoding="([^"]*?)"/ ) {
+        $encoding = lc($1);
+    }
+
+    # Convert raw bytes to characters according to the encoding:
+    local $_ = decode( $encoding, $contents );
+    s/\r\n/\n/g;
+    s/\r/\n/g;
+    # Replace '#' by '##' (double '#') since Jabref can not save files
+    # with '#' after reading:
+    s/#/##/g;
+
+    do {
+        print $fb2_file, ": ", $encoding, "\t", length($contents),
+        " (", length($_), " characters)", "\n";
+    } if 0;
+
+    print '@BOOK{b', basename( $fb2_file, ".fb2" ), ",\n";
+
+    my $year;
+    if( m,<title-info>(.*?)</title-info>,s ) {
+        local $_ = $1;
+
+        my @authors;
+        while( m,<author>(.*?)</author>,sg ) {
+            my $author = $1;
+            $author =~ s/\n/ /g;
+            my ($first_name, $middle_name, $last_name );
+            if( $author =~ m,<last-name>(.*?)</last-name>,s ) {
+                $last_name = $1;
+                $last_name =~ s/^\s+|\s+$//g;
+            }
+            if( $author =~ m,<middle-name>(.*?)</middle-name>,s ) {
+                $middle_name = $1;
+                $middle_name =~ s/^\s+|\s+$//g;
+            }
+            if( $author =~ m,<first-name>(.*?)</first-name>,s ) {
+                $first_name = $1;
+                $first_name =~ s/^\s+|\s+$//g;
+            }
+            if( defined $last_name ) {
+                $author = $last_name;
+            } else {
+                $author = "unknown";
+            }
+            if( defined $middle_name or defined $first_name ) {
+                $author .= ",";
+            }
+            if( defined $first_name ) {
+                $author .= " " . $first_name;
+            }
+            if( defined $middle_name ) {
+                $author .= " " . $middle_name;
+            }
+            push( @authors, $author );
+        }
+        print "  author = {", join( " and ", @authors ), "},\n";
+
+        if( m,<book-title>(.*?)</book-title>,s ) {
+            print "  title = {$1},\n"
+        }
+
+        if( m,<lang>(.*?)</lang>,s ) {
+            print "  language = {$1},\n"
+        }
+
+        if( m,<date(?:\s+.*?)?>(.*?)</date>,s ) {
+            $year = $1;
+        }
+
+        my $genre;
+        if( m,<genre>(.*?)</genre>,s ) {
+            $genre = $1;
+            $genre =~ s/^\s+|\s+$//g;
+            print "  genre = {$genre},\n";
+        }
+        my $keywords;
+        if( m,<keywords>(.*?)</keywords>,s ) {
+            $keywords = $1;
+            $keywords =~ s/^\s+|\s+$//g;
+            $keywords =~ s/^\s+/, /g;            
+        }
+        if( defined $genre or defined $keywords ) {
+            print "  keywords = {";
+            if( defined $genre ) {
+                print $genre;
+            }
+            if( defined $genre and defined $keywords ) {
+                print ", ";
+            }
+            if( defined $keywords ) {
+                print $keywords;
+            }
+            print "},\n";
+        }
+
+        if( m,<annotation>(.*)</annotation>,s ) {
+            my $annotation = $1;
+            $annotation =~ s/\n/ /g;
+            $annotation =~ s/<p>//g;
+            $annotation =~ s/<\/p>/\n\n/g;
+            $annotation =~ s/^\s+|\s+$//g;
+            print "  abstract = {", $annotation, "},\n";
+        }
+    }
+
+    if( m,<publish-info>(.*?)</publish-info>,s ) {
+        local $_ = $1;
+
+        if( m,<publisher>(.*?)</publisher>, ) {
+            my $publisher = $1;
+            $publisher =~ s/^\s+|\s+$//g;
+            $publisher =~ s/\n/ /g;
+            $publisher =~ s/\s+/ /g;
+            print "  publisher = {", $publisher, "},\n";
+        }
+
+        if( m,<city>(.*?)</city>, ) {
+            my $city = $1;
+            $city =~ s/^\s+|\s+$//g;
+            $city =~ s/\n/ /g;
+            $city =~ s/\s+/ /g;
+            print "  city = {", $city, "},\n";
+        }
+
+        if( m,<year>(.*?)</year>, ) {
+            if( $1 ne "" ) {
+                $year = $1;
+            }
+        }
+    }
+
+    if( defined $year and $year !~ /^\s*$/ ) {
+        print "  year = {$year},\n";
+    }
+
+    print "  file = {:$fb2_file:FB2},\n";
+
+    print "}\n\n";
+}

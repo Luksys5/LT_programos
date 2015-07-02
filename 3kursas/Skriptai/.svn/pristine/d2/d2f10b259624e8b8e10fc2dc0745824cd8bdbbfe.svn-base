@@ -1,0 +1,10 @@
+#
+# Saulius Grazulis 2005.12.30
+#
+color chain
+
+select protein
+wireframe off
+backbone 100
+
+select all

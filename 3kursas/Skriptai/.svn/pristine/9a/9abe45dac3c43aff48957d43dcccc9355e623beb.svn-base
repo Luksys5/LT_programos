@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -uex
+
+setfont ~/lib/console/ru-alt -m trivial
+loadkeys ~/lib/console/ru-phonet-alt.map
+

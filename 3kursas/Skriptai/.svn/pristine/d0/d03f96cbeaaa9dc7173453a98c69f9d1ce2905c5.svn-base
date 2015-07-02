@@ -1,0 +1,40 @@
+#!/bin/sh
+#!perl  -w
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1998/03/20 15:54:47 $ 
+#$Locker: grazulis $
+#$Revision: 1.1 $
+#$Source: /kaefer/u05/grazulis/src/scripts/RCS/namecrunch,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Try to generate a unique n-letter "crunched" signature from the long
+# name
+#**
+
+use strict;
+use GetOptions;
+use Crunch;
+
+my $length = 4;
+my @args = ();
+
+getOptions({
+    "-l,--length" => [ \$length, "<n>    crunch names to <n> characters" ],
+    "--help,--usage" => [
+        sub {
+            $0 =~ m|/(.*)$|;
+            print "Usage:\n     $1 [options]  long_name_1  long_name_3 ...\n";
+            GetOptions::printUsage();
+	    exit;
+        },
+        "print short usage message (this message) and exit"
+    ],
+});
+
+foreach( @ARGV ) {
+   print crunch( $_, $length ), "\n";
+} 

@@ -1,0 +1,111 @@
+#!/usr/bin/perl -w
+#------------------------------------------------------------------------
+#$Author:$
+#$Date:$ 
+#$Header:
+#$Locker:$
+#$Log:$
+#$Revision:$
+#$Source:$
+#$State:$
+#------------------------------------------------------------------------
+#*
+# Make table of contents (toc) from the tar tape listing
+# (produced with 'tar tv' command)
+#**
+
+use strict;
+use File::Namer;
+use SOptions;
+use SUsage;
+
+my @dirs = ();
+my %tocentry = ();
+
+my $one_col = 0;
+
+getOptions(
+    #** OPTIONS:
+    #**  -1, --one-column    output in one-column format
+    #**  -2, --two-column    output in two-column format
+
+    "-1,--one-column" => sub { $one_col = 1 },
+    "-2,--two-column" => sub { $one_col = 0 },
+
+    "--help,--usage"  => sub { SUsage::usage(); exit() }
+);
+
+$File::Namer::pattern = '^(.*\/)*([^\/]*?)(\.[^/]*)?$';
+
+while(<>) {
+    chomp;
+    my @line = split;
+    if(/^d/) {
+        $dirs[-1][1] = { %tocentry } if @dirs > 0;
+	push(@dirs, [ [@line[7,3..6]] ] );
+        %tocentry = ();
+    } elsif(/^-[^-]/) {
+        my ($key, $basename);
+        $key = $basename = File::Namer::basename($line[-1]);
+
+        if( $key =~  /.*([^a-zA-Z0-9])\d+/) {
+            $key =~ s/([^a-zA-Z0-9])\d+/$1*/g;
+        } else {
+            $key = "*" . File::Namer::ext($line[-1]);
+        }
+	$tocentry{$key}{count} ++;
+        $tocentry{$key}{name} = $basename;
+    }
+}
+
+$dirs[-1][1] = { %tocentry } if @dirs > 0;
+
+## foreach (@dirs) {
+##     print "$$_[0]\n";
+##     my $files = $$_[1];
+##     my @items = sort keys %{$files};
+## 
+##     if(@items < 3) {
+## 	   foreach (sort keys %{$files}) {
+## 	       printf "    %4d %s\n", $$files{$_}{count},
+## 		      ($$files{$_}{count} > 1 ? $_ : $$files{$_}{name});
+## 	   }
+##     } else {
+## 	   my $middle = int(scalar(@items)/2);
+## 	   my $gap = ((@items % 2 == 0) ? 0 : 1);
+## 	   my $i;
+## 	   foreach $i (0..$middle-1) {
+## 	       my $key1 = $items[$i];
+## 	       my $key2 = $items[$middle+$i+$gap];
+## 	       printf "    %4d %-25s     %4d %-25s \n",
+## 		       $$files{$key1}{count},
+## 		      ($$files{$key1}{count} > 1 ? $key1 : $$files{$key1}{name}),
+## 		       $$files{$key2}{count},
+## 		      ($$files{$key2}{count} > 1 ? $key2 : $$files{$key2}{name});
+## 	   }
+## 	   if($gap) {
+## 	       my $key = $items[$middle];
+## 	       printf "    %4d %-25s\n",
+## 		       $$files{$key}{count},
+## 		      ($$files{$key}{count} > 1 ? $key : $$files{$key}{name});
+## 	   }
+##    }
+## }
+
+## $\ = "\n";
+## $, = "\n";
+
+foreach (@dirs) {
+    my @filedescr = @{$$_[0]};
+    my $filename = shift(@filedescr);
+    printf "%-20s %4s %2d %5s %4d", substr($filename,0,20), @filedescr;
+    my $files = $$_[1];
+    my $line = 0;
+    foreach (sort keys %{$files}) {
+        printf "%s%4d %s\n", ($line ? " " x 41 : "  "),
+                $$files{$_}{count},
+	       ($$files{$_}{count} > 1 ? $_ : $$files{$_}{name}) and $line = 1
+        if /\.(image|mar|x)|d13/ and $$files{$_}{count} > 1;
+    }
+    print "\n" unless $line;
+}

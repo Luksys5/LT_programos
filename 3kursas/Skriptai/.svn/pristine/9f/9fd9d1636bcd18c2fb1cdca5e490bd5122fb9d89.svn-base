@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Draw a simple molecule picture using Rasmol.
+
+# USAGE:
+#    $0 input.pdb output.png
+
+set -ue
+
+INPUT_FILE="$1"
+OUTPUT_FILE="$2"
+
+rasmol-classic \
+    -nodisplay \
+<<EOF
+load ${INPUT_FILE} 
+select all
+wireframe off
+cpk 200
+color chain
+write ${OUTPUT_FILE}
+exit
+EOF

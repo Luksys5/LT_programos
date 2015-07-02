@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+#-------------------------------
+#$Author: Lukas_Tutkus $
+#$Date: 2015-02-24 19:08:00 +0200 (An, 24 Vas 2015) $
+#$Revision: 58 $
+#$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/vpaste $
+#$Id: vpaste 56 2015-02-24 16:58:06Z Lukas_Tutkus $
+#-------------------------------
+#*
+#       Perl script for multiple input file reading and processing to other program.
+#*
+my $ffile = $ARGV[0];
+my $Sfile = $ARGV[1];
+
+open my $fh,"<",$ffile or die "can't read file $ffile $!\n";
+open my $fh2,"<",$Sfile or die "can't read file $$ffile $!\n";
+local $/;
+
+## Pirmas failo turinys nusiunciamas programai ./vaddfiles.
+my $doc = <$fh>;
+close($fh);
+
+## Sekancio failo turinys nusiunciamas programai ./vaddfiles.
+my $doc2 = <$fh2>;
+close($fh2);
+print $doc.$doc2;

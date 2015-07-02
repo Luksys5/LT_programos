@@ -1,0 +1,241 @@
+#!/bin/csh -f
+######################################################################
+## This is a simple script to search the PDB index files for a      ##
+## pattern to get the PDB ID code and then to retrieve the PDB      ##
+## entry from the PDB FTP server.                                   ##
+##                                                                  ##
+## It is written for the SGI platform but should work with minor    ##
+## modifications on other platforms.                                ##
+## John Rose 1/05/94                                                ##
+## REVISED: E.ABOLA 6/1/94                                          ##
+## REVISED: M.LIBESON 6/21/94                                       ##
+##                                                                  ##
+## INSTALLATION PROCEDURE:                                          ##
+##                                                                  ##
+## 1.Include the following in your .netrc file.                     ##
+##                                                                  ##
+##     machine pdb.pdb.bnl.gov (IP address 130.199.144.1)           ##
+##     user anonymous                                               ##
+##     password Your_Name@Your_Address                              ##
+##                                                                  ##
+##   .netrc is a special file known to ftp.  The file must be in    ##
+##   your home directory.  The .netrc file cannot be readable by    ##
+##   others.  Use the following command to set the correct          ##
+##   permission (see manual pages on ftp for details):              ##
+##                                                                  ##
+##     chmod go-rwx .netrc                                          ##
+##                                                                  ##
+## 2. Make the file executable. Use:                                ##
+##                                                                  ##
+##      chmod +x getentry                                           ##
+##                                                                  ##
+######################################################################
+
+## set verbose = 1
+
+set FTP_SITE = ftp.rcsb.org
+set FTP_DIR  = /pub/pdb/data/structures/all/pdb
+
+if (($#argv < 1) || ($#argv > 3)) then
+     echo " "
+     echo " This is a simple script to retrieve ID codes of entries "
+     echo " which contain the search string in the PDB index files"
+     echo " "
+     echo " Usage: getentry id_code"
+     echo "        getentry -a author_name"
+     echo "        getentry -c compound_name"
+     echo "        getentry -s source_name"
+     echo "        getentry -r 'sign resolution_value'"
+     echo "        getentry -d"
+     echo "        getentry -p"
+     echo "        getentry -x crystallographer_name"
+     echo " "
+     echo "DEFINITIONS: "
+     echo "  id_code   4 character PDB id_code"
+     echo "  sign      == (equal to)"
+     echo "            != (not equal to)"
+     echo "            >= (greater than equal to)"
+     echo "            <= (less than equal to)"
+     echo "            >  (greater than)"
+     echo "            <  (less than)"
+     exit
+endif
+
+if (-e ~/.netrc) then
+     echo " "
+     echo "Contacting the PDB server ${FTP_SITE}"
+     echo "type ascii" | ftp ${FTP_SITE}
+     echo " "
+     goto CONT
+else
+     echo " "
+     echo "WARNING the .netrc file does not exist"
+     echo
+     echo "This requires the following entry in your .netrc file"
+     echo "machine ${FTP_SITE}"
+     echo "user anonymous"
+     echo "password (Your Name here)"
+     echo
+     echo "see man ftp"
+endif
+
+exit
+
+CONT:
+
+if ($#argv == 1)then
+
+     if ({$1} == "-d") then
+          echo "Fetching PDB deposition materials"
+          echo " "
+          echo "get pub/dep_form.txt PDB.depform" | ftp ${FTP_SITE} > /dev/null
+          echo " "
+          echo "Transfer Complete"
+          ls -ls PDB.depform
+          exit
+     endif
+     
+     if ({$1} == "-p") then
+          echo "Fetching PDB pending/waiting list"
+          echo " "
+          echo "get pub/pending+waiting.list PDB.pending+waiting.list" | ftp ${FTP_SITE} > /dev/null
+          echo " "
+          echo "Transfer Complete"
+          ls -ls PDB.pending+waiting.list
+          exit
+     endif
+     
+     echo " "
+     echo "Fetching entry "$1
+     echo " "
+     echo "get ${FTP_DIR}/pdb$1.ent.Z" ""$1.pdb.Z"" | ftp ${FTP_SITE} ## > /dev/null
+     echo " "
+     echo "Transfer complete"
+     echo " "
+     ls -ls $1.pdb.Z
+     exit
+endif
+
+if ({$1} == "-x") then
+     echo "Searching Crystallographer Address Index"
+     echo " "
+     echo "get crystallographer_info/crystlist.adr crystlist.adr" | ftp ${FTP_SITE} > /dev/null
+     egrep -i "$2" crystlist.adr | more
+     rm crystlist.adr
+     echo " "
+     exit
+endif
+
+if ({$1} == "-a") then
+     echo " "
+     echo "Searching PDB author index"
+     echo " get index/author.idx" ""PDB_author.index"" | ftp  pdb.pdb.bnl.gov
+     echo " "
+     set entree = `egrep -i "$2"  PDB_author.index | tee tmp.$$ | cut -c1-4 | tr "[A-Z]" "[a-z]"`
+     set tmp_count = `wc -l tmp.$$|awk '{print $1}'`
+     more tmp.$$
+     rm tmp.$$
+     echo " "
+     if ($tmp_count != 0) then
+          goto RETRIEVE
+     else
+          /bin/echo "No files found for $2"
+     endif
+AUTHOR:
+     rm PDB_author.index
+     exit
+endif
+
+if ({$1} == "-c") then
+     echo " "
+     echo "Searching PDB compound index"
+     echo " "
+     echo "get index/compound.idx" "PDB_compound.index" | ftp ${FTP_SITE}
+     set entree = `egrep -i "$2"  PDB_compound.index | tee tmp.$$ | cut -c1-4 | tr "[A-Z]" "[a-z]"`
+     set tmp_count = `wc -l tmp.$$|awk '{print $1}'`
+     more tmp.$$
+     rm tmp.$$
+     echo " "
+     if ($tmp_count != 0) then
+          goto RETRIEVE
+     else
+          /bin/echo "No files found for $2"
+     endif
+COMPND:
+     rm PDB_compound.index
+     exit
+endif
+
+if ({$1} == "-s") then
+     echo " "
+     echo "Searching PDB source index"
+     echo " "
+     echo "get index/source.idx" "PDB_source.index" | ftp ${FTP_SITE}
+     set entree = `egrep -i "$2"  PDB_source.index | tee tmp.$$ | cut -c1-4 | tr "[A-Z]" "[a-z]"`
+     set tmp_count = `wc -l tmp.$$|awk '{print $1}'`
+     more tmp.$$
+     rm tmp.$$
+     echo " "
+     if ($tmp_count != 0) then
+          goto RETRIEVE
+     else
+          /bin/echo "No files found for $2"
+     endif
+SOURCE:
+     rm PDB_source.index
+     exit
+endif
+
+if ({$1} == "-r") then
+     echo " "
+     echo "Searching PDB resolution index"
+     echo " "
+     echo "get index/resolu.idx" "PDB_resolution.index" | ftp ${FTP_SITE}
+     set res = `echo $2`
+     set entree = `awk '{if($3 '"$res"')print}' PDB_resolution.index | tee tmp.$$ | cut -c1-4 | tr "[A-Z]" "[a-z]"`
+     set tmp_count = `wc -l tmp.$$|awk '{print $1}'`
+     more tmp.$$
+     rm tmp.$$
+     echo " "
+     if ($tmp_count != 0) then
+          goto RETRIEVE
+     else
+          /bin/echo "No files found for $2"
+     endif
+RESOLU:
+     rm PDB_resolution.index
+     exit
+endif
+
+RETRIEVE:
+echo -n "Retrieve PDB file(s) from server [y/n] "
+set resp1 = $<
+
+if($resp1 =~ [Nn]*) goto CLEAN
+echo " "
+echo -n "Retrieve ALL PDB file(s) from server [y/n] "
+set resp2 = $<
+
+if($resp2 =~ [Nn]*) then
+     echo -n "Enter ID codes (separated by spaces) "
+     set entree = $<
+endif
+echo " "
+
+foreach entry ($entree)
+     echo " "
+     echo "Fetching entry " $entry
+     echo " "
+     echo "get ${FTP_DIR}/pdb$entry.ent.Z" ""$entry.pdb.Z"" | ftp ${FTP_SITE} > /dev/null
+     echo " "
+     echo "Transfer complete"
+     echo " "
+     ls -ls $entry.pdb.Z
+end
+
+CLEAN:
+
+if ({$1} == "-a") goto AUTHOR
+if ({$1} == "-c") goto COMPND
+if ({$1} == "-s") goto SOURCE
+if ({$1} == "-r") goto RESOLU

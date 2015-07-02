@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -ue
+
+for i in ${1+"$@"}
+do
+    echo `zcat $i | sha1sum | sed -e 's/ -$//'`" "`echo $i | sed -e 's/\.gz$//'`
+done

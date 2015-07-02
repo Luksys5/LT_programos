@@ -1,0 +1,35 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date:  $ 
+#$Locker: saulius $
+#$Revision: 1.0 $
+#$Source: $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# convert Molscript input to produce left pair of stereo image
+#**
+
+use strict;
+
+
+$/ = ";";
+
+while(<>) {
+    if( /transform/ ) {
+	print "$_\n\n  transform all by rotation y 6.0;";
+    } else {
+	if( !eof() ) {
+	    print;
+	} else {
+	    $\ = "\n";
+	    chomp;
+	    print;
+	}
+    }
+}
+

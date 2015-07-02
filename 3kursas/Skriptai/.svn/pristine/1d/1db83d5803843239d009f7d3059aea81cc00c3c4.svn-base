@@ -1,0 +1,83 @@
+#!/bin/sh
+#!perl -w --*-perl-*-
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#*
+# Calculate Matthews coefficient
+#**
+
+use strict;
+use SOptions;
+use SUsage;
+
+my $MW = 20000;
+my $user_spacegroup;
+
+#* USAGE:
+#     $0 [options] input.mtz
+#**
+@ARGV = getOptions(
+    "-m,--mw,--molecular-weight" => \$MW,
+    "-s,--spacegroup" => \$user_spacegroup,
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+my $PI = 4 * atan2( 1, 1 );
+
+foreach my $file (@ARGV) {
+
+    my @cell = split( " ", `mtzcell $file` );
+    my $spacegroup = $user_spacegroup ?
+        $user_spacegroup : `mtzsymm $file`;
+    my @symop = split( " ", `symop -a $spacegroup` );
+    my $aunits = $symop[2];
+    chomp( $spacegroup );
+
+    my $rho_prot = 1.34; # protein density, g/cm^3
+    my $NA = 6.023e23;   # molecules/mol
+
+    ## my $cell_vol = $cell[0] * $cell[1] * $cell[2] * sin($PI * $cell[4] / 180.0);
+    my $cell_vol = cell_volume( @cell );
+    my $au_vol   = $cell_vol / $aunits;
+
+    local $\ = "\n";
+    local $, = " ";
+    local $" = " ";
+
+    #print "Protein:   McrBNH";
+    #print "Dataset:   RS315D5";
+    print "Spacegroup $spacegroup";
+    print "Unit cell: @cell (A, deg)";
+    print "AU number: $aunits";
+    print "Cell vol:  $cell_vol A^3";
+    print "au vol:    $au_vol A^3";
+    print "Mol. wt:   $MW Da";
+    print "Assuming protein density: $rho_prot g/cm^3";
+
+    print "Spec. vol. (Matthews coef.), A^3/Da:";
+    my $n;
+    foreach $n ( 1..9 ) {
+	printf "$n chain(s):  %3.2f (%4.1f%% solv.)\n",
+	$au_vol / ($n * $MW),
+	100.0 - ($n * $MW / $NA ) * 100.0 / 
+	    ($rho_prot * $au_vol * (1e-8**3));
+    }
+}
+
+sub cell_volume
+{
+    my @cell = @_;
+
+    # Compute unit cell volume:
+
+    my ($a, $b, $c) = @cell[0..2];
+    my ($alpha, $beta, $gamma) = map {$PI * $_ / 180} @cell[3..5];
+    my ($ca, $cb, $cg) = map {cos} ($alpha, $beta, $gamma);
+    my $sg = sin($gamma);
+    my $D = $sg**2 - $ca**2 - $cb**2 + 2*$ca*$cb*$cg;
+    
+    my $V = $a * $b * $c * sqrt( $D );
+
+    return $V;
+}

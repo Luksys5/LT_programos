@@ -1,0 +1,37 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/07/06 08:39:05 $ 
+#$Locker:  $
+#$Revision: 1.1 $
+#$Source: /home/saulius/src/tdb/RCS/tdb_JOmkdict,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Make a dictionary of the journals in the tdb file
+#**
+
+use strict;
+
+my %journals;
+my $journal_name = "";
+
+while(<>) {
+    if( /^\s*#/ ) { next }
+    if( /^\s*$/ ) {
+	$journals{$journal_name} = 1;
+	$journal_name = "";
+    }
+    if( /^JO/ ) {
+	chomp;
+	my ($tag, $value) = split( " ", $_, 2 );
+	$journal_name .= $journal_name ? " $value" : $value;
+    }
+}
+
+for $journal_name ( sort keys %journals ) {
+    print "\"$journal_name\" => \"$journal_name\",\n";
+}

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -u
+
+hostname="$1"
+username="$2"
+background="$3"
+foreground="$4"
+
+xhost +${hostname} > /dev/null
+
+xon ${hostname} -user ${username} \
+    xterm -T "${username}@${hostname}" -n "${hostname}" \
+          -bg ${background} -fg ${foreground}
+
+##      -fn -misc-fixed-medium-r-normal--20-140-100-100-c-100-iso8859-1'
+
+## xhost -${hostname} > /dev/null
+

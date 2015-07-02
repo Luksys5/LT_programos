@@ -1,0 +1,108 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#*
+# extract tables from the scalepack log files
+#**
+
+use strict;
+use SOptions;
+use SUsage;
+
+my $Id = '$Id: $ ';
+
+my $default_table_start =
+    "Summary of reflections intensities and R-factors by shells";
+
+my $default_table_end =
+    "All reflections";;
+
+my $table_start = $default_table_start;
+my $table_end = $default_table_end;
+
+@ARGV = getOptions(
+#**OPTIONS:
+#** -r, --rfactors        extract table with Rfactors (default)
+#** -s, --sigmas,         extract table with I/Sigma
+#**     --I-to-sigma
+#** -d, --redundancies    extract table with observation redundancies
+#** -a, --absences        extract table with systematic absences
+#** --systematic-absences
+#**
+#** --help, --usage    print short usage message (this message) and exit
+
+    "-r,--rfactors" => sub{
+	$table_start = $default_table_start;
+	$table_end = $default_table_end;
+    },
+
+    "-s,--sigmas,-I-to-sigma,--reflections" => sub{
+	$table_start = "I/Sigma in resolution shells";
+	$table_end = "All hkl";
+    },
+
+    "-d,--redundancies" => sub{
+	$table_start = "Summary of observation redundancies by shells";
+	$table_end = "All hkl";
+    },
+
+    "-a,--absences,--systematic-absences" => sub{
+	$table_start = "Intensities of systematic absences";
+	$table_end = "Programs Denzo and Scalepack";
+    },
+
+    "--help,--usage" => sub { 
+	print "\n$Id\n\n";
+	print "usage:\n";
+	print "  $0 [options] scalepack1.log [scalepack1.log.gz ...]\n";
+        SUsage::usage();
+	exit;
+    }, 
+);
+
+my $filename;
+my $is_pipe;
+
+foreach $filename ( @ARGV ) {
+
+    print "=" x 15, " $filename ", "=" x 15, "\n";
+
+    if( $filename =~ /(\.gz|\.Z)$/  ) {
+	if( !open( INPUT, "gzip -dc '$filename'|" )) {
+	    printf( STDERR "could not decompress '$filename': $!" );
+	    next;
+	}
+	$is_pipe = 1;
+    } else {
+	if( !open( INPUT, "$filename" )) {
+	    printf( STDERR "could not open file '$filename' for reading: $!" );
+	    next;
+	}
+	$is_pipe = 0;
+    }
+
+    my @table = ();
+    while(<INPUT>) {
+	if( /$table_start/../$table_end/ ) {
+	    push( @table, $_ ) unless /Programs Denzo and Scalepack/;
+	    if( /$table_end/ ) {
+		if( !grep /DEFINITION AS IN HAMLIN\/UCSD SOFTWARE/, @table ) {
+		    print "\n";
+		    print @table;
+		    print "\n";
+		}
+		@table = ();
+	    }
+	}
+    }
+
+    print "END\n";
+
+    if( !close( INPUT )) {
+	printf( STDERR
+		"could not " . ($is_pipe ? "decompress":"read") .
+		" file '$filename': $!" );
+    }
+}

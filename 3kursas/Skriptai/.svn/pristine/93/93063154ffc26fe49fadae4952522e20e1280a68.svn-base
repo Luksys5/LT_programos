@@ -1,0 +1,10 @@
+#!/bin/sh
+
+## pwd
+## echo ${1+"$@"}
+
+DIR=$(dirname ${1+"$@"})
+
+cd $DIR
+
+rasmol -script ${1+"$@"}

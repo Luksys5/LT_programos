@@ -1,0 +1,12 @@
+outputs
+This is a .setup script.
+Its purpose is to finish automatic (non-interactive) setup of the
+working directory.
+
+.
+..
+.setup
+file.txt
+
+=== setup/file.txt ===
+This is a simple text file.

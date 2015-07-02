@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my @v = @ARGV[0,1,2];
+
+$\ = "\n";
+$, = "\t";
+
+print sqrt( $v[0]**2 + $v[1]**2 + $v[2]**2 );

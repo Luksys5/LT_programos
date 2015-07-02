@@ -1,0 +1,34 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author:$
+#$Date:$ 
+#$Revision:$
+#$URL:$
+#------------------------------------------------------------------------------
+#*
+#  Monitor laptop battery status
+#**
+
+use strict;
+
+my @status = <>;
+
+# capacity state:          ok
+# charging state:          discharging
+# present rate:            879 mA
+# remaining capacity:      2041 mAh
+# present voltage:         15340 mV
+
+my @remaining_capacity = grep /remaining capacity:/, @status;
+my @present_rate =grep /present rate:/, @status;
+@remaining_capacity = split( " ", $remaining_capacity[0] );
+@present_rate = split( " ", $present_rate[0] );
+my $remaining_capacity = $remaining_capacity[-2];
+my $present_rate = $present_rate[-2];
+
+print @status;
+printf "Time left: %s%4.2f hours\n", " " x 14,
+    $remaining_capacity / $present_rate;

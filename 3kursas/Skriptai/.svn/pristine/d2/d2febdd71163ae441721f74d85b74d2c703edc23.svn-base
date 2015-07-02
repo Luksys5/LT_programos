@@ -1,0 +1,28 @@
+#!/usr/ucb/awk -f
+
+BEGIN{
+	n = 0;
+}
+
+/Real cell/{
+	getline;
+	ave_a += $1; sqr_a += sqr($1);
+	ave_b += $2; sqr_b += sqr($2);
+	ave_c += $3; sqr_c += sqr($3);
+	n++;
+	if( system("isatty-out") )
+		printf "%f %f %f      \r", $1, $2, $3;
+}
+
+END {
+	print "#", n, "cell constant(s) averaged       ";
+	ave_a /= n;
+	ave_b /= n;
+	ave_c /= n;
+	print "#     Cell const. \t sigma"
+	print " a\t" ave_a "\t\t" sqr_a/n - sqr(ave_a); 
+	print " b\t" ave_b "\t\t" sqr_b/n - sqr(ave_b);
+	print " c\t" ave_c "\t\t" sqr_c/n - sqr(ave_c);
+}
+
+function sqr(x) { return x*x; }

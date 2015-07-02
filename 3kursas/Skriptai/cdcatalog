@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -ue
+set -x
+
+CDROM=/cdrom
+
+MUST_UNMOUNT=false
+
+if [ $# -gt 0 ]
+then
+    CDROM="$1"
+fi
+
+if ! mount | grep ${CDROM} > /dev/null 2>&1
+then
+    mount ${CDROM}
+    MUST_UNMOUNT=true
+fi
+
+(
+	CWD="`pwd`"
+	cd ${CDROM}
+
+	ls --time-style=long -lR . > "${CWD}"/ls-lR
+	find . -type f -print0 | xargs -0 md5sum | sort -k2 \
+	> "${CWD}"/md5sums
+	find . -type f -print0 | xargs -0 sha1sum | sort -k2 \
+	> "${CWD}"/sha1sums
+)
+
+chmod 444 ls-lR
+chmod 444 md5sums
+chmod 444 sha1sums
+
+if [ ${MUST_UNMOUNT} = true ]
+then
+    umount ${CDROM}
+fi

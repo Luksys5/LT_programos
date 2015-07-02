@@ -1,0 +1,52 @@
+#!/bin/sh
+#-----------------------------------------------------------------------
+#  Converting .pdb file to poly-Ala Chain
+#-----------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1996/10/05 16:11:42 $
+#$Header:
+#$Locker:  $
+#$Revision: 1.3 $
+#$Source: /kaefer/u05/grazulis/bin/CCP4_amore/RCS/applyMatrix.moleman,v $
+#$State: Exp $
+#-----------------------------------------------------------------------
+#set -x
+
+removeExtension()
+{
+   basename $1 | sed -e 's/\.[^\./]*$//'    
+}
+
+set +u
+if [ "$1" = "" ] 
+then 
+   echo "Need .pdb file to be specified as a first arg. on the cmd-line"; 
+   exit 1;
+fi
+
+PDBIN=$1
+if [ "$2" = "" ]
+then
+   PDBOUT=`removeExtension $1`-polyAla.pdb
+else
+   PDBOUT=$2
+fi
+set -u
+
+rm -f $PDBOUT
+moleman <<- EOF-moleman
+	read
+	$PDBIN
+	write
+	$PDBOUT
+	"$PDBIN as poly-Ala chain"
+	y
+	**
+	0 0
+	p
+	n
+	n
+	n
+	y
+	quit
+	EOF-moleman

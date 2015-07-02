@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -ue
+
+REMOTE_HOST="$1"
+
+xhost +${REMOTE_HOST} > /dev/null 2>&1
+xterm -bg midnightblue -fg white -cr red -T "${REMOTE_HOST}" -e telnet ${REMOTE_HOST}
+xhost -${REMOTE_HOST} > /dev/null 2>&1

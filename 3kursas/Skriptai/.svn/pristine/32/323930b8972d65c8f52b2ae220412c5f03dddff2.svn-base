@@ -1,0 +1,187 @@
+#!/bin/sh
+#!perl  -w
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1998/07/10 13:29:10 $ 
+#$Header:
+#$Locker: grazulis $
+#$Log: tartoc,v $
+# Revision 1.2  1998/07/10  13:29:10  grazulis
+# now determines the maximum length of the directory name
+# and prints the column of the suitable width
+#
+# Revision 1.1  1998/07/09  15:17:35  grazulis
+# Initial revision
+#
+#$Revision: 1.2 $
+#$Source: /kaefer/u05/grazulis/src/scripts/lists/RCS/tartoc,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Make table of contents (toc) from the tar tape listing
+# (produced with 'tar tv' command)
+#**
+
+use strict;
+use File::Namer;
+use SOptions;
+use SUsage;
+
+# possible output types:
+my $simple     = 1;
+my $one_column = 2;
+my $two_column = 3;
+
+# default output style:
+my $output_style = $simple;
+
+@ARGV = getOptions(
+    #** OPTIONS:
+    #**  -s, --simple        simple output format (default)
+    #**  -l, --long          long format, one column
+    #**  -1, --one-column    output in one-column long format
+    #**  -2, --two-column    output in two-column long format
+    #**  --help, --usage     print short usage message (this message) and exit
+
+    "-1,--one-column" => sub { $output_style = $one_column },
+    "-2,--two-column" => sub { $output_style = $two_column },
+    "-l,--long"       => sub { $output_style = $one_column },
+    "-s,--simple"     => sub { $output_style = $simple },
+
+    "--help,--usage"  => sub { SUsage::usage(); exit() }
+);
+
+$File::Namer::pattern = '^(.*\/)*([^\/]*?)(\.[^/]*)?$';
+
+my @dirs = ();
+
+# @dirs = ( [ 
+# 	      [ "T10B6_2/", "Jan",  "7",  "21:17", "1998" ], 
+# 	      { "uo2ac_*.mar1200" => { name => "uo2ac_001.mar1200", count => 90 },
+# 	        "*.log"           => { name => "strategy.log",      count =>  3 },
+# 	        "*.dat"           => { name => "matrix.dat",        count =>  1 }
+# 	      }
+#           ]
+#         );
+
+my %tocentry = ();
+
+# %tocentry = ( 
+#              "uo2ac_*.mar1200" => { name => "uo2ac_001.mar1200", count => 90 },
+# 	       "*.log"           => { name => "strategy.log",      count =>  3 },
+# 	       "*.dat"           => { name => "matrix.dat",        count =>  1 }
+# 	      );
+
+while(<>) {
+    chomp;
+    my @line = split;
+    if( /^d/) {
+        $dirs[-1][1] = { %tocentry } if @dirs > 0;
+	push(@dirs, [ [@line[7,3..6]] ] );
+        %tocentry = ();
+    } elsif(/^-[^-]/) {
+        my ($key, $basename);
+        $key = $basename = File::Namer::basename($line[-1]);
+
+        if( $key =~  /.*([^a-zA-Z0-9])\d+/) {
+            $key =~ s/([^a-zA-Z0-9])\d+/$1*/g;
+        } else {
+            $key = "*" . File::Namer::ext($line[-1]);
+        }
+	$tocentry{$key}{count} ++;
+        $tocentry{$key}{name} = $basename;
+    }
+}
+
+$dirs[-1][1] = { %tocentry } if @dirs > 0;
+
+if    ( $output_style == $simple     ) { simple_output( @dirs ) }
+elsif ( $output_style == $one_column ) { one_column_output( @dirs ) }
+elsif ( $output_style == $two_column ) { two_column_output( @dirs ) }
+else {
+    die "Output style not supported"
+}
+
+#-------------------------------------------------------------------------------------
+
+sub max_length
+{
+    my $max = 0;
+    for ( @_ ) {
+	my $length = length( $_ );
+	$max = $length if $max < $length;
+    }
+    return $max;
+}
+
+sub simple_output
+{
+    my $maxlen = max_length( map { ${$_}[0][0] } @_ ); # maximum dir name length
+    foreach (@_) {
+    	my @filedescr = @{$$_[0]};
+    	my $filename = shift(@filedescr);
+    	printf "%-${maxlen}s %3s %2d %5s %4d", $filename, @filedescr;
+    	my $files = $$_[1];
+    	my $line = 0;
+    	foreach (sort keys %{$files}) {
+    	    printf "%s%4d %s\n", ($line ? " " x ($maxlen+20) : "  "),
+    		    $$files{$_}{count},
+    		   ($$files{$_}{count} > 1 ? $_ : $$files{$_}{name}) and $line = 1
+    	    if /\.(image|mar|x)|d13/ and $$files{$_}{count} > 1;
+    	}
+    	print "\n" unless $line;
+    }
+}
+
+sub two_column_output
+{
+    foreach (@_) {
+    	print join( " ", @{$$_[0]} ), "\n";
+    	my $files = $$_[1];
+    	my @items = sort keys %{$files};
+    
+    	if(@items < 3) {
+    	       foreach (sort keys %{$files}) {
+    		   printf "    %4d %s\n", $$files{$_}{count},
+    			  ($$files{$_}{count} > 1 ? $_ : $$files{$_}{name});
+    	       }
+    	} else {
+    	       my $middle = int(scalar(@items)/2);
+    	       my $gap = ((@items % 2 == 0) ? 0 : 1);
+    	       my $i;
+    	       foreach $i (0..$middle-1) {
+    		   my $key1 = $items[$i];
+    		   my $key2 = $items[$middle+$i+$gap]; 
+    		   printf "    %4d %-25s     %4d %-25s \n", 
+    			   $$files{$key1}{count},
+    			  ($$files{$key1}{count} > 1 ? $key1 : $$files{$key1}{name}),
+    			   $$files{$key2}{count},
+    			  ($$files{$key2}{count} > 1 ? $key2 : $$files{$key2}{name});
+    	       }
+    	       if($gap) {
+    		   my $key = $items[$middle];
+    		   printf "    %4d %-25s\n",
+    			   $$files{$key}{count},
+    			  ($$files{$key}{count} > 1 ? $key : $$files{$key}{name});
+    	       }
+       }
+    }
+}
+
+sub one_column_output
+{
+    local $\ = "\n";
+    local $, = "\n";
+    
+    foreach (@_) {
+    	print join( " ", @{$$_[0]} );
+    	my $files = $$_[1];
+	my $key;
+    	foreach $key (sort keys %{$files}) {
+    	       printf "    %4d %s\n", $$files{$key}{count},
+    		      ($$files{$key}{count} > 1 ? $key : $$files{$key}{name});
+    	}
+    }
+}

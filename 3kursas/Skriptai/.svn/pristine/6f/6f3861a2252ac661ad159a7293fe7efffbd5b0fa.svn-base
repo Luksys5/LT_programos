@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -ue
+## set -x
+
+REMOTE_SERVER=delfinas
+
+BASENAME=`basename $0`
+
+case $BASENAME in
+    *-*) REMOTE_SERVER=`echo $BASENAME | awk -F- '{print $2}'` ;;
+esac
+
+set -x
+
+rsync \
+    --rsh=ssh \
+    --archive \
+    --verbose \
+    --delete \
+    ${HOME}/{struct,src,writings} \
+    ${REMOTE_SERVER}:/usr/data/${USER} \
+${1+"$@"}

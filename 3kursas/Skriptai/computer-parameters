@@ -1,0 +1,86 @@
+#! /bin/sh
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2014-06-20 17:16:24 +0300 (Pn, 20 Bir 2014) $
+#$Revision: 452 $
+#$URL: svn://saulius-grazulis.lt/scripts/computer-parameters $
+#------------------------------------------------------------------------------
+#*
+# This simple script outputs parameters of essential computer parts;
+# useful for collecting data provenance information.
+#
+# USAGE: just run this script witout any arguments:
+#     $0
+#**
+
+## set -x
+
+ID='$Id: computer-parameters 452 2014-06-20 14:16:24Z saulius $'
+
+USE_LSCPU=true
+
+#** OPTIONS:
+#**  --lscpu, --use-lscpu
+#**      Run 'lscpu' to collect information about CPU capabilities (default)
+#**
+#**  --no-lscpu
+#**      Do not run 'lscpu', skip CPU data collection. The 'lscpu' program
+#**      can be sometimes very slow on computers with large number of cores,
+#**      such as MIF cluster nodes.
+#**
+#**  --help               Print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+      --use-lscpu|--use-lscp|--use-lsc|--use-ls|--use-l|\
+      --lscpu|--lscp|--lsc|--ls|--l)
+          USE_LSCPU=true
+          ;;
+      --no-lscpu|--no-lscp|--no-lsc|--no-ls|--no-l)
+          USE_LSCPU=false
+          ;;
+      --help|--hel|--he|--h)
+            awk '/#\*/,/#\*\*/ {
+                    sub("^ *#[*]?[*]?", ""); \
+                    gsub("\\$0","'$(basename $0)'"); \
+                    print $0
+                }' $0
+	    exit
+	    ;;      
+      -*) echo "`basename $0`: unknown option $1" >&2 ; exit 1 ;;
+      *)  FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+echo "FORMAT\t"$(basename $0) \
+    $(echo '$Revision: 452 $' | sed 's/\$//g; s/Revision: *//') \
+    $(echo '$URL: svn://saulius-grazulis.lt/scripts/computer-parameters $' \
+    | sed 's/\$//g; s/URL: *//')
+
+echo "USER\t"$(whoami)
+echo "CWD\t"$(pwd)
+echo "HOST\t"$(hostname -f)
+echo "UNAME\t"$(uname -a)
+echo "UPTIME\t"$(uptime | sed 's/^  *//')
+if type perl > /dev/null 2>&1
+then
+    echo "PERL\t"$(perl --version | sed 's/^This is //' | grep '.' | head -1)
+fi
+if type java > /dev/null 2>&1
+then
+    echo "JAVA\t$(java -showversion 2>&1 | head -3)"
+fi
+echo "\nMEMORY:"
+free
+
+if [ $USE_LSCPU = true ]
+then
+    echo "\nCPU:"
+    if type lscpu
+    then
+        lscpu
+    else
+        cat /proc/cpuinfo
+    fi
+fi

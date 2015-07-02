@@ -1,0 +1,6 @@
+#!/usr/ucb/sh 
+mkdir solutions/$1
+mv     *.log solutions/$1
+PREFIX=`awk -F= '/set *logid/{print $2}' auto_amore`
+mv     $PREFIX* solutions/$1
+

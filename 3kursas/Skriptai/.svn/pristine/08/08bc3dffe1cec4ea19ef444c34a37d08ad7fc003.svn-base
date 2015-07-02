@@ -1,0 +1,57 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2001/08/21 11:10:38 $ 
+#$Locker: saulius $
+#$Revision: 1.1 $
+#$Source: /home/saulius/src/tdb/RCS/tdblist,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Produce a list (text table) from a tagged literature database 
+#**
+
+use strict;
+
+my @header = ();
+my %record = ();
+
+my $header_printed = 0;
+
+$, = "\t";
+$\ = "\n";
+
+while(<>) {
+    chomp;
+    if( /^\s*#FIELD\s+([^\s]+)/ ) {
+	push( @header, $1 );
+	next;
+    }
+    if( /^\s*#=/ ) { print; next }
+    if( /^\s*#/ ) { next }
+    if( /^\s*$/ or eof() ) {
+	next unless @header;
+	if( !$header_printed ) {
+	    print @header;
+	    $header_printed = 1;
+	}
+	my @rec = ();
+	my $key;
+	foreach $key (@header) {
+	    if( defined $record{$key} ) {
+		push( @rec, $record{$key} );
+	    } else {
+		push( @rec, "" );
+	    }
+	}
+	print @rec;
+	%record = ();
+	next;
+    }
+    my ( $key, $val ) = split( ' ', $_, 2 );
+    $val =~ s/\t/ /g;
+    $record{$key} .= $val;
+}

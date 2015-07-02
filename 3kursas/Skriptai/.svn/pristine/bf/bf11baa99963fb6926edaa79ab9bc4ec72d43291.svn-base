@@ -1,0 +1,138 @@
+#!/bin/sh
+#-----------------------------------------------------------------------
+#  CCP4 control script
+#-----------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1999/09/01 09:42:10 $
+#$Locker:  $
+#$Revision: 1.1 $
+#$Source: /kaefer/u05/grazulis/src/CCE/scripts/RCS/apply_solution,v $
+#$State: Exp $
+#-----------------------------------------------------------------------
+#*
+# apply CCP4 amore solutions to a model in PDB format
+#**
+#-----------------------------------------------------------------------
+
+#set -x
+set -u
+
+ID='$Id: apply_solution,v 1.1 1999/09/01 09:42:10 grazulis Exp $'
+
+mk_inp() { echo "# $*"; cat; }
+setvar() { eval $1="'$3'"; }
+
+setvar INPUT_PDB  = ""
+setvar OUTPUT_PDB = ""
+
+setvar ANGLES = "0 0 0"
+setvar VECTOR = "0 0 0"
+
+setvar CELL = ""
+setvar SPACEGROUP = ""
+
+#------------------------------------------------------------------------
+# executables
+
+setvar pdbset = pdbset
+setvar perl5  = perl5
+
+#------------------------------------------------------------------------
+# process the command line
+
+set +u
+
+while [ "$1" != "" ]
+do
+#** -c, --cell "a b c alpha beta gamma"  set cell constants of the new pdb file
+#** -s, --spacegroup <sg>                set spacegroup of the new pdb file
+#**
+#** -o, --output "new.pdb"            write transformed coordinates to "new.pdb"
+#** -e, --eulerian "e1 e2 e3"         specify rotation by giving Eulerian
+#**                                   angles e1, e2 e3 (in CCP4 convention)
+#** -t, --translation "t1 t2 t3"      specify translation vector <t1,t2,t3>,
+#**                                   in Angstroems
+#**
+#** --help         print short help message (this message) and exit
+#** -V, --version  print script version number and exit
+#** --script       do not run pdbset, print it's input script to STDOUT instead
+
+    OPTION=$1
+    case $OPTION in
+	-c|--cell|--cel|--ce|--c)
+	    shift; setvar CELL = "$1" ;;
+	-s|--spacegroup|--spacegrou|--spacegro|--scpacegr|--spaceg|\
+	   --space|--spac|--spa|--sp)
+	    shift; setvar SPACEGROUP = "$1" ;;
+        -o|--output|--o*)
+	    shift; setvar OUTPUT_PDB = "$1" ;;
+	-e|--eulerian|--euleria|--euleri|--euler|--eule|--eul|--eu|--e)
+	    shift; setvar ANGLES = "$1" ;;
+	-t|--translation|--traslatio|--translti|--translat|--transla|\
+           --transl|--trans|--tran|-tra|--tr|--t)
+	   shift; setvar VECTOR = "$1" ;;
+	--help|--hel|--he|--h)
+	    echo
+	    echo "Usage:"
+	    echo "    `basename $0` [options] model.pdb"
+	    awk '/#\*/,/#\*\*/{sub("^#[*]?[*]?", ""); print $0}' $0
+	    exit
+	    ;;
+        -V|--version|--versi|--vers|--ver|--ve|--v)
+	    echo $ID
+	    exit
+	    ;;
+	--script|--scrip|--scri|--scr|--sc)
+	    setvar pdbset = "mk_inp pdbset" ;;
+        -*) echo "`basename $0`: unknown option $1"; exit 1 ;;
+         *) setvar INPUT_PDB = "$1" ;;
+    esac
+    shift
+done
+
+set -u
+
+#------------------------------------------------------------------------
+# check input and set default values
+
+test -z "$INPUT_PDB" && {
+   echo "please supply .pdb file on the command line"
+   echo "try `basename $0` --help for usage info"
+   exit 1
+}
+
+test -z "$OUTPUT_PDB" && OUTPUT_PDB="`basename ${INPUT_PDB} .pdb`_sol.pdb"
+
+#------------------------------------------------------------------------
+
+test -z "$SPACEGROUP" && {
+    SPACEGROUP=`awk '/^CRYST1/ {print substr($0,56,13); exit}' $INPUT_PDB` # |\
+#                sed -e 's/ //g'`
+}
+
+test -z "$SPACEGROUP" || SPACEGROUP="SPACEGROUP $SPACEGROUP"
+test -z "$CELL"       || CELL="CELL $CELL"
+
+test -z "$SPACEGROUP" && SPACEGROUP="## SPACEGROUP is not known"
+test -z "$CELL"       && CELL="## CELL       will be taken from the pdb file"
+
+#------------------------------------------------------------------------
+# run pdbset to aplly rotation and translation to the .pdb file
+
+PROG_ID=`echo $ID | sed -e 's/\\$//g'`
+
+${pdbset} xyzin $INPUT_PDB xyzout $OUTPUT_PDB <<EOF
+	#
+	#  pdbset.inp    
+	#
+	# apply CCP4 AMORE solution to the PDB file
+	#
+	REMARK applying solution
+	REMARK $ANGLES  $VECTOR
+	REMARK to model $INPUT_PDB
+	REMARK $PROG_ID
+	$CELL
+	$SPACEGROUP
+	ROTATE EULER $ANGLES
+	SHIFT        $VECTOR
+EOF

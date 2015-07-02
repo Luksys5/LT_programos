@@ -1,0 +1,84 @@
+#!/bin/sh
+#------------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2014-10-07 15:37:54 +0300 (An, 07 Spa 2014) $
+#$Revision: 475 $
+#$URL: svn://saulius-grazulis.lt/scripts/svn-editor-hook $
+#------------------------------------------------------------------------------
+#
+# An enhancement script of the SVN editor command that automagically
+# inserts the name of the repository branck to which the commit
+# happens.
+#
+# Accepts an optional argument -- editor command; the default editor
+# is 'nano'.
+#
+# INVOCATION EXAMPLES:
+#     svn-editor-hook
+#     svn-editor-hook nano
+#     svn-editor-hook 'emacs -nw'
+#
+# A typical usage may involve setting the SVN_EDITOR variable, or
+# using the --editor-cmd option of the 'svn' command:
+#
+# SVN_EDITOR='svn-editor-hook nano'
+# export SVN_EDITOR
+# svn ci
+#
+# svn ci --editor-cmd svn-editor-hook
+#
+# Loosely based on the code presented in
+# http://blog.jasonantman.com/2011/01/client-side-subversion-commit-message-hooks/
+# 2013-03-02
+
+if [ $# -gt 1 ]
+then
+    OUR_EDITOR="$1"
+    shift
+else
+    OUR_EDITOR="nano"
+fi
+
+SVN_COMMIT_TMP="$1"
+
+set -ue
+
+REPO="$(svn info | awk '/Repository Root:/{print $3}' | sed 's/^ *//')"
+BRANCH="$(svn info | awk '/URL:/{print $2}' | sed 's/^ *//')"
+
+DIR="$(echo "${BRANCH}" \
+| sed "s|^${REPO}||" \
+| sed "s|^/||" \
+| sed 's/%20/ /g')"
+
+test -z "${DIR}" && DIR="$(basename ${REPO})"
+
+# Check if the URI::Encode module exists"
+if perl -MURI::Encode -e 'exit 0' 2> /dev/null
+then
+    DECODED_DIR=$(perl -MURI::Encode -le "print URI::Encode::uri_decode(\"$DIR\")")
+else
+    DECODED_DIR="${DIR}"
+fi
+
+test -n "$DECODED_DIR" && DIR="${DECODED_DIR}"
+
+## echo "${REPO}"
+## echo "${BRANCH}"
+
+case "${SVN_COMMIT_TMP}" in 
+    svn-commit.* ) 
+        echo "${DIR}/ ($(whoami)@$(hostname -f))" \
+        | cat - ${SVN_COMMIT_TMP} \
+        | \
+        if type sponge > /dev/null
+        then
+            sponge ${SVN_COMMIT_TMP}
+        else
+            cat > ${SVN_COMMIT_TMP}.$$.aux
+            mv ${SVN_COMMIT_TMP}.$$.aux ${SVN_COMMIT_TMP}
+        fi
+esac
+
+## set -x
+eval exec ${OUR_EDITOR} ${SVN_COMMIT_TMP}

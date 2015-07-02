@@ -1,0 +1,11 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $c = eval( $ARGV[0] );
+my @v = @ARGV[1,2,3];
+
+$\ = "\n";
+$, = "\t";
+
+print $c*$v[0], $c*$v[1], $c*$v[2];

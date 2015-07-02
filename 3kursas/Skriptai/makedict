@@ -1,0 +1,31 @@
+#!/usr/ucb/sh
+
+SCRATCH=$tmp/gcg
+
+COUNT=1
+LINENUM=`grep : $1 | wc -l`
+
+while [ $COUNT -le $LINENUM ]
+do
+   CODE=`grep : $1 | sed -n "$COUNT,$COUNT p"`
+   FILE=$SCRATCH/`echo $CODE | awk -F: '{print tolower($2) "." tolower($1)}'`
+   PSCODE=`echo $CODE | awk -F: '{print tolower($2)}'`
+
+   CWD=`pwd`
+   cd $SCRATCH
+   fetch -default $CODE > /dev/null
+   cd $CWD
+ 
+   if [ -f $FILE ]
+   then
+      NAME=`awk '/^OS /{print $2 " " $3}' $FILE`
+   else
+      NAME="????"
+   fi
+   echo s/$PSCODE/$NAME/g
+   rm -f $FILE
+   COUNT=`expr $COUNT + 1`
+done
+
+
+

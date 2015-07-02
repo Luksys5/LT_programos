@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# Remove all backup files in the directory $1
+# (or in the current directory if no dir has been specified)
+#
+
+## set -x
+
+test -z "$1" || cd $1
+rm -f  *~
+
+if [ "$UID" != 0 -a "$USER" != "root" ]
+then
+    for i in *_[0-9] *_[0-9][0-9]
+    do
+      if [ ! -d "$i" ]
+      then
+	  rm -f -- "$i"
+      fi
+    done
+fi
+
+rm -f .*~

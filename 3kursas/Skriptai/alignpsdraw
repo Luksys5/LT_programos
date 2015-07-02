@@ -1,0 +1,635 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#-----------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/11/06 09:20:56 $ 
+#$Locker: grazulis $
+#$Revision: 1.3 $
+#$Source: /fs/home/grazulis/work/RCS/alignpsdraw,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Draw sequence alignment. Output in PostScript.
+#**
+
+use strict;
+use SOptions;
+use SUsage;
+
+#*USAGE:
+#    alignpsdraw mol1-mol2.align > mol1-mol2.ps
+#**
+
+my $titles;
+my $width = 50;
+my $margin = 10;
+my $textsize = 12;
+my $charboxwidth;
+my $lineheight;
+my $rows_per_page = 7;
+my $helixthickness = 0.75;
+my $strandthickness = 0.25;
+my $secondary_gray = 0.75;
+
+my $cornerx = 50;
+my $cornery = -70;
+
+my $fontname = "Helvetica";
+my $boldfontname;
+
+my @sstruct_files = ();
+my @sstruct_descriptions = ();
+
+#**OPTIONS:
+#** -f, --font-name=Helvetica  use Helvetica as a regular font
+#** -b, --bold-font-name=Helvetica-Bold
+#**                            use Helvetica-bold for highlighted characters
+#** --secondary-structure-file=file.dat
+#**                            read secondary structure from file 'file.dat'
+#** -m, --margin=10            leave margin 10 boxes for sequence numbers
+#** -t, --textsize=12          use font size 12pt for text
+#** -r, --rows-per-page=7      print 7 alignments on one page
+#** -w, --width=50             print 50 amino-acid symbols per row
+#** -T, --titles="Seq1,Seq2"   titles for the sequences
+#** --help, --usage            print short usage message and exit
+
+@ARGV = getOptions(
+    "-f,--font-name"      => \$fontname,
+    "-b,--bold-font-name" => \$boldfontname,
+    "-s,--secondary-structure-file" => \@sstruct_files,
+    "-m,--margin"        => \$margin,
+    "-t,--textsize"      => \$textsize,
+    "-r,--rows-per-page" => \$rows_per_page,
+    "-w,--width"         => \$width,
+    "-T,--titles"        => \$titles,
+    "--help,--usage"     => sub { SUsage::usage(); exit },
+);
+
+$boldfontname = "$fontname-Bold" unless $boldfontname;
+$lineheight = $textsize unless defined $lineheight;
+$charboxwidth = $textsize unless defined $charboxwidth;
+$helixthickness *= $textsize;
+$strandthickness *= $textsize;
+
+my @titles = split( ",", $titles ) if $titles;
+
+my @align = ();
+
+while(<>) {
+    next if /^\s*#|^\s*$/;
+    my @line = split;
+    push( @align, [@line] );
+}
+
+do {
+    my $file;
+    for $file (@sstruct_files) {
+	open( SSFILE, "$file" ) or
+	    die("$0: could not open file '$file' for reading: $!");
+	my @ssd = ();
+	while(<SSFILE>) {
+	    if( /^\s*(helix|strand)/ ) {
+		my $code = $1 eq "helix" ? "H" : "S";
+		my @line = split;
+		my ($from, $to) = @line[2,4];
+		$from =~ s/[^\d]//g;
+		$to =~ s/[^\d]//g;
+		push( @ssd, [ $from, $to, $code ] );
+		next;
+	    }
+	    if( /^\s*(^LOC\s*(AlphaHelix|310Helix|Strand))/ ) {
+		my $code = $1 =~ "Helix" ? "H" : "S";
+		my @line = split;
+		my ($from, $to) = @line[3,6];
+		push( @ssd, [ $from, $to, $code ] );
+		next;
+	    }
+	}
+	@ssd = sort {$a->[0] <=> $b->[0]} @ssd;
+        push( @sstruct_descriptions, [@ssd] );
+	close SSFILE;
+    }
+};
+
+my %amino_acids = (
+    "GLY" => "G",
+    "ALA" => "A",
+    "VAL" => "V",
+    "LEU" => "L",
+    "ILE" => "I",
+    "PHE" => "F",
+    "TYR" => "Y",
+    "PRO" => "P",
+    "SER" => "S",
+    "THR" => "T",
+    "CYS" => "C",
+    "MET" => "M",
+    "TRP" => "W",
+    "ASP" => "D",
+    "ASN" => "N",
+    "GLU" => "E",
+    "GLN" => "Q",
+    "ARG" => "R",
+    "LYS" => "K",
+    "HIS" => "H",
+    "."   => ".",
+    "G" => "G",
+    "A" => "A",
+    "V" => "V",
+    "L" => "L",
+    "I" => "I",
+    "F" => "F",
+    "Y" => "Y",
+    "P" => "P",
+    "S" => "S",
+    "T" => "T",
+    "C" => "C",
+    "M" => "M",
+    "W" => "W",
+    "D" => "D",
+    "N" => "N",
+    "E" => "E",
+    "Q" => "Q",
+    "R" => "R",
+    "K" => "K",
+    "H" => "H",
+);
+
+my $page = 1;
+my $lines = 0;
+my $maxlines = 0;
+my $stretch_format = "%4s %s %4s : ";
+
+&print_dsc;
+&print_preamble;
+&print_page_setup( $page );
+
+do {
+    my $n = 0;
+
+    while( @align ) {
+	my @stretch = splice( @align, 0, $width );
+        my ( $first, $last ) = find_first_last( 0, \@stretch );
+
+	print_numbers( $first, $last, 0, \@stretch );
+
+	if( @sstruct_descriptions ) {
+	    print_secondary_gray( $first, $last, 0, \@stretch,
+				  $sstruct_descriptions[0] );
+	    print "return\n";
+	}
+
+	## print_sequence( $titles[0], $first, $last, 1, \@stretch );
+	print_sequence_bold( $titles[0], $first, $last, 1, 3, \@stretch );
+
+	## print_correspondence( 1, 3, \@stretch );
+
+        ( $first, $last ) = find_first_last( 2, \@stretch );
+
+	if( @sstruct_descriptions > 1 ) {
+	    print_secondary_gray( $first, $last, 2, \@stretch,
+				  $sstruct_descriptions[1] );
+	    print "return\n";
+	}
+
+	## print_sequence( $titles[1], $first, $last, 3, \@stretch );
+	print_sequence_bold( $titles[1], $first, $last, 3, 1, \@stretch );
+
+	print_numbers( $first, $last, 2, \@stretch );
+
+	&print_newline;
+
+	if( ++$n % $rows_per_page == 0 && @align ) {
+	    print "showpage\n";
+	    $page++;
+	    &print_page_setup($page);
+	    $maxlines = $lines if $maxlines < $lines;
+	    $lines = 0;
+	}
+    }
+};
+
+print "showpage\n";
+
+$maxlines = $lines if $maxlines < $lines;
+
+my @bb;
+
+$bb[0] = -$cornery - $lineheight;
+$bb[1] = $cornerx;
+$bb[2] = $bb[0] + ($maxlines - 0.5) * $lineheight;
+$bb[3] = $bb[1] + ($margin + $width + 1) * $charboxwidth;
+
+print_trailer( @bb, $page );
+
+#------------------------------------------------------------------------------
+
+sub find_first_last
+{
+    my ( $n, $stretch ) = @_;
+    my ( $first, $last );
+
+    for ( @{$stretch} ) {
+	if( $_->[$n] ne "." ) {
+	    $last = sprintf( "%d", $_->[$n] );
+	    $first = $last unless defined $first;
+	}
+    }
+    $first = "." unless $first;
+    $last  = "." unless $last;
+    return ( $first, $last );
+}
+
+sub print_sequence
+{
+    my ( $title, $first, $last, $n, $stretch ) = @_;
+
+    my $prefix = sprintf $stretch_format, $first, "-", $last;
+
+    $title = "" unless defined $title;
+    print "($title) show ", $margin/3, " advanceto ($prefix) show ";
+    print "$margin advanceto\n";
+    print "(", (map {$amino_acids{$_->[$n]}} @{$stretch}), ")\n";
+    print "showmono newline\n";
+}
+
+sub print_sequence_bold
+{
+    my ( $title, $first, $last, $n1, $n2, $stretch ) = @_;
+    my $i;
+
+    my $prefix = sprintf $stretch_format, $first, "-", $last;
+
+    $title = "" unless defined $title;
+    print "($title) show ", $margin/3, " advanceto ($prefix) show ";
+    print "$margin advanceto\n";
+
+    $i = 0;
+    my $string = "";
+    my $last_eq;
+    while( $i <= $#{$stretch} ) {
+	my $s = $stretch->[$i];
+	my $aa = $amino_acids{$s->[$n1]};
+	if( $s->[$n1] eq $s->[$n2] ) {
+	    if( !defined $last_eq || $last_eq ) {
+		$string .= $aa;
+	    } else {
+		print "($string) showmono\n";
+		$string = "$aa";
+	    }
+	    $last_eq = 1;
+	} else {
+	    if( !defined $last_eq || !$last_eq ) {
+		$string .= $aa;
+	    } else {
+		print "($string) showmonobold\n";
+		$string = $aa;
+	    }
+	    $last_eq = 0;
+	}
+	$i ++;
+    }
+    if( $string ) {
+	if( $last_eq ) {
+	    print "($string) showmonobold\n";
+	} else {
+	    print "($string) showmono\n";
+	}
+    }
+    &print_newline;
+}
+
+sub print_numbers
+{
+    my ( $first, $last, $n, $stretch ) = @_;
+    my $i;
+
+    print "$margin advanceto\n";
+
+    $i = 0;
+    while( $i <= $#{$stretch} ) {
+	my $s = $stretch->[$i];
+	if( $s->[$n] ne "." && $s->[$n] % 10 == 0 ) {
+	    print "$margin $i add advanceto\n";
+	    print "($s->[$n]) printsmall\n";
+	}
+	$i ++;
+    }
+    &print_newline;
+}
+
+sub print_correspondence
+{
+    my ( $n1, $n2, $stretch ) = @_;
+
+    print "$margin advanceto\n";
+    print "(";
+    print map {$_->[$n1] eq $_->[$n2] && $_->[$n1] ne "." ? "|" : "."}
+          @{$stretch};
+    print ")\n showmono newline\n";
+}
+
+sub print_secondary
+{
+    my ( $first, $last, $n, $stretch, $ssd ) = @_;
+
+    return if $first eq "." && $last eq ".";
+    my $element;
+    for $element (@{$ssd}) {
+	if( $element->[0] > $last ) { last }
+	if( $element->[1] < $first ) { next }
+	## if( $element->[0] >= $first && $element->[0] <= $last ) {
+	my $from = 0;
+	$from ++
+	    while( $from <= $#{$stretch} &&
+		   ($stretch->[$from][$n] eq "." ||
+		    $stretch->[$from][$n] < $element->[0] ));
+	my $to = $from;
+	$to ++
+	    while( $to <= $#{$stretch} &&
+		   ($stretch->[$to][$n] eq "." ||
+		    $stretch->[$to][$n] < $element->[1] ));
+	my $len = $to - $from;
+        $len ++ if $to <= $#{$stretch};
+	my $code = $element->[2] eq "H" ? "H" : "S";
+	my $thickness  = $element->[2] eq "H" ?
+	    $helixthickness : $strandthickness;
+	if( $len > 0 ) {
+	    print "$margin $from add advanceto\n";
+	    print "$len $thickness $code\n";
+	}
+	## }
+    }
+    ## &print_newline;
+}
+
+sub print_secondary_gray
+{
+    print "gsave\n";
+    print "$secondary_gray setgray\n";
+    print "{ $secondary_gray setgray } sethelixbodycolor\n";
+    print "{ $secondary_gray setgray } setstrandbodycolor\n";
+    &print_secondary;
+    print "grestore\n";
+}
+
+#------------------------------------------------------------------------------
+
+sub fold
+{
+    my $length = shift;
+    my $separator = shift;
+    my $string = shift;
+    my @lines = ();
+    my $line = "";
+
+    my $ors = $separator =~ /\s/ ? $separator : "$separator ";
+    my $word;
+    for $word (split( $separator, $string )) {
+	$word =~ s/^\s*|\s*$//g;
+	if( !$line ) {
+	    $line = $word;
+	} else {
+	    my $new_line = "$line$ors$word";
+	    if( length($new_line) < $length ) {
+		$line = $new_line;
+	    } else {
+		push( @lines, $line );
+		$line = $word;
+	    }
+	}
+    }
+    push( @lines, $line );
+    return @lines;
+}
+
+#------------------------------------------------------------------------------
+
+sub print_newline
+{
+    print "newline\n";
+    $lines ++;
+}
+
+sub print_dsc
+{
+    print "%!PS-Adobe-3.0 EPSF-3.0\n";
+    print "%%BoundingBox: (atend)\n";
+    print "%%Pages: (atend)\n";
+    print "%%EndComments\n";
+}
+
+sub print_trailer
+{
+    my ($bb1, $bb2, $bb3, $bb4, $pages) = @_;
+    print "%%Trailer\n";
+    print "%%BoundingBox: $bb1 $bb2 $bb3 $bb4\n";
+    print "%%Pages: $pages\n";
+    print "%%EOF\n";
+}
+
+sub print_page_setup
+{
+my $page_nr = shift;
+print <<EOF
+%%Page: $page_nr $page_nr
+0 0 90 rotate
+$cornerx $cornery moveto
+setleftmargin
+EOF
+}
+
+sub print_preamble
+{
+print <<EOF;
+%%BeginSetup
+/fontsize $textsize def
+
+/$fontname findfont fontsize scalefont setfont
+
+/leftmargin 0 def
+
+/setleftmargin {
+    currentpoint
+    pop /leftmargin exch def
+} def
+
+/currentMheight {
+    gsave
+        newpath 0 0 moveto
+        true charpath
+        pathbbox
+        pop exch pop sub neg
+    grestore
+} def
+
+/currentfontheight { (M) currentMheight } def
+/charboxwidth      $charboxwidth def
+/currentlineheight $lineheight def
+
+/advanceto {
+    charboxwidth mul leftmargin add currentpoint exch pop moveto
+} def
+
+/newline {
+    currentlineheight
+    currentpoint exch pop exch sub
+    leftmargin exch moveto
+} bind def
+
+/return {
+    currentpoint exch pop
+    leftmargin exch moveto
+} def
+
+/showmono {
+    {
+     gsave
+         1 string dup 0 
+         4 -1 roll put
+         dup stringwidth pop 2 div
+         charboxwidth 2 div exch sub
+         0 rmoveto 
+         show
+     grestore
+     charboxwidth 0 rmoveto
+    } forall
+} def
+
+/showmonobold {
+    gsave
+        /$boldfontname findfont $textsize scalefont setfont
+	showmono
+        currentpoint
+    grestore
+    moveto
+} def
+
+/center {
+    0
+    currentfontheight 2 div
+    rmoveto
+} def 
+
+/cshow {
+    currentpoint exch pop exch 
+    center show
+    currentpoint pop
+    exch moveto
+} def
+
+/cbox {
+    /hh exch def
+    /ww exch charboxwidth mul def
+    currentpoint
+    /yy exch def
+    /xx exch def
+    gsave
+        center currentpoint translate
+        newpath
+        /hh2 hh 2 div def
+        0 0 moveto
+        0  hh2 neg lineto
+        ww hh2 neg lineto
+        ww hh2 lineto
+        0  hh2 lineto
+        closepath fill
+    grestore
+    xx ww add yy moveto
+} def
+
+/helixlidcolor   { 1 setgray } def
+/helixbodycolor  { 1 setgray } def
+/strandbodycolor { 1 setgray } def
+
+/sethelixlidcolor   { /helixlidcolor   exch def } def
+/sethelixbodycolor  { /helixbodycolor  exch def } def
+/setstrandbodycolor { /strandbodycolor exch def } def
+
+/drawhelix {
+    /hh exch def
+    /ww exch charboxwidth mul def
+    currentpoint
+    /yy exch def
+    /xx exch def
+    /hh2 hh 2 div def
+    /lidscale 0.7 def
+    /xl charboxwidth 2 div def
+    /wl ww hh2 sub def
+    gsave
+        center currentpoint translate
+        newpath
+        % tail
+        wl 0 moveto
+        ww charboxwidth 2 div add 0 lineto stroke
+        % body
+        xl 0 moveto
+        xl  hh2 neg lineto
+        wl hh2 neg lineto
+        wl 0 hh2 -90 90 arc
+        xl hh2 lineto
+        closepath
+        gsave helixbodycolor fill grestore stroke
+        % lid
+        lidscale 1 scale
+        xl 0 hh2 0 360 arc
+        gsave helixlidcolor fill grestore stroke
+        % tail
+        xl 0 moveto
+        0 0 lineto
+        stroke
+    grestore
+    xx ww add yy moveto
+} def
+
+/drawstrand {
+    /hh exch def
+    /ww exch charboxwidth mul def
+    currentpoint
+    /yy exch def
+    /xx exch def
+    /hh2 hh 2 div def
+    /ha hh2 2.5 mul def
+    /wa hh2 8.0 mul def
+    /wb ww wa sub def
+    gsave
+        center currentpoint translate
+        newpath
+        % body
+        0 0 moveto
+        0  hh2 neg lineto
+        wb hh2 neg lineto
+        % arrow
+        wb ha neg lineto
+        ww  0 lineto
+        wb ha lineto
+        % body
+        wb hh2 lineto
+        0 hh2 lineto
+        closepath
+        gsave strandbodycolor fill grestore stroke
+    grestore
+    xx ww add yy moveto
+} def
+
+/hcenter {
+    charboxwidth 2 div 0 rmoveto
+} def 
+
+/printsmall {
+    gsave
+       hcenter
+       currentfont 0.6 scalefont setfont
+       center
+       dup stringwidth pop 2 div neg 0 rmoveto
+       show
+    grestore
+} def
+
+/H { drawhelix } def
+/S { drawstrand } def
+%%EndSetup
+EOF
+}

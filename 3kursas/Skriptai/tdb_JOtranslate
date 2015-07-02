@@ -1,0 +1,94 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/07/06 08:39:51 $ 
+#$Locker:  $
+#$Revision: 1.1 $
+#$Source: /home/saulius/src/tdb/RCS/tdb_JOtranslate,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# tdb_JOabbrev  dictionary.pld  database1.tdb [database2.tdb ...]
+#
+# Translate journal names in the .tdb file(s) according to the dictionary.
+#**
+
+use strict;
+
+sub fold
+{
+    my $length = shift;
+    my $separator = shift;
+    my $string = shift;
+    my @lines = ();
+    my $line = "";
+
+    my $ors = $separator =~ /\s/ ? $separator : "$separator ";
+    my $word;
+    for $word (split( $separator, $string )) {
+	$word =~ s/^\s*|\s*$//g;
+	if( !$line ) {
+	    $line = $word;
+	} else {
+	    my $new_line = "$line$ors$word";
+	    if( length($new_line) < $length ) {
+		$line = $new_line;
+	    } else {
+		push( @lines, $line );
+		$line = $word;
+	    }
+	}
+    }
+    push( @lines, $line );
+    return @lines;
+}
+
+my %journals = ();
+my $journal_name = "";
+
+my $dict_file = shift(@ARGV);
+
+open( DICT, $dict_file ) or
+    die( "$0: could not open dictionary file '$dict_file': $!" );
+
+eval '%journals = (' . join("",<DICT>) . ')';
+die( "$0: $@" ) if $@;
+
+close(DICT);
+
+## for $journal_name ( sort keys %journals ) {
+##     print "\"$journal_name\" => \"$journals{$journal_name}\",\n";
+## }
+
+while(<>) {
+    if( /^\s*#/ ) { print; next }
+    ## if( /^\s*#/ ) { next }
+    if( ( !/^JO/ || eof ) && $journal_name ) {
+	my $journal;
+	if( exists $journals{$journal_name} ) {
+	    $journal = $journals{$journal_name};
+	} else {
+	    $journal = $journal_name;
+	}
+	print map {"JO\t$_\n"} fold( 70, " ", $journal );
+	$journal_name = "";
+    }
+    if( /^\s*$/ ) {
+	print "\n";
+	next;
+    }
+    if( /^JO/ ) {
+	chomp;
+	my ($tag, $value) = split( " ", $_, 2 );
+	$journal_name .= $journal_name ? " $value" : $value;
+	next;
+    }
+    if( /^[^\s]/ ) {
+	print "$_";
+	next;
+    }
+}
+

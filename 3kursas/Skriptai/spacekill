@@ -1,0 +1,33 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2008-07-10 15:34:58 +0300 (Kt, 10 Lie 2008) $ 
+#$Revision: 134 $
+#$URL: svn://saulius-grazulis.lt/scripts/spacekill $
+#------------------------------------------------------------------------------
+#*
+#  This script removed trailing spaces from all lines of a given text
+#  file.
+#  Usage:
+#       spacekill [options] file1.txt [file2.txt ...] > result.txt
+#       spacekill -i file1.txt file2.txt
+#**
+
+use strict;
+use SOptions;
+use SUsage;
+
+@ARGV = getOptions(
+    "-i,--in-place"  => sub{ $^I = "~" },
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+$\ = "\n";
+
+while(<>) {
+    s/\s+$//;
+    print
+}

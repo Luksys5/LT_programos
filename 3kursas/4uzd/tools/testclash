@@ -1,0 +1,109 @@
+#!/usr/bin/perl
+
+#-------------------------------
+#$Author: saulius $
+#$Date: 2015-05-18 17:45:24 +0300 (Pr, 18 Geg 2015) $
+#$Revision: 290 $
+#$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/4uzd/pdbclashes $
+#$Id: pdbclashes 359 2015-06-01 13:12:44Z Lukas_Tutkus $
+#-------------------------------
+use Scalar::Util qw(looks_like_number);
+use strict;
+use warnings;
+use AtomProperties;
+use Math::Complex;
+
+sub One_lowercase
+{
+	my @upercase = @_;
+	my @tmp;
+	foreach my $up (@upercase){ 
+		my @split_up = split("", $up);
+		if(defined $split_up[1]){
+			push @tmp, ($split_up[0].(lc $split_up[1]));
+		}else{  push @tmp, $split_up[0];  }
+	}
+	return @tmp;
+}
+
+sub VdW_contact
+{
+	my (
+		$chain1, $name1, $residue_name1, $residue_nr1, 
+		$chain2, $name2, $residue_name2, $residue_nr2, 
+		$vdw_rad1, $vdw_rad2, $distance, $sigma, $filename
+	) = @_;
+	my $vdw_sum1 = $vdw_rad1+$vdw_rad2+$sigma;
+	my $vdw_sum2 = $vdw_rad1+$vdw_rad2-$sigma;
+	if (($distance < $vdw_sum1) && ($distance > $vdw_sum2)) {
+		my $trunc_dist = int($distance*10000) / 10000;
+		my $trunc_sumdist = int(($distance-($vdw_rad1+$vdw_rad2))*10000) / 10000;
+		my $vdw_sum = $vdw_rad1+$vdw_rad2;
+		print 
+		"VDWCONT ".$trunc_dist." ".$vdw_sum.
+		" ".$trunc_sumdist." ".$filename.
+		" ".$chain1." ".$name1." ".$residue_name1." ".$residue_nr1.
+		" ".$chain2." ".$name2." ".$residue_name2." ".$residue_nr2."\n";
+	}
+}
+
+sub Not_covalent
+{
+	my ($cov_rad1, $cov_rad2, $distance, $sigma) = @_;
+	my $cov_sum1 = $cov_rad1+$cov_rad2+$sigma;
+	my $cov_sum2 = $cov_rad1+$cov_rad2-$sigma;
+	if(($distance < $cov_sum1) && ($distance > $cov_sum2)){
+		return 1;
+	}else{ return 0; }
+}
+
+my $sigma = 0.1;
+if (looks_like_number($ARGV[0])){ $sigma = shift @ARGV; }
+my $vdw_rad = 0;
+my $Id = '$Id: pdbclashes 359 2015-06-01 13:12:44Z Lukas_Tutkus $';
+my (@pdblines, @atoms, @boxes);
+my ($xmin, $xmax, $ymin, $ymax, $zmin, $zmax);
+foreach my $arg (@ARGV){
+	my @file = split "/", $arg;
+	open my $fh, '<'.$arg or die "File doesn't exist or can't be open: ".$arg;
+	@pdblines  = map {chomp; $_} <$fh>;
+	@atoms = grep { /(^ATOM|^HETATM)/ } @pdblines;
+	if ((@atoms) == 0){ die "No atoms found";}
+	
+	foreach my $atom (@atoms){
+		my @Atom_info = split(" ", $atom);
+		for my $atom2 (@atoms){
+			if($atom ne $atom2){
+				my @Atom_info1 = split(" ", $atom);
+				my @Atom_info2 = split(" ", $atom2);
+				
+				if (( length($Atom_info1[2]) > 1 ) || ( length($Atom_info2[2]) > 1 )){
+			
+					my @arr = One_lowercase($Atom_info1[2], $Atom_info2[2]);
+					$Atom_info1[2] = $arr[0];
+					$Atom_info2[2] = $arr[1];
+				
+				}
+				my $distance = sqrt( 
+					($Atom_info2[10] - $Atom_info1[10])*($Atom_info2[10] - $Atom_info1[10]) + 
+					($Atom_info2[11] - $Atom_info1[11])*($Atom_info2[11] - $Atom_info1[11]) + 
+					($Atom_info2[12] - $Atom_info1[12])*($Atom_info2[12] - $Atom_info1[12])
+				);
+
+				my $cov_rad1 = $AtomProperties::atoms{$Atom_info1[2]}{"covalent_radius"};
+				my $cov_rad2 = $AtomProperties::atoms{$Atom_info2[2]}{"covalent_radius"};
+				if( Not_covalent($cov_rad1, $cov_rad2, $distance, $sigma) == 0){
+			
+					my $vdw_rad1 = $AtomProperties::atoms{$Atom_info1[2]}{"vdw_radius"};
+					my $vdw_rad2 = $AtomProperties::atoms{$Atom_info2[2]}{"vdw_radius"};
+					VdW_contact(
+						$Atom_info1[6], $Atom_info1[2], $Atom_info1[5], $Atom_info1[8], 
+						$Atom_info2[6], $Atom_info2[2], $Atom_info2[5], $Atom_info2[8], 
+						$vdw_rad1, $vdw_rad2, $distance, $sigma, $file[$#file]
+					);
+						
+				}
+			}
+		}
+	}
+}

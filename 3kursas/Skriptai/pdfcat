@@ -1,0 +1,12 @@
+#!/bin/sh
+# Concatenate PDF files using Ghostscript:
+
+gs \
+    -q \
+    -sPAPERSIZE=a4 \
+    -sAutoRotatePages=false \
+    -dNOPAUSE \
+    -dBATCH \
+    -sDEVICE=pdfwrite \
+    -sOutputFile=- \
+${1+"$@"}

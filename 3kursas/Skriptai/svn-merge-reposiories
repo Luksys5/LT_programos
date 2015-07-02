@@ -1,0 +1,75 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2013-03-02 17:14:26 +0200 (Št, 02 Kov 2013) $
+#$Revision: 379 $
+#$URL: svn://saulius-grazulis.lt/scripts/svn-merge-reposiories $
+#------------------------------------------------------------------------------
+#
+# Merge one Subversion repository (the "old repository") into a branck of the 
+# other existing repository (the "new repository").
+#
+
+ID='$Id: svn-merge-reposiories 379 2013-03-02 15:14:26Z saulius $'
+
+#** USAGE:
+#**     $0 old-repo new-repo
+#**     $0 old-repo new-repo new-branch
+#**
+#** OPTIONS:
+#**  --help                   print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+      --help|--hel|--he|--h)
+            awk '/#\*/,/#\*\*/ {
+                    sub("^ *#[*]?[*]?", ""); \
+                    gsub("\\$0","'$(basename $0)'"); \
+                    print $0
+                }' $0
+	    exit
+	    ;;      
+      -*) echo "$(basename $0): unknown option $1" >&2 ; exit 1 ;;
+      *)  FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+eval set -- "${FILES}"
+
+if [ $# != 2 -a $# != 3 ]
+then
+    echo "$0: ERROR, need two or three comand line arguments" >&2
+    echo "$0: usage: " >&2
+    echo "    $(basename $0) old-repo new-repo" >&2
+    echo "    $(basename $0) old-repo new-repo new-branch" >&2
+    exit 1
+fi
+
+OLD_REPO="$1"
+NEW_REPO="$2"
+BRANCH="$3"
+
+test -z "${BRANCH}" && BRANCH="$(basename ${OLD_REPO})"/
+
+if [[ ! ${BRANCH} =~ .*/$ ]]
+then
+    BRANCH="${BRANCH}/"
+fi
+
+set -ue
+
+OLD_PATH=$(cd "${OLD_REPO}"; pwd)
+OLD_URL="file://${OLD_PATH}"
+
+NEW_PATH=$(cd "${NEW_REPO}"; pwd)
+NEW_URL="file://${NEW_PATH}"
+
+set -x
+
+svn mkdir ${NEW_URL}/${BRANCH} \
+    -m "$(echo -e $ID"\n"Creating directory \'${BRANCH}\' to load) $(svn info ${OLD_URL})"
+
+svnadmin dump ${OLD_REPO} \
+| perl -pe "s,(Node-path: |Node-copyfrom-path: ),\${1}${BRANCH}," \
+| svnadmin load ${NEW_REPO}

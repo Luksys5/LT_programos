@@ -1,0 +1,45 @@
+ topology  
+    autogenerate angle=true end
+    @/xray/xplor/toppar/tophcsdx.pro
+!    @/xray/xplor/toppar/toph11.dna
+ end       
+
+ parameter                                     
+
+   @/xray/xplor/toppar/parhcsdx.pro 
+!   @/xray/xplor/toppar/param11.dna
+   
+   nbonds                                    { This statement specifies the   }
+      atom cdie shift eps=1.0  e14fac=0.4    { nonbonded interaction energy   }
+      cutnb=7.5 ctonnb=6.0 ctofnb=6.5        { options.  Note the reduced     }
+      nbxmod=5 vswitch                       { nonbonding cutoff to save some }
+   end                                       { CPU time.                      }
+ end
+                                             
+
+{ ***** BEGIN SEGMENT DECLARATION ******************************************* }
+{ ***** SEGMENT 1 : Molekuel 1 ******************************************* }
+
+ segment                                     { First, generate protein        }
+
+   name="   1"                               { Should match columns 73:76 in  }
+ 
+   chain                                     
+     coordinates @models/cfr10.pdb end
+   end
+ end
+
+ coordinates @models/cfr10.pdb end
+ 
+ coor rotate matrix=( -1.00000  0.00279 -0.00044 )
+                    ( -0.00279 -1.00000 -0.00028 )
+                    ( -0.00044 -0.00028  1.00000 ) end
+                    
+ coor translate vector=( 32.34    41.15    -0.19 ) end
+
+
+ write coordinates output=models/cfr10-amore2.pdb end
+ 
+ 
+ stop
+

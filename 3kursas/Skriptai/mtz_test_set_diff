@@ -1,0 +1,77 @@
+#!/bin/sh
+
+# This script takes two MTZ files with the TEST (test set assignment
+# flags) in their *third* column and compares test set assignment for
+# the reflections that are common to both files.
+
+# USAGE:
+#     $0 FOBS1.mtz FOBS2.mtz
+
+TMP_DIR="${TMPDIR}"
+BASENAME="$(basename $0)"
+
+if [ $# -ne 2 ]; then
+    echo "$0: *** ERROR: ***" >&2
+    echo "Please supply two MTZ files with test sets in the third TEST column" >&2
+    echo "on the command line." >&2
+    echo "Usage:" >&2
+    echo "    `basename $0` FOBS1.mtz FOBS2.mtz" >&2
+    exit 1
+fi
+
+## echo ${1+"$@"}
+
+test -z "${TMP_DIR}" && TMP_DIR="/tmp"
+TMP_DIR="${TMP_DIR}/tmp-${BASENAME}-$$"
+
+# To make the trap portable between bash and dash, we need to trap
+# "signal" 0 ("EXIT") and rely on it for the cleanup:
+## trap "rm -rf '${TMP_DIR}'" 0 1 2 3 15
+trap "rm -rf '${TMP_DIR}'" EXIT
+trap "exit 1" HUP INT QUIT TERM
+
+mkdir "${TMP_DIR}"
+
+set -ue
+## set +x
+
+FOBS1="$1"
+FOBS2="$2"
+
+TMP_HKL1="${TMP_DIR}/1.hkl"
+TMP_HKL2="${TMP_DIR}/2.hkl"
+
+TMP_IDX1="${TMP_DIR}/1.idx"
+TMP_IDX2="${TMP_DIR}/2.idx"
+
+TMP_TST1="${TMP_DIR}/1.tst"
+TMP_TST2="${TMP_DIR}/2.tst"
+
+COMMON_IDX="${TMP_DIR}/common.idx"
+
+# Dump both MTZ files in text format:
+mtzperl "${FOBS1}" > "${TMP_HKL1}"
+mtzperl "${FOBS2}" > "${TMP_HKL2}"
+
+# Extract and sort HKL indexes present in both files:
+grep -v '^#' "${TMP_HKL1}" | cut -b 1-14 | sort > "${TMP_IDX1}"
+grep -v '^#' "${TMP_HKL2}" | cut -b 1-14 | sort > "${TMP_IDX2}"
+
+# Find reflections (indexes) common to both files:
+comm -12 "${TMP_IDX1}" "${TMP_IDX2}" | awk '{print "^" $0}' > "${COMMON_IDX}"
+
+# Extract and sort reflections common to both input MTZ files, and get
+# their TEST column:
+grep -f "${COMMON_IDX}" "${TMP_HKL1}" | awk '{print $1,$2,$3,$4}' | sort > "${TMP_TST1}"
+grep -f "${COMMON_IDX}" "${TMP_HKL2}" | awk '{print $1,$2,$3,$4}' | sort > "${TMP_TST2}"
+
+# Run diff on the sorted TEST flag files. If the assignemnt of the
+# TEST falgs is identical, the script should say that the files are
+# identical; if not, it should give the list of the differing
+# reflections:
+if diff "${TMP_TST1}" "${TMP_TST2}"
+then
+    echo $0: files "'${FOBS1}'" and "'${FOBS2}'" have identical fourth columns \
+        "(presumably TEST flags...)"
+fi
+

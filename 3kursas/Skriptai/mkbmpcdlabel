@@ -1,0 +1,291 @@
+#! /bin/sh
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2014-03-03 12:34:49 +0200 (Pr, 03 Kov 2014) $ 
+#$Revision: 418 $
+#$URL: svn://saulius-grazulis.lt/scripts/mkbmpcdlabel $
+#------------------------------------------------------------------------------
+#*
+#   Produce a label for a CD in a BMP (bitmap) format.
+#**
+
+TMP_DIR="${TMPDIR}"
+
+set -ue
+## set -x
+
+script() { echo "# $*"; cat; }
+setvar() { eval $1="'$3'"; }
+
+setvar Id = '$Id: mkbmpcdlabel 418 2014-03-03 10:34:49Z saulius $'
+
+setvar TITLE  = ""
+setvar HEADER = ""
+setvar TCOLOR = Red  # Title color
+setvar COLOR  = blue # Text color
+setvar LLOGO  = ""
+setvar RLOGO  = ""
+
+setvar DATE   = "$(date +%Y-%m-%d)"
+
+setvar TEXT    = ""
+setvar TXTFILE = ""
+
+setvar FILES = ""
+
+setvar BASENAME = "`basename $0`"
+
+setvar OUTPUT_BMP = ${BASENAME}.bmp
+
+#** USAGE:
+#**   $0 --options ... dir1*/ dir2*/
+#**
+#** OPTIONS:
+#**  -C, --title-color         Set title color
+#**  -c, --color  blue         Set main text color
+#**  -h, --header "Header"     Specify the CD header (LaTeX markup OK)
+#**  -o, --output label.bmp    Specify the name of the output file.
+#**  -t, --title  "CD Title"   Set the CD title
+#**  -T, --text   "Text"       Specify text to be printed on the CD
+#**
+#**  -f, --file   input.txt
+#**       Specify file with a label text instead of the 'ls' listing
+#**
+#**  -l, --left-logo, --logotipe llogo.eps
+#**      Specify logotype to put on the left side
+#** 
+#**  -r, --right-logo rlogo.eps
+#**      Specify logotype to put on the right side
+#** 
+#**  -D, --date 2014-02-28
+#**       Specify burn date to be writen on all CDs
+#**
+#**  --tmp-dir /tmp            Specify which directory to use for temporary files.
+#**  --help                    Print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+      -C|--title-color|--title-colo|--title-col|--title-co|--title-c)
+          TCOLOR="$2"
+          shift
+          ;;
+      -c|--color|--colo|--col|--co|--c)
+          COLOR="$2"
+          shift
+          ;;
+      -f|--file|--fil|--fi|--f)
+          TEXT=""
+          TXTFILE="$2"
+          shift
+          ;;
+      -h|--header|--heade|--head|--hea|--he|--h)
+          HEADER="$2"
+          shift
+          ;;
+      -l|--left-logo|--left-log|--left-lo|--left-l|--left|--lef|--le|--l)
+          LLOGO="$2"
+          shift
+          ;;
+      -o|--output|--outpu|--outp|--out|--ou|--o)
+          OUTPUT_BMP="$2"
+          shift
+          ;;
+      -r|--right-logo|--right-log|--right-lo|--right-l|\
+      --right|--righ|--rig|--ri|--r)
+          RLOGO="$2"
+          shift
+          ;;
+      -t|--title|--titl|--tit|--ti|--t)
+          TITLE="$2"
+          shift
+          ;;
+      -D|--date|--dat|--da|--d)
+          DATE="$2"
+          shift
+          ;;
+      -T|--text|--tex|--te)
+          TXTFILE=""
+          TEXT="$2"
+          shift
+          ;;
+      --tmp-dir|--tmp-di|--tmp-d|--tmp|--tm|--t)
+          TMP_DIR="$2"
+          shift
+          ;;
+      --options|--option|--optio|--opti|--opt|--op|--o)
+          echo $0: the following options are supported:
+          $0 --help | awk '/^ *OPTIONS:/,/$eof/' | sed 's/(this message) //'
+          exit
+          ;;
+      --help|--hel|--he|--h)
+            awk '/#\*/,/#\*\*/ {
+                    sub("^ *#[*]?[*]?", ""); \
+                    gsub("\\$0","'$(basename $0)'"); \
+                    print $0
+                }' $0
+	    exit
+	    ;;      
+      -*) echo "`basename $0`: unknown option $1" >&2 ; exit 1 ;;
+      *)  FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+## echo ${FILES}
+eval set -- "${FILES}"
+
+## test -z "${TMP_DIR}" && TMP_DIR="/tmp"
+test -z "${TMP_DIR}" && TMP_DIR="."
+TMP_DIR="${TMP_DIR}/tmp-${BASENAME}-$$"
+mkdir "${TMP_DIR}"
+
+trap "rm -rf '${TMP_DIR}'" EXIT
+trap "exit 1" HUP INT QUIT TERM
+
+TMP_LATEX="${TMP_DIR}/labels.tex"
+TMP_FILES="${TMP_DIR}/filelist.txt"
+
+set -x
+
+if [ -n "$TEXT" ]
+then
+    echo "$TEXT"
+elif [ -n "$TXTFILE" ]
+then
+    cat "$TXTFILE"
+else
+    ls -w 70 -C ${1+"$@"}
+fi \
+    | expand > ${TMP_FILES}
+
+MAX_LINES=9
+if [ $(wc -l < ${TMP_FILES}) -gt ${MAX_LINES} ]
+then
+    head -n $(expr ${MAX_LINES} - 1) ${TMP_FILES} > ${TMP_FILES}.tmp
+    NLINES=$(wc -l < ${TMP_FILES})
+    mv ${TMP_FILES}.tmp ${TMP_FILES}
+    echo "... ($NLINES files)" >> ${TMP_FILES}
+fi
+
+TCOLOR=$(echo ${TCOLOR} | perl -pe 's/(.*)/ucfirst(lc($1))/e')
+
+LOGO_HEIGHT="2cm"
+
+if [ -z "${LLOGO}" ]
+then
+    LLOGO_CMD="\rule[-${LOGO_HEIGHT}]{0pt}{${LOGO_HEIGHT}}"
+else
+    LLOGO="$(cd $(dirname "${LLOGO}"); pwd)/$(basename ${LLOGO})"
+    LLOGO_CMD="\includegraphics[height=${LOGO_HEIGHT}]{${LLOGO}}"
+fi
+
+if [ -z "${RLOGO}" ]
+then
+    RLOGO_CMD="\rule[-${LOGO_HEIGHT}]{0pt}{${LOGO_HEIGHT}}"
+else
+    RLOGO="$(cd $(dirname "${RLOGO}"); pwd)/$(basename ${RLOGO})"
+    RLOGO_CMD="\includegraphics[height=${LOGO_HEIGHT}]{${RLOGO}}"
+fi
+
+cat > ${TMP_LATEX} <<EOF
+\documentclass{article}
+
+\pagestyle{empty}
+
+\usepackage{colordvi}
+\usepackage{pstricks}
+\usepackage{datetime}
+\usepackage{verbatim}
+\usepackage{graphicx}
+
+\renewcommand{\dateseparator}{-}
+\newcommand{\todayiso}{\the\year \dateseparator \twodigit\month
+  \dateseparator \twodigit\day}
+
+\oddsidemargin -2.7cm
+\topmargin 11.4cm
+
+\begin{document}
+
+\pscircle[linewidth=0.5pt](6cm,-6cm){6cm}
+\pscircle[linewidth=0.5pt](6cm,-6cm){2cm}
+
+%%\fbox{
+\begin{minipage}{12cm}
+    % http://www.ursoswald.ch/LaTeXGraphics/picture/picture.html:
+    %% \setlength{\unitlength}{1mm}
+    %% \begin{picture}(60,60)
+    %%   \put(0,0){\circle{20}}
+    %% \end{picture}
+    \parbox[t]{1pt}{\rule[-4.4cm]{0pt}{4.4cm}}
+    \parbox[t]{11.9cm}{
+      \begin{center}
+        \color{${COLOR}}
+        \todayiso
+
+        \vspace{0.5\baselineskip}
+        \\${TCOLOR}{${TITLE}}
+        \vspace{0.5\baselineskip}
+
+        ${HEADER}
+
+      \end{center}
+    }
+
+    %%\fbox{
+    \parbox{3cm}{
+       \center
+       ${LLOGO_CMD}
+    }%%}
+    \hfill
+    \hfill
+    \hfill
+    \hfill
+    \parbox{3cm}{
+      \center
+      ${RLOGO_CMD}
+    }%%}
+    \hfill
+
+    \rule[-1.1cm]{0pt}{1.1cm}
+
+    \begin{center}
+      \color{${COLOR}}
+      \begin{minipage}{7cm}
+        \scriptsize
+        \verbatiminput{$(basename ${TMP_FILES})}
+        %% \verbatiminput{label.txt}
+        %% \verbatiminput{comments.txt}
+      \end{minipage}
+    \end{center}
+\end{minipage}
+%%}
+
+\end{document}
+EOF
+
+OUTPUT_BMP=$(cd $(dirname ${OUTPUT_BMP}); pwd)/$(basename ${OUTPUT_BMP})
+
+(
+    cd ${TMP_DIR}
+
+    TMP_LATEX=$(basename ${TMP_LATEX})
+    TMP_DVI=$(basename ${TMP_LATEX} .tex).dvi
+    TMP_EPS=$(basename ${TMP_LATEX} .tex).eps
+
+    latex ${TMP_LATEX}
+    dvips ${TMP_DVI} -D1200 -o ${TMP_EPS}
+
+    ## ps2pnm -r 1200 ${TMP_EPS} -o - \
+    ## | pnmcrop | ppmtobmp > ${OUTPUT_BMP}
+
+    gs -q -dNOPAUSE -dBATCH \
+        -g6000x6000 \
+        -r1200 \
+        -sDEVICE=bmp16m \
+        -sOutputFile=${OUTPUT_BMP} \
+        ${TMP_EPS} 
+
+#        -dEPSCrop \
+
+)
