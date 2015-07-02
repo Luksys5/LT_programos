@@ -168,12 +168,6 @@ def save_alternative(measure, struct_name, structures, second, primar_atst, prim
 	place.write("\n"+struct_name+"\n")
 	for key in ('H', 'E', '-'):
 	
-		if key == 'H': place.write(Bcolors.GREEN)
-	
-		elif key == 'E': place.write(Bcolors.YELLOW) 
-	
-		else: place.write(Bcolors.RESET)
-		
 		place.write(key+' ')
 		for x, y in zip(structures[key], second[key]): place.write(x+' '+y+' ')
 		place.write("\n")
@@ -284,7 +278,7 @@ def spalv(dssp, measure, place):
 			
 				dssp_diff, size1, size2, struct_diff = final_diffcount(measure, atst_dssp, align_dssp, atst_structure, align_structure)
 				save_alternative(
-					measure, Bcolors.RED + name_atst + " VS " + name_align, dssp_diff, 
+					measure, name_atst + " VS " + name_align, dssp_diff, 
 					struct_diff, atst_dssp, align_dssp, size1, size2, place)
 				
 				if not dssp_line: return
@@ -318,9 +312,8 @@ except IndexError:
 	print "Usage ./differize measure_value"
 	sys.exit(1)
 
-fw = open('coolseek/atst', 'w')
-fdssp = open("../align_env/dali.ali")
-fw.write(Bcolors.GREEN + '                Alfa helix H '+ Bcolors.YELLOW +
-                ' Beta strand E '+ Bcolors.RESET+' Bend -'+'\n')
+fw = open('diff_output/atst', 'w')
+fdssp = open("dali.ali")
+fw.write('                Alfa helix H ' + ' Beta strand E ' + ' Bend -'+'\n')
 spalv(fdssp, m, fw)
 
