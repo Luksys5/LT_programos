@@ -6,21 +6,18 @@ import fileinput
 def file_len(fname):
         cc = 0
         with open(fname) as f:
-                for i, l in enumerate(f):
-                        if not l.strip():
-                                cc += 1
-                        pass
+                for x in f:
+			cc += 1
         return cc
 
-def one_chain(input_chains):
+def fullest_chain(input_chains):
 	in_chains = input_chains.split()
-        for chain in input_chains:
-		linescc = 0
-		with open("../"+chain+".pdb", 'r'):
-			crline = cr.readline()
-			if not crline: break
-			if re.match(
-	
+	full_ch = ('chain', 0)
+        for chain in in_chains:
+		chain_sz = file_len("../pdbs_sep/"+chain[5:])
+		if chain_sz > full_ch[1]:
+			full_ch = (chain[5:], chain_sz)
+	return full_ch[0]
 
 
 def downloadNget(file_name, name):
@@ -85,20 +82,16 @@ for fgline in fglines:
 				myin = ''
 				for x in v:
 					x = x.replace(' ', '')
-					print x
 					myin += 'pdbs/'+line[:4]+'_'+x+' '
-					print myin
-				Chosen_one = one_chain(myin)
-				print Chosen_one
-			sys.exit(1)
+				full = fullest_chain(myin)
 			for x in Mol:
-				fogR.write(x+' ' + line[:4] + ' ' + str(FPS) + '\n')
+				fogR.write(x+' ' + full + ' ' + str(FPS) + '\n')
 				if x in Molecules.keys():
 					if FPS < Molecules[x][2]:
-						Molecules[x] = (fgline[7:], line[:4], FPS)
+						Molecules[x] = (fgline[7:], str(full), FPS)
 				else:
-					Molecules[x] = [fgline[7:], line[:4], FPS]
+					Molecules[x] = [fgline[7:], str(full), FPS]
 
-'''fw.write('Group          Protein  Molecule                                Resoluton\n')
+fw.write('Group          Protein  Molecule                                Resoluton\n')
 for k,v in Molecules.iteritems():
-'''#	fw.write(v[1] + ' ' + v[0] + ' '*(15-len(v[0])) +' '*5 + k + ' '*(43-len(k)) + str(v[2]) + '\n')
+	fw.write(v[1] + ' ' + v[0] + ' '*(15-len(v[0])) +' '*5 + k + ' '*(43-len(k)) + str(v[2]) + '\n')

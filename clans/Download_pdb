@@ -1,6 +1,11 @@
 #!/usr/bin/python
 import os, sys
-fr = open(sys.argv[1], 'r')
+
+try:
+	fr = open(sys.argv[1], 'r')
+except IndexError:
+	print 'Input list'
+
 lines = fr.readlines()
 for x in lines:
 	x = x.split('_')
