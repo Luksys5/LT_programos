@@ -1,57 +1,104 @@
 #!/usr/bin/python
 import re
 import os, sys
+import fileinput
+
+def file_len(fname):
+        cc = 0
+        with open(fname) as f:
+                for i, l in enumerate(f):
+                        if not l.strip():
+                                cc += 1
+                        pass
+        return cc
+
+def one_chain(input_chains):
+	in_chains = input_chains.split()
+        for chain in input_chains:
+		linescc = 0
+		with open("../"+chain+".pdb", 'r'):
+			crline = cr.readline()
+			if not crline: break
+			if re.match(
+	
+
+
 def downloadNget(file_name, name):
-	os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+name)
-	f = open(name, 'r')
+	os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+file_name)
+	f = open(file_name, 'r')
 	run = True
+	Molecules = []
+	Polymer_chains = {}
+	polymer_cc = 0
 	while(run):
 		line = f.readline()
-		if re.match('.*se_xrayResolution.*', line) or not line:
-			run = False
-
+		if re.match('.*Polymer:</span></td>', line):
+			polymer_cc += 1
 		
-	line=f.readline().rstrip('\n')
-	Resolution = float(line)
+		if re.match('.*Chains:</span></td>', line):
+			line = f.readline().rstrip('\n')
+			Chains = line[35:].split('>')[0].split('<')[0]
+			Polymer_chains[polymer_cc] = Chains.split(',')
 
-	os.system( 'rm '+name )
-	return Resolution
+		if re.match('.*se_xrayResolution.*', line):
+			line = f.readline().rstrip('\n')
+			Resolution = float(line) 
+ 		
+		if re.match('.*>Molecule:</span>', line):
+			f.readline(); tmp = f.readline().strip()
 
-fg = open('groups_names', 'r')
+		if re.match('.*>Type:</span>', line):
+			line = f.readline().rstrip('\n')
+			if re.match('.*protein.*', line):
+				Molecules.append(tmp)
+			
+		if not line: run = False
+
+	return Resolution, Molecules, Polymer_chains
+
+#downloadNget('get_structure', '3bep');
+try:
+	fg = open(sys.argv[1], 'r')
+except IndexError:
+	print "Input groups names"
+	sys.exit(1)
+
 fglines =  fg.readlines()
-Leader_names = []
-fw = open('grupiu_atstovai', 'w')
-fogR = open("file_of_group_resolutions", 'w')
-group_resolution = []
-Res_list= []
-i = 0
+fw = open('../outputs/Protein_molecule_res', 'w')
+fogR = open("../outputs/All_Proteins_Molecules_resolutions", 'w')
+Molecules = {}
+found_proteins = []
+
 for fgline in fglines:
 	fgline = fgline.rstrip('\n')
-	group_file = open(fgline, 'r')
+	group_file = open("../"+fgline, 'r')
 	group_lines = group_file.readlines()
+	fogR.write('\n' + fgline[7:] + '\n')
 	
 	for line in group_lines:
 		line = line.split()[1]
-		Resolution = downloadNget(fgline, line[:4])	
-		if i == 1 :
-			if( min_resolution > Resolution ):
-				min_resolution = Resolution
-				min_line = line
-		
-		else:
-			min_resolution = Resolution
-			min_line = line
-			i = 1
+		if line[:4] not in found_proteins:
+			found_proteins.append(line[:4])
+			FPS, Mol, Poli_chains= downloadNget('get_structure', line[:4])
+			print line[:4], FPS
+			for i, (k,v) in enumerate(Poli_chains.iteritems()):
+				myin = ''
+				for x in v:
+					x = x.replace(' ', '')
+					print x
+					myin += 'pdbs/'+line[:4]+'_'+x+' '
+					print myin
+				Chosen_one = one_chain(myin)
+				print Chosen_one
+			sys.exit(1)
+			for x in Mol:
+				fogR.write(x+' ' + line[:4] + ' ' + str(FPS) + '\n')
+				if x in Molecules.keys():
+					if FPS < Molecules[x][2]:
+						Molecules[x] = (fgline[7:], line[:4], FPS)
+				else:
+					Molecules[x] = [fgline[7:], line[:4], FPS]
 
-		if( Resolution-0.1 < min_resolution ):
-			Res_list.append((line, Resolution))
-
-	Leader_names.append(min_line.rstrip("\n"))
-	
-	fogR.write(fgline+"\n")
-	for x in Res_list: fogR.write( x[0]+' '+str(x[1])+"\n" )
-	fogR.write("\n") 
-	Res_list = []; i = 0
-
-for x in Leader_names:
-	fw.write(x)
+'''fw.write('Group          Protein  Molecule                                Resoluton\n')
+for k,v in Molecules.iteritems():
+'''#	fw.write(v[1] + ' ' + v[0] + ' '*(15-len(v[0])) +' '*5 + k + ' '*(43-len(k)) + str(v[2]) + '\n')
