@@ -1,0 +1,94 @@
+#!/usr/bin/python
+import re
+import os, sys
+import fileinput
+
+def file_len(fname):
+        cc = 0
+        with open(fname) as f:
+                for x in f:
+			cc += 1
+        return cc
+
+def fullest_chain(input_chains):
+	in_chains = input_chains.split()
+	full_ch = ('chain', 0)
+        for chain in in_chains:
+		print chain
+		chain_sz = file_len("../pdbs_sep/"+chain)
+		if chain_sz > full_ch[1]:
+			full_ch = (chain[5:], chain_sz)
+	return full_ch[0]
+
+
+def downloadNget(file_name, name):
+	os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+file_name)
+	f = open(file_name, 'r')
+	run = True
+	Molecules = []
+	Polymer_chains = []
+	Its_protein = 0
+	while(run):
+		line = f.readline()
+
+		if re.match('.*Chains:</span></td>', line) and Its_protein:
+			line = f.readline().rstrip('\n')
+			Chains = line[35:].split('>')[0].split('<')[0]
+			Polymer_chains.append(Chains.split(','))
+
+		if re.match('.*se_xrayResolution.*', line):
+			line = f.readline().rstrip('\n')
+			Resolution = float(line) 
+ 		
+		if re.match('.*>Molecule:</span>', line):
+			f.readline(); tmp = f.readline().strip()
+
+		if re.match('.*>Type:</span>', line):
+			if Its_protein: Its_protein = 0
+			line = f.readline().rstrip('\n')
+			if re.match('.*protein.*', line):
+				Its_protein = 1
+				Molecules.append(tmp)
+			
+		if not line: run = False
+
+	return Resolution, Molecules, Polymer_chains
+
+#downloadNget('get_structure', '3bep');
+try:
+	fg = open(sys.argv[1], 'r')
+except IndexError:
+	print "Input groups names"
+	sys.exit(1)
+
+fglines =  fg.readlines()
+fw = open('../outputs/Protein_molecule_res', 'w')
+fogR = open("../outputs/All_Proteins_Molecules_resolutions", 'w')
+Polimers = {}
+found_proteins = []
+
+for fgline in fglines:
+	fgline = fgline.rstrip('\n')
+	group_file = open("../"+fgline, 'r')
+	group_lines = group_file.readlines()
+	fogR.write('\n' + fgline[7:] + '\n')
+	
+	for line in group_lines:
+		line = line.split()[1]
+		if line[:4] not in found_proteins:
+			found_proteins.append(line[:4])
+			FPS, Mol, Poli_chains= downloadNget('get_structure', line[:4])
+			full_chains = '';
+			print Mol[0], FPS, line[:4]
+			
+			for c in range(0,len(Poli_chains)):
+				for chain in Poli_chains[c]:
+					full_chains += line[:4]+'_'+chain.strip() + ' '
+				full = line[:4]+'_'+fullest_chain(full_chains)
+				Polimers[full] = (Mol[c], FPS)
+				fogR.write(Mol[c] + ' ' + full + ' '+ str(FPS)+"\n")
+				full_chains = ''
+
+for key, val in Polimers.iteritems():
+	fw.write(key+"\t\t"+val[0]+"\t"+str(val[1])+"\n")
+
