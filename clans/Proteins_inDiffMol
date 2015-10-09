@@ -22,37 +22,45 @@ def fullest_chain(input_chains):
 
 
 def downloadNget(file_name, name):
-	os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+file_name)
+	try:
+		open(file_name)
+	except IOError:
+		print "Downloading:", name
+		os.system('curl -s http://www.rcsb.org/pdb/explore/explore.do?structureId='+name+' > '+file_name)
+	
 	f = open(file_name, 'r')
 	run = True
-	Molecules = []
-	Polymer_chains = []
+	Mol_Ch = {}
 	Its_protein = 0
+	Organizm = "";
+	temp = []
 	while(run):
 		line = f.readline()
-
-		if re.match('.*Chains:</span></td>', line) and Its_protein:
-			line = f.readline().rstrip('\n')
-			Chains = line[35:].split('>')[0].split('<')[0]
-			Polymer_chains.append(Chains.split(','))
-
-		if re.match('.*se_xrayResolution.*', line):
-			line = f.readline().rstrip('\n')
-			Resolution = float(line) 
- 		
-		if re.match('.*>Molecule:</span>', line):
-			f.readline(); tmp = f.readline().strip()
-
-		if re.match('.*>Type:</span>', line):
-			if Its_protein: Its_protein = 0
-			line = f.readline().rstrip('\n')
-			if re.match('.*protein.*', line):
+		if re.match(".*pdb:sentencePlus.*", line):
+			Organizm = line.split('>')[1].split('<')[0]		
+		elif re.match('.*>Molecule:</span>', line):
+                        f.readline(); Mol = f.readline().strip()
+                elif re.match('.*>Type:</span>', line):
+                        Its_protein = 0
+                        line = f.readline().rstrip('\n')
+                        if re.match('.*protein.*', line):
 				Its_protein = 1
-				Molecules.append(tmp)
-			
+				if Mol not in Mol_Ch.keys():
+					Mol_Ch[Mol] = []
+				else:
+					print Mol, "jau aptikta"
+
+		elif re.match('.*Chains:</span></td>', line) and Its_protein:
+			temp = []
+			line = f.readline().rstrip('\n')
+			Chains = line[35:].split('>')[0].split('<')[0].split(',')
+			for c in Chains:
+				temp.append(c.strip())
+			Mol_Ch[Mol] = temp
+
 		if not line: run = False
 
-	return Resolution, Molecules, Polymer_chains
+	return Organizm, Mol_Ch;
 
 #downloadNget('get_structure', '3bep');
 try:
@@ -64,8 +72,9 @@ except IndexError:
 fglines =  fg.readlines()
 fw = open('../outputs/Protein_molecule_res', 'w')
 fogR = open("../outputs/All_Proteins_Molecules_resolutions", 'w')
-Polimers = {}
 found_proteins = []
+Organism_mol = {}
+all_molecule = []
 
 for fgline in fglines:
 	fgline = fgline.rstrip('\n')
@@ -77,18 +86,18 @@ for fgline in fglines:
 		line = line.split()[1]
 		if line[:4] not in found_proteins:
 			found_proteins.append(line[:4])
-			FPS, Mol, Poli_chains= downloadNget('get_structure', line[:4])
-			full_chains = '';
-			print Mol[0], FPS, line[:4]
+			Org, Mol_Ch = downloadNget("../pdb_refs/" + line[:4], line[:4])
+			if(Org not in Organism_mol.keys()):
+				Organism_mol[Org] = []
+
+			for m, chains in Mol_Ch.iteritems():
+				for c in chains:
+					Organism_mol[Org].append(line[:4] + '_' + c + ' ' + m)
+
 			
-			for c in range(0,len(Poli_chains)):
-				for chain in Poli_chains[c]:
-					full_chains += line[:4]+'_'+chain.strip() + ' '
-				full = line[:4]+'_'+fullest_chain(full_chains)
-				Polimers[full] = (Mol[c], FPS)
-				fogR.write(Mol[c] + ' ' + full + ' '+ str(FPS)+"\n")
-				full_chains = ''
 
-for key, val in Polimers.iteritems():
-	fw.write(key+"\t\t"+val[0]+"\t"+str(val[1])+"\n")
-
+for org, mol in Organism_mol.iteritems():
+	fw.write(org+":\n")
+	for m in mol:
+		fw.write(str(m) + "\n")
+	fw.write("\n");
