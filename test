@@ -1,0 +1,105 @@
+#!/usr/bin/python
+import os
+import os.path
+import sys
+import re	
+import random 
+import math
+
+
+## Test is using DaliLite
+## This test is to prove that different chain have impact on Z_values
+## especialy those which will not give DaliLite output: 1axc_B don't give mol1B.txt So Z_values are 0.0
+def get_Zvalue(pdb, ch):
+	os.system(Dalipath + " -pairwise " + pdbpath + 
+		"1axc_" + ch + ' ' + pdbpath + pdb + " > DaliOut 2> DaliErr")
+
+	if not os.path.isfile("mol1" + ch + ".txt"):
+		return 0.0;
+		
+	with open("mol1" + ch + ".txt") as fmol:
+		fmline = fmol.readline().rstrip("\n")
+		if re.match(".*Query.*", fmline):
+			fmol.readline()
+			fmline = fmol.readline()
+			Z_val = fmline[14:18]
+			if not Z_val:
+				Z_val = 0.0
+			
+			fZ.write(pdb + ' ' + str(Z_val) + "\n")
+		else:
+			print "Stopping, no query at mol1" + ch + ".txt"
+			sys.exit(1)
+
+	return Z_val
+
+def sort(values, keys):
+	for i in range(0, len(values)):
+		for j in range(0, len(values)):
+			if( float(values[j]) < float(values[i]) ):
+				tempkey = keys[i]
+				keys[i] = keys[j]
+				keys[j] = tempkey
+
+				tempval = values[j]
+				values[j] = values[i]
+				values[i] = tempval
+	return values, keys
+
+def Zsum():
+	average_Z = {}
+        with open("Zall", 'r') as fZ:
+                for line in fZ:
+                        key = line.split()[0]
+                        val = line.split()[1]
+                        try:      
+                                average_Z[key] += float(val)
+                        except KeyError:
+                                average_Z[key] = float(val)
+
+	for k in sorted(average_Z, key=average_Z.get, reverse=True):
+		print k, math.ceil(average_Z[k]*100/3)/100
+
+
+origpath = os.getcwd()
+Dalipath = "~/DaliLite_3.3/DaliLite"
+Alignpath = "/home/l_/Darbai/Kursinis/clans/outputs/list_pdb"
+pdbpath = "/home/l_/Darbai/Kursinis/clans/pdbs_sep/" 
+
+main_chains = ['A', 'B', 'C', 'D', 'E', 'F']
+
+## Kurioje direktorijoje bus iskvieciamas dali palyginimas
+os.chdir("/home/l_/Darbai/Kursinis/clans/dali_out/")
+
+if not os.path.isfile("Zall"):
+	fZ = open("Zall", 'w')
+	f = open(Alignpath, 'r')
+	pdblines = f.readlines()
+	for m, ch in enumerate(main_chains):
+		Zvals = []
+		fw = open("Z_values" + ch, 'w')
+		fwO = open("unsorted" + ch, 'w')
+
+		fw.write("\t1axc_" + ch + "\n")
+		fwO.write("\t1axc_" + ch + "\n")
+
+		for i, line in enumerate(pdblines):
+			line = line.rstrip("\n")
+			val = float(get_Zvalue(line, ch))
+			Zvals.append(val)
+			fwO.write(line + "\t" + str(Zvals[i]) + "\n")
+		
+		Zvals, pdblines = sort(Zvals, pdblines)
+		
+		for i, Z in enumerate(Zvals):
+			fw.write(pdblines[i].rstrip() + "\t" + str(Z) + "\n")
+
+		fw.close()
+		fwO.close()
+	Zsum()
+else:
+	Zsum()		
+		
+os.chdir(origpath)
+
+
