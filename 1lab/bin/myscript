@@ -1,0 +1,9 @@
+#!/usr/bin/Rscript
+
+op <- par(bg = "light blue")
+x <- seq(0, 2*pi, len = 51)
+## something "between type='b' and type='o'":
+plot(x, sin(x), type = "o", pch = 21, bg = par("bg"), col = "blue", cex = .6,
+ main = 'plot(..., type="o", pch=21, bg=par("bg"))')
+par(op)
+

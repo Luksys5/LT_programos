@@ -1,0 +1,14 @@
+#!/usr/bin/Rscript
+args <- commandArgs(trailingOnly = TRUE)
+Func = read.table(args[1], sep="\t", header=TRUE)
+op <- par(lheight=.8, bg = "light blue")
+
+## 1st graph
+plot(Func$x, Func$y, type='o', pch=15, col='blue', 
+	xlab="x",ylab="y", col.lab="green", 
+	cex = .6)
+lines(Func$x, cos(2*Func$x), type='l', pch=22, col='red')
+title(main="Lagranzo polynomas", col.main="red", font.main=4)
+
+
+par(op)
