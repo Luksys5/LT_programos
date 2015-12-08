@@ -1,0 +1,4 @@
+Item set L1 = x : dažniausiai sutikti rinkiniai bei jų skaičius
+attr1 = 1 attr2= 1 20 => attr3 = 1, attr4 = 1 20 
+tai taisykles kurios rodo kas su kuo eina, kad su attr1, attr2 eina ir attr3 attr4 pagal pasikliovimo lygmeni kazkoki(conf)
+Esmė tai kad rezultatas parodo kurie atributai su kuriais eina kartu dažniausiai

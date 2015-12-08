@@ -1,0 +1,158 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
+import imaplib
+import re
+import email
+from email.parser import HeaderParser
+import email.header
+import datetime
+import string
+
+def parse_headers(Heads, mail, msg):
+	for h in Heads:
+		hinfo = mail.header.decode_header(msg[h])[0]
+		print h, hinfo[0]
+
+def parse_to_f(body, msg, email, fw, filename, nr, mtype):
+	From = email.header.decode_header(msg["From"])[0]
+	From = From[0].rstrip("\n")
+	if(From[15:] == ""):
+		fw.write("yes,")
+	else:
+		fw.write("no,")
+	
+	if(len(body) - body.count(' ') > 100):
+		fw.write("yes,")
+	else:
+		fw.write("no,")
+	cc = 0
+	for i, char in enumerate(list(string.ascii_lowercase)):
+		uchar = list(string.ascii_uppercase)[i]
+		cc += body.count(char) + body.count(uchar)
+	if(cc > 100):
+		fw.write("yes,")
+	else:
+		fw.write("no,")
+	
+	cc = 0
+	for i in range(0, 10):
+		cc+= body.count(str(i))
+	
+	if(cc > 100):   
+                fw.write("yes,")
+        else:
+                fw.write("no,")
+
+	if(body.count('?') > 10):
+		fw.write("yes,")
+        else:
+                fw.write("no,")	
+
+	if len(re.findall(".*https.*", body)) > 3 or re.findall(".*http.*", body) > 3: 
+                fw.write("yes,")
+        else:
+                fw.write("no,")		
+
+	From = email.header.decode_header(msg["To"])[0]
+	fw.write(str(len(From)-1) + ',')
+
+	resp,adata = M.fetch(nr, '(RFC822.SIZE)')
+	size = adata[0].split()[2].split(')')[0]
+	fw.write(str(round(float(size)/float(1024*1024), 2)) + ',')
+	
+	Subject  = email.header.decode_header(msg["Subject"])[0]
+	Subject = Subject[0]
+	if(len(Subject) - Subject.count(' ') > 10):
+		fw.write("yes,")
+        else:
+                fw.write("no,")
+	
+	cc = 0
+        for i, char in enumerate(list(string.ascii_lowercase)):
+                uchar = list(string.ascii_uppercase)[i]
+                cc += Subject.count(char) + Subject.count(uchar)
+        if(cc > 10):
+                fw.write("yes,")
+        else:
+                fw.write("no,")
+
+	cc = 0
+        for i in range(0, 10):
+                cc+= Subject.count(str(i))
+	if(cc > 5):
+                fw.write("yes,")
+        else:
+                fw.write("no,")
+
+	if(filename is not None):
+		fw.write("yes,")
+	else:
+		fw.write("no,")
+
+	
+	fw.write(str(body.count("Explore") + body.count("explore")) + ',')
+	fw.write(str(body.count("Click") + body.count("click")) + ',')
+	fw.write(str(body.count("Populiar") + body.count("populiar")) + ',')
+	fw.write(str(body.count("Achieve") + body.count("achieve")) + ',')
+	fw.write(str(body.count("Learn") + body.count("learn")) + ',')
+	fw.write(str(body.count("tips") + body.count("Tips")) + ',')
+	fw.write(str(body.count("Business") + body.count("business")) + ',')
+	fw.write(str(body.count("upgrade") + body.count("Upgrade")) + ',')
+	fw.write(str(body.count("save") + body.count("Save")) + ',')
+	fw.write(mtype + "\n")
+
+def process_mailbox(M, fw, mtype):
+	rv, data = M.search(None, "ALL")
+	if rv != 'OK':
+		print "No messages found!"
+		return
+	
+	Headers = ['Delivered-To', 'X-All-Senders-In-Circles', 'Reply-To', 'Date', 'Message-ID', 'Subject', 'From', 'To']
+	for num in data[0].split():
+		print num
+		rv, data = M.fetch(num, '(RFC822)')
+	
+		if rv != 'OK':
+			print "ERROR getting message", num
+			return
+
+		body = ""
+		filename = ""
+
+		msg = email.message_from_string(data[0][1])
+		if( msg.get_content_maintype() == "multipart"):
+			for m in msg.walk():
+				if m.get_content_type() == "text/plain":
+					body = m.get_payload(decode = True)
+				elif m.get('Content-Disposition') is None:
+					filename = m.get_filename()
+				else:
+					continue
+		parse_to_f(body, msg, email, fw, filename, num, mtype)
+
+append_file =open("laisk_attr", 'a')
+M = imaplib.IMAP4_SSL('imap.gmail.com')
+try:
+    rv, data = M.login("username", "gmail password")
+except imaplib.IMAP4.error:
+    print "LOGIN FAILED!!! "
+    sys.exit(1)
+
+print rv, data
+rv, mailbox = M.list()
+#for m in mailbox: print m
+which = int(raw_input("1 - Spam, 0 - Inbox"))
+mail_type = ["geras", "blogas"]
+if which:
+	rv, data = M.select("Asmenin&ARc-")
+else:
+	rv, data = M.select("Darbas")
+
+print which, mail_type[which]
+if rv == "OK":
+	print "Processing mailbox...\n"
+	process_mailbox(M, append_file, mail_type[which])
+	M.close()
+	
+append_file.close()

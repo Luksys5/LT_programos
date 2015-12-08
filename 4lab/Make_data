@@ -1,0 +1,37 @@
+#!/usr/bin/python
+import sys
+try:
+	sys.argv[3]
+except IndexError:
+	print "Input Attributes file(attributes nr.), and Names file(@attributes), Data file(@data)"
+	sys.exit(1)
+
+MyAttr = []
+My_attrf = open(sys.argv[1], 'r')
+for i, x in enumerate(My_attrf.readlines()):
+	if i + 1 == 7:
+		splix = (x.rstrip("\n")).split()
+		for y in splix:
+			MyAttr.append(int(y))
+MyAttr.sort();
+
+attr_cc = 1
+with open(sys.argv[2], 'r') as names_f:
+	for line in names_f:
+		if(line.startswith("@relation")):
+			print line
+		elif(line.startswith("@attribute")):
+			for a in MyAttr:
+				if(attr_cc == a):
+					print line.rstrip("\n")
+
+			attr_cc += 1
+print "\n", "@data"
+with open(sys.argv[3], 'r') as data_f:
+	for line in data_f:
+		split_line = line.split(',')
+		for a in MyAttr:
+			if(a != MyAttr[-1]):
+				sys.stdout.write(split_line[int(a)-1] + ",")
+			else:
+				sys.stdout.write(split_line[int(a)-1])

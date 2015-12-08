@@ -1,0 +1,107 @@
+#!/usr/bin/python
+import sys
+age = 0; bgr = 0; 
+nage = 0; nbgr = 0;
+
+attribute = {}
+attr_names = ['sg', 'al', 'cad']
+for name in attr_names:
+	attribute[name] = {}
+
+start_reading = 0
+name = sys.argv[1]
+not_lines = []
+lines = []
+with open(name, 'r') as f:
+	for line in f:
+		line = line.rstrip("\n")
+		if(start_reading):
+			lines.append(line)
+			attributes = line.split(',')
+			attr_age = attributes[0]
+			attr_sg = attributes[1]
+			attr_al = attributes[2]
+			attr_bgr = attributes[3]
+			attr_cad  = attributes[4]
+			if(attr_age != '?'):		
+				nage += 1
+				age += int(attr_age)
+			if(attr_bgr != '?'):
+				nbgr += 1
+				bgr += int(attr_bgr)
+
+			if(attr_sg in attribute['sg'].keys()):
+				attribute['sg'][attr_sg] += 1
+			elif(attr_sg != '?'):
+				attribute['sg'][attr_sg] = 1;
+			
+			if(attr_al in attribute['al'].keys()):
+				attribute['al'][attr_al] += 1
+			elif(attr_al != '?'):
+				attribute['al'][attr_al] = 1
+
+			if(attr_cad in attribute['cad'].keys()):
+				attribute['cad'][attr_cad] += 1
+			elif(attr_cad != '?'):
+				attribute['cad'][attr_cad] = 1
+			
+
+		elif(line.startswith("@data")):
+			start_reading = 1
+			not_lines.append(line)
+		else:
+			not_lines.append(line)
+vid_age = age/nage
+vid_bgr = bgr/nbgr
+best_val = []
+tmp_val = []
+best_val.append(vid_age)
+
+
+for key, value in attribute.iteritems():
+	max_val = ('z', 0)
+	for k, v in value.iteritems():
+		if(max_val[1] < v):
+			max_val = (k, v)
+	best_val.append(max_val[0])
+
+best_val.append(vid_bgr)
+tmp_val = best_val[:3]; tmp_val.append(best_val[4]); tmp_val.append(best_val[3])
+best_val = tmp_val
+
+for x in best_val:
+	print x
+
+
+fC = open('Change_Values.arff', 'w')
+fR = open("Removed_Values.arff", 'w')
+
+with open(name, 'r') as f:
+	for line in f:
+		line = line.rstrip("\n")
+		splitted = line.split(',')
+		isSymbol = 0
+		appline = ""
+		for x in splitted:
+			if(x == '?'):
+				isSymbol = 1
+
+		if(not isSymbol):
+			fR.write(line + "\n")
+			fC.write(line + "\n")
+		else:
+			for i, x in enumerate(splitted):
+				if(x == '?'):
+					fC.write(str(best_val[i]) + ',')
+				elif(i == 5):
+					fC.write(str(x) + "\n")
+				else:
+					fC.write(str(x) + ',')
+
+
+
+fR.close()
+fC.close()
+					
+
+
