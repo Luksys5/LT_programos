@@ -10,9 +10,8 @@ git add <-- ideda faila
 git commit <-- commitina faila
 git push <-- nusiuncia i repozitorija faila(us)
 git pull <-- parsiuncia is dabartines sakos faila(us)
-git checkout --orphan <branchname> <-- sukuria nauja saka
+git checkout -b <branchname> <-- sukuria nauja saka
 --------------------arba
-git checkout -b "branchname"
 rm -rf * | git rm -rf *
 git commit -a
 git push origin "branchname"
