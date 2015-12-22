@@ -6,314 +6,322 @@ import sys
 from itertools import cycle
 
 def corresponds(el1, el2):
+    
+    if int(el2[0]) <= int(el1[0]) and int(el1[0]) < int(el2[1]):
+        return True
+    elif int(el2[0]) < int(el1[1]) and int(el1[1]) <= int(el2[1]):
+        return True
 
-	if int(el2[0]) <= int(el1[0]) and int(el1[0]) < int(el2[1]):
-		return True
-	elif int(el2[0]) < int(el1[1]) and int(el1[1]) <= int(el2[1]):
-		return True
-
-	return False
-
+    return False
 def is_anyone_in(struct1, struct2, run):
-	a = b = 0
-	myline = ''
-	if struct1 and struct2:
-		while(run):
-			
-			nospace_struct1 = struct1[a].split()
-			nospace_struct2 = struct2[b].split()
-			st_numb = nospace_struct1[0].split('-')
-			nd_numb = nospace_struct2[0].split('-')
-			
-			if corresponds(st_numb, nd_numb) or corresponds(nd_numb, st_numb):
-				struct1.remove(nospace_struct1[0] + ' ' + nospace_struct1[1] + ' ' + nospace_struct1[2] + ' ')
-				a += 1; b += 1
+        a = b = 0
+        myline = ''
+        if struct1 and struct2:
+            while(run):
 
-			elif int(st_numb[0]) < int(nd_numb[0]):
-				a +=1
-		
-			else:
-				b += 1 
-			
-			if a >= len(struct1) or b >= len(struct2):
-				run = False
-		
-	return struct1, struct2
+                nospace_struct1 = struct1[a].split()
+                nospace_struct2 = struct2[b].split()
+                st_numb = nospace_struct1[0].split('-')
+                nd_numb = nospace_struct2[0].split('-')
+
+                if corresponds(st_numb, nd_numb) or corresponds(nd_numb, st_numb):
+                    struct1.remove(nospace_struct1[0] + ' ' + nospace_struct1[1] \
+                        + ' ' + nospace_struct1[2] + ' ')
+                    a += 1; b += 1
+                elif int(st_numb[0]) < int(nd_numb[0]):
+                    a +=1
+                else:
+                    b += 1
+
+                if a >= len(struct1) or b >= len(struct2):
+                    run = False
+
+        return struct1, struct2
+
 
 def is_it_in(measure, struct1, struct2, atst, align):
 	
-	run = True
-	a = b = 0
-	new_struct1 = new_struct2 = []
-	Not_found_struct = ''
-	adding_struct1 = ''
-	adding_struct2 = ''
-	while(run):
-		if a+1 == len(struct1) or b+1 == len(struct2):
-			run = False
-	
-		st_numb = struct1[a].split('-')
-		nd_numb = struct2[b].split('-')
-		
-		if corresponds(st_numb, nd_numb) or corresponds(nd_numb, st_numb):
-			adding_struct1 += st_numb[0] + '-' + st_numb[1] + ' '
-			adding_struct2 += nd_numb[0] + '-' + nd_numb[1] + ' '
-			a += 1; b += 1
-	
-		else:
-			if int(st_numb[1]) <= int(nd_numb[0]):
-				if (int(st_numb[1]) - int(st_numb[0]) + 1) >= measure:
-					Not_found_struct += struct1[a] + ' ' + \
-						atst[int(st_numb[0]) : int(st_numb[1])] + ' ' + \
-						align[int(st_numb[0]) : int(st_numb[1])] + ' '
-				a += 1
-			
-			elif int(nd_numb[1]) <= int(st_numb[0]):
-				if (int(nd_numb[1]) - int(nd_numb[0]) + 1) >= measure:
-					Not_found_struct += struct2[b]+' ' + \
-						atst[int(nd_numb[0]):int(nd_numb[1])] + ' ' + \
-                                        	align[int(nd_numb[0]):int(nd_numb[1])] + ' '
-				b += 1
-	
-	newstruct1 = adding_struct1.split()
-	newstruct2 = adding_struct2.split()
-	
-	return newstruct1, newstruct2, Not_found_struct
-	
+    run = True
+    a = b = 0
+    new_struct1 = new_struct2 = []
+    Not_found_struct = ''; adding_struct1 = ''; adding_struct2 = ''
+    while(run):
+        if a+1 == len(struct1) or b+1 == len(struct2):
+            run = False
+
+        st_numb = struct1[a].split('-')
+        nd_numb = struct2[b].split('-')
+        if corresponds(st_numb, nd_numb) or corresponds(nd_numb, st_numb):
+            adding_struct1 += st_numb[0] + '-' + st_numb[1] + ' '
+            adding_struct2 += nd_numb[0] + '-' + nd_numb[1] + ' '
+            a += 1; b += 1
+        else:
+            if int(st_numb[1]) <= int(nd_numb[0]):
+                if (int(st_numb[1]) - int(st_numb[0]) + 1) >= measure:
+                    Not_found_struct += struct1[a] + ' ' + atst[int(st_numb[0]) : int(st_numb[1])] \
+                        + ' ' + align[int(st_numb[0]) : int(st_numb[1])] + ' '
+                a += 1
+            
+            elif int(nd_numb[1]) <= int(st_numb[0]):
+                if (int(nd_numb[1]) - int(nd_numb[0]) + 1) >= measure:
+                    Not_found_struct += struct2[b] + ' ' + atst[int(nd_numb[0]) : int(nd_numb[1])] \
+                        + ' ' + align[int(nd_numb[0]) : int(nd_numb[1])] + ' '
+                b += 1
+
+    newstruct1 = adding_struct1.split()
+    newstruct2 = adding_struct2.split()
+    
+    return newstruct1, newstruct2, Not_found_struct
+    
 def trunc_space(el_list, mm):
-	
-	run = True
-	Not_found_struct = []
-	new_struct = el_list
-	elcycle = cycle(el_list)
-	nextel = elcycle.next()
-	which = 0
-	
-	while run:
-		if len(el_list) < 2: break
-		st_el_interval = el_list[which].split('-')
-		nd_el_interval = el_list[which+1].split('-')
-		margin = abs(int(st_el_interval[1]) - int(nd_el_interval[0]))
+    
+    run = True
+    Not_found_struct = []
+    new_struct = el_list
+    elcycle = cycle(el_list)
+    nextel = elcycle.next()
+    which = 0
+    
+    while run:
+        if len(el_list) < 2: break
+        st_el_interval = el_list[which].split('-')
+        nd_el_interval = el_list[which+1].split('-')
+        margin = abs(int(st_el_interval[1]) - int(nd_el_interval[0]))
 
-		if margin < mm: 
+        if margin < mm: 
+            interval_start = str(int(st_el_interval[0])+(margin/2))
+            interval_end = str(int(nd_el_interval[1])-(margin/2))
+            el_list[which] = interval_start+'-'+interval_end
+            el_list.remove(el_list[which+1])
+            which -= 1
 
-			interval_start = str(int(st_el_interval[0])+(margin/2))
-			interval_end = str(int(nd_el_interval[1])-(margin/2))
-			el_list[which] = interval_start+'-'+interval_end
-			el_list.remove(el_list[which+1])
-			which -= 1
+        which += 1
+        if which+1 == len(el_list):
+            return 
+    
+    return
 
-		which += 1
-		if which+1 == len(el_list):
-			return 
-	
-	return
+def size_align(Structure_atst, Structure_ali, Sequence_atst, Sequence_ali, measure):
+    size_atst = ''; size_ali = ''
+    size_diff = [];
+    size_atst = ''; size_ali = '';
+    
+    for value1, value2 in zip(Structure_atst, Structure_ali):
+        interval_vals1 = value1.split('-')
+        interval_vals2 = value2.split('-')
+        size1 = int(interval_vals1[1]) - int(interval_vals1[0])
+        size2 = int(interval_vals2[1]) - int(interval_vals2[0])
+        
+        if abs(size2 - size1) + 1 > measure:
 
-def size_align(second_atst, second_ali, primar_atst, primar_ali, measure):
-	size_atst = ''; size_ali = ''
-	size_diff = [];
-	size_atst = ''; size_ali = '';
-	
-	for value1, value2 in zip(second_atst, second_ali):
-		interval_vals1 = value1.split('-')
-		interval_vals2 = value2.split('-')
-		size1 = int(interval_vals1[1]) - int(interval_vals1[0])
-		size2 = int(interval_vals2[1]) - int(interval_vals2[0])
-		
-		if abs(size2 - size1) > measure:
+            ## Adding the dssp with larger interval to array
+            if size2 > size1:
+                value = value2
+            else:
+                    value = value1
+                
+            size_atst = Sequence_atst[ int(interval_vals1[0])-1 : int(interval_vals1[1]) ] 
+            size_ali = Sequence_ali[  int(interval_vals2[0])-1 : int(interval_vals2[1]) ] 
+            size_diff.append( value + ' ' + size_atst + ' '+ size_ali + ' ' )
+                    
+    return size_diff
 
-			## Adding the dssp with larger interval to array
-			if size2 > size1:
-				value = value2
-
-			else:
-				value = value1
-			
-			size_atst = primar_atst[ int(interval_vals1[0])-1 : int(interval_vals1[1]) ] 
-			size_ali = primar_ali[  int(interval_vals2[0])-1 : int(interval_vals2[1]) ] 
-			
-			size_diff.append( value + ' ' + size_atst + ' '+ size_ali + ' ' )
-			
-	return size_diff
-
-def save_alternative(measure, struct_name, structures, second, primar_atst, primar_ali, size_dict1, size_dict2, place):
-	
-	size = {}; Nfound = {};
-	size['H'] = []; size['E'] = []; size['-'] = []
-	Nfound['H'] = []; Nfound['E'] = []; Nfound['-'] = []
-	for key in ('E', 'H', '-'):
-		for (strv, secv) in zip( structures[key], second[key] ):
-			x1, x2 = strv.split('-')
-			margin = 1 + int(x2) - int(x1)
-			if margin < measure:
-				structures[key].remove(strv)
-				second[key].remove(secv)
+def write_to_output(measure, struct_name, structures, Structure, Sequence_atst, Sequence_ali, size_dict1, size_dict2, place):
+    size = {}; Nfound = {};
+    size['H'] = []; size['E'] = []; size['S'] = []; size['-'] = []
+    Nfound['H'] = []; Nfound['E'] = []; Nfound['S'] = [];Nfound['-'] = []
+    for key in ('E', 'H', '-', 'S'):
+        for (strv, secv) in zip( structures[key], Structure[key] ):
+            x1, x2 = strv.split('-')
+            margin = 1 + int(x2) - int(x1)
+            if margin < measure:
+                structures[key].remove(strv)
+                Structure[key].remove(secv)
 
 	## Searching structures size differenece Ex: 17-23 and 15-29 result in => 17-23 8
-	for key in ('E', 'H', '-'):
-		trunc_space( size_dict2[key], int(measure/4) )
-		trunc_space( size_dict1[key], int(measure/4) )
-		size_dict1[key], size_dict2[key], Nfound[key] = is_it_in( measure, size_dict1[key], size_dict2[key], primar_atst, primar_ali )
-		size[key] = size_align( size_dict1[key], size_dict2[key], primar_atst, primar_ali, measure)
-	
+    for key in ('E', 'H', '-', 'S'):
+        trunc_space( size_dict2[key], int(measure/4) )
+        trunc_space( size_dict1[key], int(measure/4) )
+        size_dict1[key], size_dict2[key], Nfound[key] = \
+            is_it_in( measure, size_dict1[key], size_dict2[key], Sequence_atst[1], Sequence_ali )
+        size[key] = size_align( size_dict1[key], size_dict2[key], \
+                Sequence_atst[1], Sequence_ali, measure)
+    
 	## cleaning same difference
-	is_anyone_in(size['H'], size['E'], True)
-	is_anyone_in(size['H'], size['-'], True)
-	is_anyone_in(size['-'], size['E'], True)
-	
-	is_anyone_in(size['-'], structures['-'], True)
-	is_anyone_in(size['H'], structures['H'], True)
-	is_anyone_in(size['E'], structures['E'], True)
-		
-	place.write("\n"+struct_name+"\n")
-	for key in ('H', 'E', '-'):
-	
-		place.write(key+' ')
-		for x, y in zip(structures[key], second[key]): place.write(x+' '+y+' ')
-		place.write("\n")
-		
-		if Nfound[key]: place.write("Not found seeks\n")
-		for x in Nfound[key]: place.write(x)
-		if Nfound[key]: place.write("\n")
-		
-		if size[key]: place.write("Difference in size\n")
-		for x in size[key]:place.write(str(x)+' ')
-                if size[key]: place.write("\n")
+    for key in ('E', 'H', '-', 'S'):
+        for other_key in ('E', 'H', '-', 'S'):
+            if key != other_key:
+                is_anyone_in(size[key], size[other_key], True)
+    
+        is_anyone_in(size[key], structures[key], True)
+    
 
-	return
-def add_diff(primar_diff, primar_ali, primar_atst, second_dict, count_same, i, key):
-	
-	if primar_ali[(i-count_same):i] == primar_atst[(i-count_same):i]:
-		primar_diff[key].append(primar_atst[(i-count_same):i]+' ')
+    place.write("\n*---------------------------------------------------\n")
+    place.write(struct_name)
+    place.write("\n*----------------------------------------------------\n")
+    for key in ('H', 'E', 'S', '-'): 
+        if key == 'H': 
+            place.write(Bcolors.RED)
+        elif key == 'E': 
+            place.write(Bcolors.YELLOW) 
+        elif key == 'S':
+            place.write(Bcolors.GREEN)
+        else: 
+            place.write(Bcolors.RESET)
+        
+        place.write(key+' ')
+        for x, y in zip(structures[key], Structure[key]): 
+            place.write(x+' '+y+' ')
+        place.write("\n")
+        
+        if Nfound[key]: 
+            place.write("Nerastos sekos\n")
+        place.write( Nfound[key] + "\n")
+        if Nfound[key]: 
+            place.write("\n")
+        
+        if size[key]: 
+            place.write("strukturiniai skirtumai\n")
+        for x in size[key]:
+            place.write(str(x)+' ')
+        if size[key]: 
+            place.write("\n")
+        
+    return
+def add_diff(Sequence_diff, Sequence_ali, Sequence_atst, Structure_dict, count_same, i, key):
+    
+    if Sequence_ali[(i-count_same):i] == Sequence_atst[(i-count_same):i]:
+        Sequence_diff[key].append(Sequence_atst[(i-count_same):i]+' ')
+    else: 
+        Sequence_diff[key].append(Sequence_atst[(i-count_same):i] + ' ' + \
+            Sequence_ali[(i-count_same):i])
+    Structure_dict[key].append(str(i+1-count_same)+'-'+str(i)+' ')
 
-	else: primar_diff[key].append(primar_atst[(i-count_same):i]+' '+primar_ali[(i-count_same):i])
-	second_dict[key].append(str(i+1-count_same)+'-'+str(i)+' ')
+    return Sequence_ali, Sequence_atst, Structure_dict, 0
 
-	return primar_ali, primar_atst, second_dict, 0
+def DiffCount(Seqalign, Seqatst, SSalign, SSatst):  ## SS - Secondary structure
 
-def final_diffcount(measure, primar_atst, primar_ali, second_atst, second_ali):
-	
-	size_dict1 = {}; size_dict2 = {}; size_dict = {}; second_dict = {}; primar_diff = {}
-	size_dict1['H'] = []; size_dict2['H'] = []; second_dict['H'] = []; primar_diff['H'] = []
-	size_dict1['E'] = []; size_dict2['E'] = []; second_dict['E'] = []; primar_diff['E'] = []
-	size_dict1['-'] = []; size_dict2['-'] = []; second_dict['-'] = []; primar_diff['-'] = []
-	atst_primar_diff = []; align_primar_diff = []
-	last_second1 = second_atst[0]; last_second2 = second_ali[0];
-	count_same = count_struct1 = count_struct2 = 0 
-	last_number1 = last_number2 = repeat = 0
-	
-	for i,( second_item1, second_item2 ) in enumerate(zip( second_atst, second_ali )):
-		## Diffs in struct size
-		if last_second1 != second_item1:
+    size_dict1 = {}; size_dict2 = {}; size_dict = {}; Structure_dict = {}; Sequence_diff = {}
+    size_dict1['H'] = []; size_dict2['H'] = []; Structure_dict['H'] = []; Sequence_diff['H'] = []
+    size_dict1['E'] = []; size_dict2['E'] = []; Structure_dict['E'] = []; Sequence_diff['E'] = []
+    size_dict1['-'] = []; size_dict2['-'] = []; Structure_dict['-'] = []; Sequence_diff['-'] = []
+    size_dict1['S'] = []; size_dict2['S'] = []; Structure_dict['S'] = []; Sequence_diff['S'] = []
+    last_Structure1 = SSatst[0]; last_Structure2 = SSalign[0];
+    count_same = count_struct1 = count_struct2 = 0 
+    last_number1 = last_number2 = repeat = 0
+    
+    for i,( Structure_item1, Structure_item2 ) in enumerate(zip( SSatst, SSalign )):
+        if last_Structure1 != Structure_item1:
+            try:
+                size_dict1[last_Structure1].append(str(i+1-count_struct1)+'-'+str(i)+' ')   ### Pridedamas praeitos strukturos dydis
+            except KeyError:
+                print "Error while reading, Key: "+last_Structure1
+            count_struct1 = 0
+        
+        if last_Structure2 != Structure_item2:
+            try:
+                size_dict2[last_Structure2].append(str(i+1-count_struct2)+'-'+str(i)+' ')
+            except KeyError:
+                print "Error while reading, Key: "+last_Structure2
+            count_struct2 = 0
 
-			try:
-				size_dict1[last_second1].append(str(i+1-count_struct1)+'-'+str(i)+' ')
+        ## differences between structure elements
+        if Structure_item1 != Structure_item2:
+            if last_Structure1 != Structure_item1 and count_same  > 0:
+                Sequence_ali, Sequence_atst, Structure_dict, count_same =\
+                add_diff(Sequence_diff, Seqalign, Seqatst, Structure_dict, \
+                        count_same, i, last_Structure1)
+            count_same += 1
+        elif count_same  > 0:
+            Sequence_ali, Sequence_atst, Structure_dict, count_same = \
+            add_diff(Sequence_diff, Seqalign, Seqatst, \
+                Structure_dict, count_same, i, last_Structure1)
+    
+        last_Structure1 = Structure_item1; last_Structure2 = Structure_item2
+        count_struct1 += 1; count_struct2 += 1;
+    return Structure_dict, size_dict1, size_dict2, Sequence_diff 	
 
-			except KeyError:
-				print "Error while reading, Key: "+last_second1
+def readDssp(first, name, Atstlines, Alignlines, filename, struct):
+    with open(filename, 'r') as f:
+        for line in f:
+            if line.startswith('>'):
+                name = line[1:].split()[0].rstrip("\n")
+                if( line.startswith(">2zvv_A") ):
+                    first = 1
+                    Atstlines = (name, "")
+                else:
+                    Alignlines[name] = ""
+                    first = 0
+            elif line:
+                line = line.rstrip("\n")
+                if struct:
+                    changeline = ""
+                    for x in line:
+                        if x == 'B' or x == 'T':
+                            x = 'E'
+                        if x == 'G' or x == 'I':
+                            x = 'H'
+                        changeline += x
+                    line = changeline
+                
+                if first == 1:
+                    line += Atstlines[1]
+                    Atstlines = (name, line)
+                else:
+                    Alignlines[name] += line
+    return Atstlines, Alignlines
 
-			count_struct1 = 0
-		
-		if last_second2 != second_item2:
+def output(Structures, Sequences, Structures_name):
+    sys.stdout.write(Structures_name + "\n")
+    sys.stdout.write(Bcolors.RED + 'H' + Bcolors.RESET + "\n")
+    for x, y in zip(Structures['H'], Sequences['H']):
+        sys.stdout.write(x + ' ' + y + ' ')
+    
+    sys.stdout.write("\n" + Bcolors.YELLOW + 'E' + Bcolors.RESET + "\n")
+    for x, y in zip(Structures['E'], Sequences['E']):
+        sys.stdout.write(x + ' ' + y + ' ')
 
-			try:
-				size_dict2[last_second2].append(str(i+1-count_struct2)+'-'+str(i)+' ')
-			except KeyError:
-				print "Error while reading, Key: "+last_second2
-			count_struct2 = 0
+    sys.stdout.write("\n" + Bcolors.GREEN + 'S' + Bcolors.RESET + "\n") 
+    for x, y in zip(Structures['S'], Sequences['S']):
+        sys.stdout.write(x + ' ' + y + ' ')
 
+    sys.stdout.write("\n" + '-' + "\n")
+    for x, y in zip(Structures['-'], Sequences['-']):
+        sys.stdout.write(x + ' ' + y + ' ')
+    sys.stdout.write("\n")
 
-		## differences between structure elements
-		if second_item1 != second_item2:
-			if last_second1 != second_item1 and count_same  > 0:
-				primar_ali,primar_atst,second_dict,count_same =\
-				add_diff(primar_diff, primar_ali, 
-					primar_atst, second_dict, count_same, 
-					i, last_second1)
+def StructDiff(measure): 
+    fw = open("diff_out", 'w')
+    fw.write(Bcolors.RED + "\t\tAlfa helix H " + Bcolors.YELLOW +
+        " Beta strand E " + Bcolors.GREEN + " Bend S " + Bcolors.RESET+' Noseq -'+'\n')
+    AtstStruct, LygStruct = readDssp(2, "", (), {}, sys.argv[2], 1)
+    AtstSeq, LygSeq = readDssp(2, "", (), {}, sys.argv[1], 0)
+    for (AlignSSkey, AlignSSvalue), (AlignSeqkey, AlignSeqvalue) in zip(LygStruct.iteritems(), LygSeq.iteritems()):
+        Structure_diff, sizes1, sizes2, Sequence_diff = DiffCount(AlignSeqvalue, AtstSeq[1], AlignSSvalue, AtstStruct[1])
+        #output(Structure_diff, Sequence_diff, "Structures n Sequences")
+        write_to_output(measure, AlignSSkey + " VS " + AtstSeq[0], Structure_diff, \
+            Sequence_diff, AtstStruct, AlignSSvalue, sizes1, sizes2, fw)
+    fw.write(Bcolors.RESET)
 
-			count_same += 1
-			
-		elif count_same  > 0:
-			primar_ali, primar_atst, second_dict, count_same = \
-			add_diff(primar_diff, primar_ali, primar_atst, 
-				second_dict, count_same, i, last_second1)
-		
-
-		last_second1 = second_item1; last_second2 = second_item2
-		count_struct1 += 1; count_struct2 += 1;
-	return second_dict, size_dict1, size_dict2, primar_diff
-
-def spalv(dssp, measure, place): 
-	
-	name_atst = dssp.readline()[1:7].rstrip('\n'); name_align = ''
-	atst_dssp= ''; align_dssp= ''
-	atst_structure = ''; align_structure = ''
-	cc = 0
-	
-	## Reading atst structure and dssp 
-	while(True):
-		dssp_line = dssp.readline().rstrip('\n')
-		if dssp_line.startswith('>'): 
-			if not dssp_line.startswith('>'+name_atst):
-				cc = 0
-				break
-			cc = 1
-			dssp_line = dssp.readline().rstrip('\n')
-
-		if cc == 0:
-			atst_structure += dssp_line
-		else:
-			atst_dssp += dssp_line
-	
-	empty = 0
-	## Reading align dssp and strucure 
-	while(True):
-		if re.match('>.*dssp', dssp_line):
-			cc = 1; empty = 0
-
-		elif re.match('>', dssp_line) or not dssp_line:
-			cc = 0; empty = 0
-
-			if name_align: 
-			
-				dssp_diff, size1, size2, struct_diff = final_diffcount(measure, atst_dssp, align_dssp, atst_structure, align_structure)
-				save_alternative(
-					measure, name_atst + " VS " + name_align, dssp_diff, 
-					struct_diff, atst_dssp, align_dssp, size1, size2, place)
-				
-				if not dssp_line: return
-				align_structure = ''
-				align_dssp = ''
-			
-			name_align = dssp_line[1:7]
-			
-		elif cc == 1:
-			count = 0
-			if '----------------------------------------------' in dssp_line: empty = 1
-			if not empty: align_structure += dssp_line 	
-
-		else:
-			if '----------------------------------------------' in dssp_line: empty = 1
-			
-			if not empty: align_dssp += dssp_line
-		
-		dssp_line = dssp.readline().rstrip('\n')
 class Bcolors:
-        RED = '\033[91m'
-        BOLD = '\033[95m'	
-        BLUE = '\033[94m'
-        GREEN = '\033[92m'
-        YELLOW = '\033[93m'
-        RESET = '\033[0m'
+    RED = '\033[91m'
+    BOLD = '\033[95m'	
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RESET = '\033[0m'
 try:
-	m = int(sys.argv[1])
-
+    sys.argv[2]
 except IndexError:
-	print "Usage ./differize measure_value"
-	sys.exit(1)
+    print "Usage ./differizer file1 file2 [int] \n" + \
+            "file1 - file of aligned sequences\n" \
+            "file2 - file of aligned structures(DSSP)\n" + \
+            "int - measure_value(optional)"
+    sys.exit(1)
 
-fw = open('diff_output/atst', 'w')
-fdssp = open("dali.ali")
-fw.write('                Alfa helix H ' + ' Beta strand E ' + ' Bend -'+'\n')
-spalv(fdssp, m, fw)
+if len(sys.argv) > 3:
+    m = int(sys.argv[3])
+else:
+    m = 5
 
+StructDiff(m)
