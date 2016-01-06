@@ -1,0 +1,112 @@
+#!/usr/bin/python
+import sys
+import re
+import os
+if(len(sys.argv) < 2 or re.match(".*-h.*", sys.argv[1])):
+    print "USAGE: ./blastNParse input.fa"
+    print "input.fa - queries(y) for blastn"
+    print "You can make your own database and use other blast type"
+    print "Example ./blastNparse input.fa ./blastp dbname"
+    print "Second argument for program is path of blastp, likewise the third is path, but to database."
+    print "The program will only change blast type and db if three arguments is given"
+    sys.exit(1)
+
+def readblast(tList, counter, found):
+    with open("here" + str(counter), 'r') as f:
+        for line in f:
+            if line.startswith("> "):
+                tair = line.split()[1]
+                if tair not in tList:
+                    found += 1
+                    tList.append(tair)
+                break
+    os.system("rm here" + str(counter))
+    return tList, found
+
+print "If using ./blastNparse first time type 1"
+need_install = int(raw_input("1 - Need to install R package org.At.tair.db.\n0 - don't need to install. "))
+if need_install:
+    os.system("R CMD INSTALL --build org.At.tair.db_3.2.3.tar.gz")
+defaultblast = "./blastn"
+defaultdb = "arabidopsis.fa"
+if(len(sys.argv) == 4):
+    defaultblast = sys.argv[2]
+    defaultdb = sys.argv[3]
+
+TairList = []
+lines = ""
+linescc = 0
+hits_found = 0
+fw = open("query.fa", 'w')
+with open(sys.argv[1]) as fr:
+    for line in fr:
+        if line.startswith('>') and linescc != 0:
+            fw.write(lines)
+            fw.close()
+            os.system(defaultblast + " -query query.fa -db " +  \
+                    defaultdb + " -out here" + str(linescc))
+            TairList, hits_found = readblast(TairList, linescc, hits_found)        
+            fw = open("query.fa", 'w')
+            linescc += 1
+            lines = "" 
+        elif linescc != 0:
+            lines += line.rstrip("\n")
+        else:
+            linescc = 1
+
+    fw.write(lines)
+    fw.close()
+    os.system(defaultblast + " -query query.fa -db " + \
+            defaultdb + " -out here" + str(linescc))
+    TairList, hits_found = readblast(TairList, linescc, hits_found)
+print "Hits found:", hits_found
+os.system("rm query.fa")
+
+GOIds = {}
+fulltair = ""
+for tair in TairList:
+    fulltair += tair + ' '
+print fulltair
+
+os.system("./TairToGoid " + fulltair + " > output")
+GOIds = {}
+GOlist = []
+seka = ""
+seekstart = 0
+with open("output", 'r') as fr:
+    for line in fr:
+        if re.match(".*seka.*", line):
+            seekstart = 1
+        elif seekstart:
+            seekstart = 0
+            seka = line.split()[1]
+            for key in GOlist:
+                if key in GOIds.keys():
+                    GOIds[key] += 1
+                else:
+                    GOIds[key] = 1
+
+            GOlist = []
+        elif re.match(".*\[.*\].*", line) and not re.match(".*nera.*", line):
+            line_split = line.split()
+            for i in range(1, len(line_split)):
+                if line_split[i][0] != '[' :
+                    if line_split[i] not in GOlist:
+                        GOlist.append(line_split[i])
+
+for key in GOlist:
+    if key in GOIds.keys():
+        GOIds[key] += 1
+    else:
+        GOIds[key] = 1
+
+fw = open("GOIds", 'w')
+fw.write("GO\tquant\n")
+for k, v in GOIds.iteritems():
+    print k, v
+    fw.write(k + "\t" + str(v) + "\n")
+fw.close()
+
+os.system("./pieChart GOIds")
+os.system("evince Rplots.pdf")
+os.system("rm Rplots.pdf")

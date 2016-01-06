@@ -1,0 +1,20 @@
+#!/usr/bin/Rscript
+args <- commandArgs(trailingOnly = TRUE)
+library(org.At.tair.db)
+x <- org.At.tair.db::org.At.tairGO
+mapped_tairs <- AnnotationDbi::mappedkeys(x)
+xx <- AnnotationDbi::as.list(x[mapped_tairs])
+len <- length(names(xx))
+for(j in 1:length(args))
+{
+    print("seka: ")
+    print(args[j])
+    z <- 0
+    for(i in 1:len)
+        if(names(xx[i]) == args[j])
+        {
+                print(names(xx[i][[1]]))
+                z = 1
+        }else if(z == 0 && i == len-1)
+            print("nera")
+}

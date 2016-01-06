@@ -1,2 +1,0 @@
-#!/bin/sh
-java -cp -Xmx4G -jar clans.jar -readblast F -docalc -F -cpu 1

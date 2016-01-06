@@ -1,0 +1,6 @@
+#!/usr/bin/Rscript
+args <- commandArgs(trailingOnly = TRUE)
+info <- read.table(args[1], sep="\t", header=TRUE)
+colors = c("red", "yellow", "green", "violet", "orange", "blue", "pink", "cyan") 
+pie(info$quant, info$GO, col=colors)
+legend("topright", legend=info$quant, cex=0.8, fill=colors)
