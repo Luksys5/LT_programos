@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name ="description" content="Vesicles Content calculations">
+	<meta name="author" content="MIF 3 kurso bioinfromatikos studentas">
+	
+	<script src="../javascripts/json2.js" type="text/javascript"></script>
+	<script src="../javascripts/jquery-2.1.4.min.js" type="text/javascript"></script>
+	<script src="../javascripts/cookies.js" type="text/javascript"></script>
+	<script src="../javascripts/flickrshow-7.2.js" type="text/javascript"></script>
+	<script src="../javascripts/Js4VesCalc.js" type="text/javascript"></script>
+	<title> Test </title>
+
+<style>
+	@import url("Vesiculewebpage_style.css");
+</style>
+<script>
+	$(document).ready(function(){
+		$('#nouser').hide();
+		$('#about').show();
+		$("#options").hide();
+		$('#login').height($('#top').height());
+		document.getElementById('name').style.height = $('#top').height()+'px';
+
+		// Prisijungimo lauko aukstis
+		$('#login').height($('#name').height());
+		$('#logo').height($('#name').height());
+		
+		// Calcs container height
+		var height = window.innerHeight;
+		newh = (height/10)*7;
+		document.getElementById('container').style.height = newh+'px';
+	
+		//Reklamos pirmots plotis
+		wcomm = $("#side").width();    	
+		$("#comm").css("width",wcomm+"px"); 
+		document.getElementById('container').style.height = newh+'px';
+		
+		// Hide all section except opening menu section
+		$(".section").not("#about").hide();
+		$(".main_input").css("width", "100px");
+
+		// Change height of menu options buttons div
+		var btlen = $("#options").children().length;
+		brlen = $("#options").children('br').length;
+		if (brlen - btlen == 0){ sum = 1;}else{sum = Math.abs(brlen - btlen);}
+		$("#options").height((btlen-brlen)*50);
+	});
+</script>
+
+<script>
+	$( window ).resize(function() {
+		$('#login').height($('#imglogo').height());
+	});
+	window.onload = function() {
+		var Firefox = typeof InstallTrigger !== 'undefined';
+		if(Firefox)
+		{
+			$("#Nvol").css("left", "3px");
+			$("#Nmass").css("left", "19px");
+		}
+		/*
+
+		var chrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+		if(chrome){
+                        #div ml in main_input style="position:relative; float:left; left: -95px; "
+			$("#Fuserbox").css('padding-right', '20px');
+			$("#Pastas").css("left", "4.5px");
+			$("#reg").css("left", "5px");
+			$("#reg").css("left", "22px");
+		}
+		*/
+	};
+</script>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<script>
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/lt_LT/sdk.js#xfbml=1&version=v2.5&appId=748646898568020";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+	</script>	
+	<div id="top" class="blur">
+		<div id="logo"><img id = "imglogo" src="../pict/logo.png" alt="nothing"></div>
+		<div id="name"><h3>Vesicles Calculations ©</h3></div>
+		<!--div id="login" class="logintext">
+			<form name="tables" id = 'logform' method="post">  
+				E-Mail <br>
+				<input type="email" id = 'Pastas'>
+				<br>Password:<br />
+				<input type='password' name='slapt' required/>
+				<br>
+			</form>
+			<input type='submit' value="Sign In " onclick="getuser()" class="SignReg"> 
+			<button class="SignReg" onclick = "window.location.href='Registracija.html'">Register</button>
+			<br />
+			<button id = "Forgot" onclick="makeblur('blur(5px)',1)" >Forgot password?</button>
+		</div-->
+		<div id='login' class="logintext"><br /><br />Welcome to Vesicules Content Calculator<br /> </div>			
+	</div> 
+	
+	<div id="container" class="blur">
+		<div id="menu" >
+			<br />
+			<button class = 'menu' onmouseover="toggleVisibility('about');return false;" >  Home </button><br>
+			<br />
+
+			<!--button class = 'menu' onmouseover="$('#options').slideDown();">Calcs
+			</button>
+			<br></br-->
+	
+			<!--div id="options"  class = "section menu"-->
+			
+			<button class = 'menu' onmouseover="toggleVisibility('calc1');">Calculation</button><br><br />
+			<!--button class="option" href = "#" onmouseover="toggleVisibility('calc2');">LpV</button><br></br-->
+			<!--/div-->
+
+			<button class = 'menu' id ="butt" onmouseover="toggleVisibility('contacts'); return false;" >Contacts </button>
+			<br><br />
+		
+			<button class = 'menu' onmouseover = "toggleVisibility('donate'); return false;" > Donation </button>
+			<br><br /> 
+
+			<div class="fb-like" data-href="https://www.facebook.com/VesCalc" data-layout="box_count" 
+				data-action="like" data-show-faces="false" data-share="true">
+			</div>
+		</div>
+
+		<div id="about" class="section">
+                        <img src="../pict/Example.jpg" alt="smile">
+			<!--p>This web page was created to save researchers time by 
+				making calculations for liposome preparation and their properties more convenient.
+			<br /><br /><p>Here you will find three types of calculations which allows you to: 
+			<br /><p>1) Calculate volumes of lipid solutions (unlimited number of different lipids solutions) 
+				required to prepare certain composition of liposomes.
+			<br /><br /><p>2) Calculate molecular weight of any composition and size liposome.
+			<br /><br /><p>3) Calculate number of lipids per liposome of any composition and size. 
+				Which allows you to decide how much of a certain lipid, protein or any other 
+				molecule to add into the lipid mixture during liposome preparation to have a single 
+				copy of it percertain size of liposome.
+			<br /><br /><p>Working with this toolkit you will find an extra option (10 dollars/year) 
+				to make your own personalised library of lipid info - once lipidname and its 
+				properties are entered it will be saved and next time you will not need to 
+				spend time to enter all that information.
+			</p-->
+                </div>
+		
+		<div id = 'calcs' class = 'section'>
+			<form id="check" onsubmit="return showother();"></form>
+			<form id="check2" onsubmit="return rezults();" ></form>
+	
+			<div id="calc1" class="section " ><h2>Enter values:</h2>
+				<div id="field" class="section">
+					<TABLE>
+					
+					<TR>
+						<TD><span>Number of lipids:</span></TD>
+						<TD>
+							<input class = "main_input" type="number" form="check" id = "Nlip"
+								name="quantity" min="1" max="10" 
+							required/><br>
+						</TD>
+					</TR>
+					
+					<TR>
+						<TD><span>Final volume of solution:</span></TD>
+						<TD>
+							<input class = "main_input" type="number" step="0.01" id = "Nvol"
+								 name="Volume" min="0" 
+							required/>
+						</TD>
+						<TD>
+							<div >[ml]</div>
+						</TD>
+					</TR>
+
+					<TR>
+						<TD><span>Final mass of solution:</span></TD>
+						<TD>
+							<input class = "main_input" type="number" step="0.01" id = "Nmass"
+								form="check"
+								name="Mass" min="0"
+							required/>
+						</TD>
+						<TD>
+							<div>[mg]</div>
+						</TD>
+					</TR>
+
+					<TR>
+						<TD><span>Title of experiment:</span></TD>
+						<TD>
+							<input class = "main_input" type="text" form="check" id = "Titl" 
+								name = "title"
+							required><br>
+						</TD>
+					</TR>
+					
+
+					</TABLE>
+					<br /><input type = "submit" class="sub" form="check" value="Next">
+                                        <button id='reset' class="sub" onclick="del()">RESET</button><br />
+				</div>
+				
+				<div id="fieldx" class="section"></div>
+			</div>
+		
+			<div id="calc2" class = 'section' >
+                                Lipidu skaicius: <input id='Lipidu_skaicius' type='number'><br>
+                                Minimalus lipido diametras: <input id='min_out_diam' type='number' min=1> [Å]<br> 
+                                Maksimalus lipido diametras: <input id='max_out_diam' type='number' min=2> [Å]<br>
+                                <br><input type='submit' value='Next'>
+                                <br>
+        
+
+                        </div>	
+
+			<div id="VscHints" class="section "><h3>Hints</h3><br>Number of lipids - how many lipid's to create<br></div>
+			<div id="rezult1" class="section" >Rezai</div>
+		</div>
+		
+		<div id = "contacts" class = "section">
+			<p>
+				Marius : Algoritmo kūrimas  <br />
+				Lukas : Svetainės kūrimas (luksys5@yahoo.com)
+			</p>
+		</div>
+		
+		<div id = "donate" class = "section">
+			<TR valign="top">
+			<td valign="top"><p><br>
+
+			<TABLE align="center" width=100%>
+				<FORM action="https://payments.verisign.com.au/payflowlink" method="post" name="payform" ORDERFORM=False SHOWCONFIRM=False>
+
+					<TABLE width=100% cellpadding="0" cellspacing=0&nbsp;; border: 1px solid #fac99e; margin: 0; >
+
+					<TR>
+						<TD align="left" class="Plain">
+							<FONT COLOR="#333333">Donation Amount 
+								<FONT COLOR="#26e500">*
+								</FONT>
+							</FONT>
+						</TD>
+						<TD align="left" class="Plain">
+							<input id="AMOUNT" name="AMOUNT" type="text" size="10">€
+						</TD>
+						<TD align="left" class="Plain"></TD>
+
+					</TR>
+
+					<TR>
+						<TD align="left" class="Plain"> First Name <FONT COLOR="#26e500">*</FONT> </TD>
+
+						<TD align="left"  class="MAINTXT1">
+							<span class="Plain">
+								<INPUT name="USER1" TYPE="text" class="MAINTXT1" id="USER1" size=20>
+							</span>
+						</TD>
+					</TR>
+
+					<TR>
+						<TD align="left" class="MAINTXT1">
+							<span class="Plain">Last Name <FONT COLOR="#26e500">*</FONT></span>
+						</TD>
+						<TD align="left"  valign="middle" class="MAINTXT1">
+							<span class="Plain">
+							  <INPUT name="USER2" TYPE="text" class="MAINTXT1" id="USER2" size=20>
+							</span>
+						</TD>
+
+					</TR>
+					
+					<TR>
+                                                <TD align="left" class="MAINTXT1">
+                                                        <span class="Plain">E-mail</span>
+                                                </TD>
+                                                <TD align="left"  valign="middle" class="MAINTXT1">
+                                                        <span class="Plain">
+                                                          <INPUT name="USER3" TYPE="text" class="MAINTXT1" id="USER3" size=20>
+                                                        </span>
+                                                </TD>
+
+                                        </TR>
+
+					</TABLE>
+				</FORM>
+	
+			</TABLE>
+			
+			<br /><br />		
+			<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+                                <input type="hidden" name="cmd" value="_s-xclick">
+                                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----...[Encrypted message]...-----END PKCS7-----">
+
+                                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+
+                        </form>
+			</td>
+			</tr>
+
+		</div>
+
+		<div id ="side" >
+			<img id = "comm" src="../pict/htmlimg.jpg" 
+				style="min-width:100%;min-height:50%;display: block;" alt = "htmlimg2" >
+			<img src="../pict/Firefox.jpg" 
+				style="max-width:50%;min-height:50%;display: inline;" alt = "htmlimg2" >
+			<img src="../pict/chrome.jpg" 
+				style="min-height:50%;max-width:50%;;display:inline;float:left;max-width:50%;" alt = "htmlimg2" >
+		</div>
+
+	</div>
+
+	<div id = "bot" class = "blur">
+		<h4>Copyright ©Luksys Tm.</h4>
+	</div>
+	
+	<div id = "REZ"></div>
+	
+	<form id ="Fuserbox" class ='section' onsubmit="return checknsend(1)">
+		<h4 style='padding-top:30px;'>Enter email
+			<input type="email" name ="fPastas" >
+			<input type = "submit" value ="Send password">
+			<button onclick = "return checknsend(0)"> Cancel </button>
+		</h4>
+	</form>
+	<div id = "tmp" class = 'section'></div>
+	<div id = "LoggedIn" class = 'section'></div>
+</body>
+</html>
+
+
+
+
+
+

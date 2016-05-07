@@ -1,293 +1,42 @@
-body
-	{
-	
-	background-color: #D7E5DA;
-	margin: 0px;
-	overflow-x:hidden;
-	}
-#top
-	{
-	top: 0px;
-	height: 10%;
-	float:left;
-	position:relative;
-	width:100%;
-	text-align:center;
-	//border-bottom: solid 3px green;
-	}
-#side
-	{
-	//top: 0px;
-	//right: 0px;
-	margin:0 !important;
-	position:relative;
-	width:25%;
-	height:100%;
-	//display: block;
-	float: right;
-	border-left:3px solid black;
-	//background-color:#FFB600;	
-	}
-#container
-	{
-	clear: both;	
-	margin: 0 !important;
-        padding: 0 !important;
-//	background-color:#FFD700;
-	float:left;
-	border-top: solid 3px black;
-	width:100%;
-	height:100%;
-	position:relative;
-	}
-#bot
-	{
-	clear:both;
-	border-top: solid 3px black; 
-	position:relative;
-	float:left;
-	width:100%;
-	height:10%;
-	}
-#logo
-	{
-	clear: both;
-	float:left;
-	width: 10%;
-	border-right: solid 3px black; 
-	position: relative;
-	}
-#name
-	{
-//	background-color:#FFD700;
-	text-align:center;
-	top:0px;
-	margin: 0 auto;
-	position:relative;
-	float:left; 
-	width:63%;
-	}
-#logform
-	{
-	position:relative;
-	display: inline;
-	//float: left;
-	top: 2%;
-	width: 100%;
-	}
-#login
-	{
-	position:relative;
-	float: right;
-	right: 0px;
-	width:25%;
-	border-left: solid 3px black;	
-//	background-color:#FFA500;
-	}
-#credits
-	{
-	position:relative;
-	float:left;
-	width:100%;
-	border-bottom:3px solid green;
-	}
-#imglogo
-	{
-	height: 100%;
-	width: 100%;
-	display: block;
-	}
-#menu
-	{
-//	background-color:green;
-	position: relative;  
-	float: left;
-	width: 10%;
-	text-align:center;	
-	border-right:solid 3px;	
-	min-height:100%;
-	}
-#about
-        {
-	top: 10px;
-	position: relative;
-	//background-color:#FFA500;
-	width:64%;
-	height: 80%;
-	float: left;
-	}
-#calculations
-	{
-	margin-right:0;
-	width:63%;
-	height: 100%;
-	display: block;
-	background-color:yellow;
-	overflow-y:hidden;
-	position: relative;
-	}
-#calcs 
-	{
-	float: left;
-	width: 63%;
-	height: 100%;
-	//background-color:yellow;
-	position: relative;  
-	}
-#calc1	
+html
 {
-	overflow-y: auto;
-	width:50%;
-	height:100%;
-	background-color:yellow;
-	position: relative;
-	float:left;
-	font-family: times, serif;
+    background: url(../pict/body.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
-#calc2
+
+.menubt
 {
-	width:auto;
-	height: auto;
-	float:left;
-	position: relative;
+    font-size: 15pt;
+    font-family: serif;    
+    width: 12.5%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    position: fixed;
+    text-align: left;
+    left: 2px;
+    min-width: 15px;
 }
-#calc3
-{
-	width:auto;
-	height: auto;
-	float:left;
-	position: relative;
-}
-#VscHints
-{
-	background-color:green;
-	width:49%;
-	height: auto;
-	position: relative;
-	float: left; 
-}
-#support
-{
-	border-bottom:3px solid black;
-	width: 59%;
-	height: 800px;
-	float: left;
-	position: relative;  
-	z-index: 1; 
-}
-#help	
-{
-	border-bottom: solid 3px;
-	width: 59%;
-	height: 800px;
-	position: relative;
-	float: left;  
-	position: relative;  
-	z-index: 1; 
-}
-#img
-{
-	z-index: -1;
-	min-height: 100%;
-	min-width: 1024px;
-	width: 100%;
-	height: 1000px;
-	position: fixed;
-	top: 0;
-	left: 0;
-}
-#rezult1
-{
-	min-width: 49%;
-	height: 50%;
-	background-color:red;
-	//border:solid 3px black;	
-	float: left;
-	position:relative;
-}
-#options
-{
-	float: center;
-	position:relative; 
-	width: 40%
-}
-#contacts
-{
-	position: relative;
-	float: left;
-	height: 100%;
-	width: 63%;
-}
-#profile
-{
-	position: relative;
-	float: left;
-	height: 100%; width: 63%;
-}
-#Forgot{
-	position: relative;
-	float: center;
-        top: 2px;
-}
-#Fuserbox
-{
-	position: absolute;
-	top: 50%;
-	text-align:left;
-	left: 50%;
-	margin-top: -100px;
-	margin-left: -160px;
-	width: 200px;
-	height: 200px;
-	background-color: #b0e0e6;
-	border: 2px solid #a1a1a1;
-	padding: 10px 40px;
-	background: #dddddd;
-	border-radius: 25px;
-}
-.SignReg
-{
-	position: relative;
-	display: inline;
-	top: 2px;
-}
+
 .section
 {
-	display:none;
+    width: 50%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    position: fixed;
+    min-width: 15px;
+    min-height: 15px;
+    
 }
-.news
+
+#container
 {
-	width:50px;
-	height:50px;
-	border:3px solid black;
-}
-a
-{
-	color: black;
-	text-decoration: none; 
-	background-color: none;
-}
-.logintext { 
-	position:relative;
-	right:50px;
-	font-family: times, serif; 
-	font-size:14pt; 
-	font-style:Times New Roman;
-}
-.advert {background-position:cover;}
-.menu {position: relative; float:center;  height: 30px; width: 90%;}
-.option {
-	position: relative;
-	display:inline-block;
-	left:25%;
-	height: 30px;
-	width:70px; 
-}
-.option:hover{background: #E6E6E6;}
-.sub {position: relative; height: 30px; width: 60px;}
-h3 {text-align: center; font-size: 300%;}
-h4 {font-family: times, serif;font-size:14pt;font-style:Times New Roman;}	
-p{ margin: 5px ;}
-br {
-   line-height:22px;
+    overflow-x: auto; /* for horizontal scrolling*/
+overflow-y: auto; /* for vertical scrolling */
+    position: absolute;
+    margin-left: 179px;
+    margin-top: 90px;
+    margin-bottom: 100px;
 }
