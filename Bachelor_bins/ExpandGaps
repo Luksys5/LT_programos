@@ -1,0 +1,131 @@
+#!/usr/bin/python
+import sys
+
+class Align(object):
+    def __init__(self):
+        self.lTargets = []
+        self.lTemplates = []
+        self.lTargetEnum = []
+        self.lTemplatesEnum = []
+        self.strLines = ""
+        self.strCondensed = ""
+
+    def ReadCondensed(self):
+        with open(sys.argv[1], 'r') as f:
+            f.readline()
+            for line in f:
+                if(line.startswith('>')):
+                    break
+                self.strCondensed += line.rstrip("\n")
+
+    def ReadTargets(self):
+        with open(sys.argv[2], 'r') as f:
+            f.readline()
+            for line in f:
+                if(line.startswith('>')):
+                    self.lTargetEnum.append(0)
+                    self.lTargets.append(self.strLines)
+                    self.strLines = ""
+                else:
+                    self.strLines += line.rstrip("\n")
+        self.lTargets.append(self.strLines)
+        self.lTargetEnum.append(0)
+        self.strLines = ""
+
+    def ReadTemplates(self):
+        self.strLines = ""
+        with open("Template.fa", 'r') as f:
+            f.readline()
+            for line in f:
+                if(line.startswith('>')):
+                    self.lTemplatesEnum.append(0)
+                    self.lTemplates.append(self.strLines)
+                    self.strLines = ""
+                else:
+                    self.strLines += line.rstrip("\n")
+        self.lTemplatesEnum.append(0)
+        self.lTemplates.append(self.strLines)
+        self.strLines = ""
+
+    def CutEndGap(self):
+        for i in range(len(self.lTargets)):
+            j = len(self.lTargets[i]) - 1
+            print self.lTargets[i], "\n"
+            nGapLength = 0
+            while(self.lTargets[i][j - nGapLength] == '-'):
+                nGapLength += 1
+            self.lTargets[i] = self.lTargets[i][:j - nGapLength + 1]
+
+    ## Get Max Gap After Each aa
+    def ExpandGaps(self):
+        j = 0
+        nCounter = 0
+        while(j < len(self.strCondensed)):
+            nMaxGap = 0
+            nMaxGapAt = 0
+            lInsertion = []
+            lGaps = []
+            strLongestInsertion = ""
+            for i, strSeq in enumerate(self.lTargets):
+                nGapLength = 0
+                strInsert = ""
+                while(self.lTargetEnum[i] < len(strSeq) and strSeq[self.lTargetEnum[i]] == '-'):
+                    strInsert += self.lTemplates[i][self.lTemplatesEnum[i] + nGapLength]
+                    nGapLength += 1
+                    self.lTargetEnum[i] += 1
+               
+                lGaps.append(nGapLength)
+                lInsertion.append(strInsert)
+
+
+                self.lTargetEnum[i] += 1
+                self.lTemplatesEnum[i] += 1
+                if(nGapLength > nMaxGap):
+                    strLongestInsertion = strInsert
+                    nMaxGapAt = self.lTargetEnum[i]
+                    nMaxGap = nGapLength
+
+            if(nMaxGap > 0):
+                self.strCondensed = self.strCondensed[:j] \
+                        +  '-' * nMaxGap \
+                        + self.strCondensed[j:]
+
+                if(j != 0):
+                    for i in range(len(self.lTemplates)):
+                        nTemplateGap = 0
+                        nFirstGap = (nMaxGap - lGaps[i] - nTemplateGap) / 2
+                        nSecondGap = (nMaxGap - lGaps[i] - nTemplateGap + 1) / 2
+                        self.lTemplates[i] = self.lTemplates[i][:self.lTemplatesEnum[i] - 1] + \
+                                (nFirstGap * '-') + lInsertion[i] + (nSecondGap * '-') + \
+                                self.lTemplates[i][self.lTemplatesEnum[i] + lGaps[i] - 1:]
+                        self.lTemplatesEnum[i] += nMaxGap
+                else:
+                    for i in range(len(self.lTemplates)):
+                        nGapLength = nMaxGap - lGaps[i]
+                        self.lTemplates[i] = '-' * nGapLength \
+                                + lInsertion[i] \
+                                + self.lTemplates[i][(lGaps[i]):]
+                        self.lTemplatesEnum[i] += nMaxGap
+
+            j += nMaxGap + 1
+
+    def SequenceToUpperCase(self, strSeq):
+        newSeq = ""
+        for char in strSeq:
+            newSeq += char.upper()
+        return newSeq
+
+if(__name__ == "__main__"):
+    Al = Align()
+    Al.ReadCondensed()
+    Al.ReadTargets()
+    Al.ReadTemplates()
+    Al.CutEndGap()
+    Al.ExpandGaps()
+    Al.strCondensed = Al.SequenceToUpperCase(Al.strCondensed)
+    print '>'
+    print Al.strCondensed
+    for strSeq in Al.lTemplates:
+        strSeq = Al.SequenceToUpperCase(strSeq)
+        print '>'
+        print strSeq

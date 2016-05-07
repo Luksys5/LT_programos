@@ -1,0 +1,83 @@
+#!/usr/bin/python
+import os
+import re
+import sys
+
+
+class DaliAlign(object):
+    def __init__(self, TargetPath, TemplatePath):
+        self.strTargetPath = TargetPath
+        self.strTemplateListPath = TemplatePath
+        self.strDali = "~/DaliLite_3.3/DaliLite"
+
+        self.strTargetName = TargetPath.split('/')[-1]
+        self.strTemplateName = ""
+        
+        self.fwTargetFa = open("Target.fa", 'a')
+        self.fwTargetDssp = open("Target.dssp", 'a')
+        self.fwTemplateFa = open("Template.fa", 'a')
+        self.fwTemplateDssp = open("Template.dssp", 'a')
+
+    def ReadTemplateList(self):
+        with open(self.strTemplateListPath, 'r') as f:
+            for line in f:
+                print line
+                self.Align(line.rstrip("\n"))
+                self.ReadAndStore("mol1A.html")
+
+    def Align(self, strTemplatePath):
+        os.system(self.strDali + " -pairwise " + self.strTargetPath + ' ' + strTemplatePath + " > DaliErr")
+        self.strTemplateName = strTemplatePath.split('/')[-1]
+
+    def ReadAndStore(self, strInputName):
+        bSubjectFound = False
+        bSecondAlignmentFound = False
+        
+        ## Target output
+        self.fwTargetFa.write('>' + self.strTargetName + "\n")
+        self.fwTargetDssp.write('>' + self.strTargetName + "\n")
+        
+        ## Template output
+        self.fwTemplateFa.write('>' + self.strTemplateName + "\n")
+        self.fwTemplateDssp.write('>' + self.strTemplateName + "\n")
+        with open(strInputName, 'r') as fDssp:
+            for strLine in fDssp:
+                if(strLine.startswith("Query")):
+                    self.fwTargetFa.write(strLine.split()[1])
+                elif(strLine.startswith("Sbjct")):
+                    bSubjectFound = True
+                    self.fwTemplateFa.write(strLine.split()[1])
+                elif(strLine.startswith("DSSP")):
+                    if(bSubjectFound):
+                        bSubjectFound = False
+                        self.fwTemplateDssp.write(strLine.split()[1])
+                    else:
+                        self.fwTargetDssp.write(strLine.split()[1])
+
+                elif strLine.startswith("</PRE><a name=alignment-2>"):
+                    break
+
+        self.fwTargetFa.write("\n")
+        self.fwTargetDssp.write("\n")
+        self.fwTemplateFa.write("\n")
+        self.fwTemplateDssp.write("\n")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.fhTemplates.close()
+
+if __name__ == "__main__":
+    try:
+        sys.argv[2]
+    except IndexError:
+        print "Run DaliToFastaDssp:"
+        print "  ./DaliToFastaDssp Target.pdb Templates.lst"
+        print "Target.pdb - target pdb path and name"
+        print "Templates.lst - templates pdb path and name writen in file"
+        print "\nRun: \n ./DaliToFastaDssp example for example"
+        sys.exit(1)
+
+    MyPdbs = DaliAlign(sys.argv[1], sys.argv[2])
+    MyPdbs.ReadTemplateList()
