@@ -1,0 +1,469 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, unicode]{hyperref}
+
+%\parindent=7mm
+\renewcommand{\contentsname}{Turinys}
+\usepackage[T1]{fontenc} 
+
+% Lukas paketai
+\usepackage{needspace}
+\usepackage{mathtools}
+
+\usepackage{lmodern,textcomp}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage{graphicx}
+\usepackage{verbatim}
+
+%upperCase
+\usepackage[overload]{textcase}
+
+%--------------------------------
+
+\usepackage{tabularx}% http://ctan.org/pkg/tabularx
+\usepackage[parfill]{parskip}
+\usepackage[unicode]{hyperref}
+\usepackage{hyperref}
+\usepackage{tocloft}
+\usepackage[dotinlabels]{titletoc}
+\usepackage[capposition=top]{floatrow}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{secdot}
+
+\usepackage{listings}
+\DeclareFixedFont{\ttb}{T1}{txtt}{bx}{n}{12} % for bold
+\DeclareFixedFont{\ttm}{T1}{txtt}{m}{n}{12}  % for normal
+
+% Custom colors
+
+
+	
+
+\begin{document}
+
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}		
+
+\lstdefinestyle{Python2}
+{
+    language=Python,
+    basicstyle=\footnotesize,
+    xleftmargin=-8.0ex,
+    otherkeywords={self},
+	keywordstyle=\ttb\color{deepblue},
+	emph={def, return},          % Custom highlighting
+	emphstyle=\ttb\color{deepred},    % Custom highlighting style
+	stringstyle=\color{deepgreen},
+	frame=tb,                         % Any extra options here
+	showstringspaces=false,            %
+	literate = *{\ \ \ \ }{\ }1
+}
+
+\graphicspath{./}
+\renewcommand{\cftdot}{.}
+\newcommand{\iemph}[1]{\MakeTextUppercase{#1}}
+
+\begin{titlepage}
+\center 
+
+%----------------------------------------------------------------------------------------
+%	Universitetas Fakultetas Katedra
+%----------------------------------------------------------------------------------------
+
+
+\textsc{\Large VILNIAUS UNIVERSITETAS\\
+MATEMATIKOS IR INFORMATIKOS FAKULTETAS\\
+MATEMATINĖS INFORMATIKOS KATEDRA}\\[1.5cm] 
+
+%----------------------------------------------------------------------------------------
+%	Dokumento tipas
+%----------------------------------------------------------------------------------------
+
+\textsc{\Large Praktikos Ataskaita}\\[1.5cm] 
+
+\begin{flushleft}
+
+
+%----------------------------------------------------------------------------------------
+%	Praktikos informacija
+%----------------------------------------------------------------------------------------
+
+\textsf{\large{Praktiką atliko}:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\vspace{-0.3cm}
+\flushright{\small{(studento vardas pavardė)\hspace{4cm}(parašas)}}
+
+\flushright{\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}
+\vspace{-0.3cm}
+\flushright{\small{(studijų programa, kursas)\hspace{5.5cm}}}
+
+\vspace{0.3cm}
+
+\textsf{\large{Praktikos institucija}:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+\vspace{-0.8cm}
+\flushright{\small{(organizacijos pavadinimas)\hspace{1cm}}}
+
+
+\vspace{0.3cm}
+
+\textsf{\large{Organizacijos praktikos vadovas}:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+\vspace{-0.8cm}
+\flushright{\small{(pareigos, vardas, pavardė)\hspace{1.1cm}}}
+
+\vspace{0.3cm}
+
+\textsf{\large{Organizacijos praktikos vadovo įvertinimas}:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+\vspace{-0.8cm}
+\flushright{\small{(įvertinimas, parašas)\hspace{1cm}}}
+
+\vspace{0.3cm}
+
+\textsf{\large{Universiteto praktikos vadovas}:} \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+\vspace{-0.8cm}
+\flushright{\small{(mokslo laipsnis vardas pavarde)\hspace{0.1cm}}}
+
+
+\flushright{\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_}
+\vspace{-0.4cm}
+\flushright{\small{(parašas)\hspace{3.9cm}}}
+
+\end{flushleft}
+
+\vspace{1cm}
+
+\begin{flushright}
+
+\textsf{Ataskaitos įteikimo data}\hspace{0.2cm}\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\textsf{Registracijos nr.:}\hspace{0.5cm}\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\textsf{Įvertinimas}\hspace{1.5cm}\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+\vspace{-0.4cm}
+\flushright{\small{(data, įvertinimas, parašas)\hspace{0.1cm}}}
+
+
+
+\end{flushright}
+
+%----------------------------------------------------------------------------------------
+%	Miestas - DATA
+%----------------------------------------------------------------------------------------
+
+\vspace{0.5cm}
+\textsf{Vilnius 2016}
+
+\end{titlepage}
+\clearpage
+\null
+\thispagestyle{empty}%
+\addtocounter{page}{-1}%
+
+
+
+
+
+\tableofcontents
+
+\clearpage
+\normalsize
+
+
+\section*{Praktikos vietos aprašymas}
+\vspace{3cm}
+\textbf{\large{Praktikos vieta}}\\
+ Praktikos vieta - Biotechnologijos institutas. Tai mokslinių tyrimų institucija, siekianti užtikrinti valstybės pažangą sparčiai besivystančiose gyvybės mokslų ir biotechnologijų srityse, plėtoti tarptautinio lygio molekulinės biotechnologijos tyrimus, skatinti tarpdisciplininius tyrimus bei mokslo ir verslo bendradarbiavimą.
+ 
+ \vspace{3cm}
+\textbf{\large{Darbo sąlygos}}\\
+ Įmonėje darbo sąlygos - geros ir pateiktos visos priemonės praktinių užduočių atlikimui (darbo stalas, interneto prieiga ir kanceliarinės priemonės). Praktikantai ir vadovai turi vieną kabinetą, tai paskatino efektyviau atlikti užduotis. Įmonėje dirbantis kolektyvas atsakydavo į iškilusius klausimus ir padėdavo įveikti sunkumus. Kadangi darbo vieta yra toliau nuo miesto į ją bei iš jos veždavo  privačiais autobusais todėl darbo diena prasidėdavo 8:00 ir pasibaigdavo 16:35.
+\vspace{1cm}
+
+\clearpage
+
+\section*{Įvadas}
+
+\textbf{Darbo tikslas:} \\
+Surasti didžiausius struktūrų skirtumus bei panašumus ir juos pavaizduoti struktūrų paliginyje.
+Taip pat panaudoti programavimo įgudžius iškilusioms problemoms spręsti.\\
+
+\textbf{Uždaviniai:} \\
+\begin{itemize}
+	\item Išmokti naudotis bioinformatiniais metodais bei įrankiais.
+	\item Išanalizuoti procesyvumo veiksnių struktūras bei rasti struktūrų skirtumus, panašumus.
+	\item Išspręsti problemas naudojantis savo sukurtais įrankiais.
+\end{itemize}
+\hfill
+
+
+\textbf{Nagrinėjamos problemos aktualumas:} \\
+DNR replikacija svarbus procesas ir procesyvumo veiksniai dalyvauja visų organizmų replikacijoje ir DNR taisyme, todėl detalesni tyrimai yra svarbūs. Žmonėms atliekantiems panašią analizę gali buti reikalingos parašytos programos. \\
+\hfill
+
+\textbf{Naudoti informacijos rinkimo metodai:} \\
+Straipsniai apie baltymus jų analizę. Naudota daliserver trūkių išplėtimo funkcionalumui patikrinti. \\
+\hfill
+
+\textbf{Duomenų rinkimo  metodai:} \\
+Naudota operacinės sistemos linux komanda curl - atsisiūsti reikalingų baltymų pdb failus iš baltymų paieškos svetainių: rcsb.org, swissmodel.  \\
+\hfill
+
+
+\textbf{Atlikto darbo reikšmė:} \\
+Pagal struktūrų panašumus galima rasti iš ko kilo, bendrą giminingumą. Iš struktūrų skirtūmų galima sužinoti apie skirtingą baltymo funkciją. Metodų tobulinimas reikalingas kitų struktūrų analizei.
+Atliktam darbe nustatytas DNR procesyvumo veiksnių giminingumas kituose organizmose. 
+
+
+\clearpage 
+
+\section{Teorinis-metodinis skyrius}
+
+\subsection{DNR replikacija}
+\qquad DNR replikacija – genetinės medžiagos kopijavimo procesas. Tai procedūra, kurioje išvyniojama DNR grandinė, sintetinami ir naujoje DNR gijoje prijungiami nukleotidai. Sintetinimas vyksta 5' -> 3' kryptimi tiek vienpusėje, tiek dvipusėje replikacijoje. Čia veikiantys procesyvumo faktoriai užtikrina replikacijos efektyvumą.
+\smallskip
+
+\subsection{Procesyvumo faktoriai}
+
+\qquad DNR replikacijos metu per trumpą laiką reikia nukopijuoti apytikriai nuo tūkstančio iki milijardo nukleotidų. Pavienė DNR polimerazė prieš disociaciją susintetina tik keliasdešimt nukleotidų, todėl reikalingi procesyvumo faktoriai.  Jie  užtikrina DNA-Pol sankibą. Dėl tvirto ryšio padidėja procesyvumas ir replikacijos greitis tiek lydinčioje, tiek atsiliekančioje grandinėse.
+ 
+\qquad DNR procesyvumo faktorius dar vadinamas slenkančiuoju žiedu. Pats žiedas neužsikelia ant DNR grandinės todėl reikia jį katalizuojančio baltymo - užkelėjo. Slenkančiojo žiedo užkelėjas naudoja ATP energiją tam, kad  reikiamu momentu praskirtų žiedą, uždėtų jį ant DNR ir vėl sujungtų. Užkėlėjas taip pat privalo reikiamą akimirką nuimti žiedą nuo DNR.
+
+\qquad Skirtingų organizmų procesyvumo faktorius sieja struktūriniai ir funkciniai panašumai. Procesyvumo faktoriai buvo rasti visuose organizmų tipuose, pavyzdžiui:
+
+\begin{itemize}
+	\item Eukariotose, archejose – trijų subvienetų  faktorius PCNA, 
+	\item baketriofagose – trijų subvienetų faktorius GP45,
+	\item E. coli – dviejų subvienetų faktorius beta,
+	\item herpes simplex viruse -  monomeras UL42.
+\end{itemize}
+
+
+\qquad E. Coli DNR replikaciją vykdo DNR polimerazės holofermentas. Holofermentas sudarytas iš 10 skirtingų subvienetų. Beta subvienetas-holofermento procesyvumo faktorius, kurį sudaro du subvienetai turintys po tris skirtingus domenus. Gama subvienetas atsakingas už beta komplekso užkėlimą ant polimerazės III šerdies. Jo aktyvumas priklauso nuo laisvo ATP kiekio(\hyperlink{YaoN}{Yao N, Leu FP, Anjelkovic J, Turner J, O'Donnell M}). 
+	
+\qquad Eukariotose žinomas procesyvumo faktorius PCNA, identifikuotas kaip antigenas transliuojamas lastelės ciklo DNR sintezės fazėje, ląstelės branduolyje. PCNA sudarytas iš trijų subvienetų, kur kekviename yra po du domenus. PCNA ir E. Coli beta žiedas išviso turi po šešis domenus. Tačiau jie turi ir pakankamai skirtumų. Pavyzdžiui, PCNA žiedas šešiakampės formos,  o gp45 subvienetai yra trikampio formos (\hyperlink{Zhihao}{Zhihao Zhuang; Yongxing Ai}).
+
+\qquad T4 bakteriofago procesyvumo faktorius sudaro slenkantis žiedas- gp45 ir užkelėjas – keturi gp44 subvienetai ir gp62 subvienetas(Spicer et al. 1984; Jarvis et al. 1989b). Prokariotų beta žiedas, PCNA ir T4 bakteriofagas yra funkciniai homologai. GP45 sudarytas iš 3 subvienetų, kurių išsidėstymas panašus į PCNA procesyvumo faktorių. Tačiau PCNA ir T4 lyginant su beta faktoriumi sekos  panašumų mažas (<10\%) (\hyperlink{Kong}{Kong et al. 1992; Krishna et al. 1994; Gulbis et al. 1996; Moarefi et al. 2000}). 
+
+\qquad 
+\qquad Herpes simplex viruso DNR polimerazė sandara: katalizinis subvienetas procesyvumo subvienetas UL42. Herpes virusas neturi užkelėjo todėl ir polimerazės funkcionuoja šiek tiek kitaip, jos faktorius – UL42 su kataliziniu subvienetu tiesiogiai jungiasi prie DNR. Nors ir turi skirtingą DNR priėjimo būdą, jo tikslas vis tiek išlieka toks pat, padidinti polimerazės procesyvumą (\hyperlink{Gottlieb}{Gottlieb,J.,A.I.Marcy,D.M.Coen,andM.D.Challberg}). Taigi funkciškai jis panašus į kitus minėtus procesyvumo faktorius.
+
+
+\clearpage 
+\section{Tiriamasis analitinis skyrius}
+
+Tiriamajam praktiniui darbui naudojau medžiagą gautą iš kursinio bei kursinio projekto.
+Todėl pateiksiu kursinio bei kursinio projekto gautus rezultatus bei pasitaikusias problemas.
+
+
+\subsection{Tyrimai atlikti prieš praktinį darbą}
+Kursinio tyrimo pradžioje turėjau atsisiūsti keturius baltymus atstovaujančius skirtingus organizmus.
+
+Juos atsisiuntęs galėjau vykdyti išplėstinę paiešką naudojantis daliserver svetaine, kuri turi savo baltymų duombazę. Gauti baltymai buvo atrinkti iki Z reikšmės didesnės už tris, nes žemesnės Z reikšmės baltymai dažniausiai tampa nepanašūs.
+Taip pat baltymų homologų paieška praplėsta su BLAST per sekų su žinomom struktūrom duomenų baze.
+
+Iš Blasto gauta įvairovė ir naujiausi procesyvumo veiksnių struktūrų pdb failai. Beliko vykdyti baltymų išlyginimą. Jis buvo vykdomas su programa DaliLite, kuri porinio išlyginimo įvestyje prašo dviejų pdb failų ir grąžina sekas išlygintas pagal tretinę struktūrą.
+
+Įvykdžius įšlyginimą ir gautas sekas peržiurėjus su programa Jalview matėsi, kad per daug vienodų sekų, dėl to jos buvo atrenkamos. Atrinktos visos sekos iki 95\% panašumo, iš jų palikta viena su ilgiausia seka bei didžiausią rezoliucija. Iš likusių sekų galima buvo sudaryti grupes pagal molekulės tipą(PCNA, POLI Beta, GP45, Herpes virusų PV)
+
+Iškilo ir kita problema, kad išlygintų pdb failų struktūra turi trūkių tai matėsi Pymol programoje.
+Norint atkurti trūkius reikėjo sudaryti modelius pdb failam. Juos sudariau modelių paieškos svetainėje \hyperlink{swissprot}{http://swissmodel.expasy.org/}
+
+Atsisiuntus visus modelius jos reikėjo pavaizduoti grafe, tam naudojau programą Cytoscape. Grafo nupiešimui reikėjo įkelti į programą sąrašą susidedanti iš baltymų pavadinimų, sąveikos tipo, atstumų įverčių. Šią informaciją galima gauti iš DaliLite porinio išlyginimo, o sąveikos tipas visur vienodas - baltymo su baltymu sąveika(protein-protein interaction).
+
+Tam parašytas įrankis, kuris paduoda pdb failų pavadinimus ir kelią iki jų DaliLite įvesčiai. Po kekvieno išlyginimo išsaugo lygintų baltymų pavadinimus bei atstumų įvertį gautą iš Z reikšmės į vieną failą. Gautą sąrašą galima bus paduoti Cytoscape programai.
+
+Tačiau prieš grupių lyginimą pirmą reikėjo identifikuoti atstovą, todėl išlyginamas kekvienas baltymas su kekvienu. Buvo rasti Z įverčio vidurkiai ir didžiausią vidurkį turėjo baltymas 1iz4.\\
+Kitas žingsnis buvo išlyginti vienoje grupėje visus baltymus ir taip pat su kekviena grupe, bei išlyginti kekvieną baltymą su rastu baltymų atstovu 1iz4.
+
+Gautas sąrašas paduodamas Cytoscape ir naudojantis reikiamais jo įrankiais nupiešiamas grafas, kur pavaizduotos keturios baltymų grupės.
+
+
+\subsection{Praktinio darbo tyrimas}
+
+Kai identifikuotos Cytoscape grafe esančios grupės belieka surasti kekvienos grupės struktūrinius panašumus, skirtumus. Juos galima rasti su Pymol programa patikrinus atstovo bei kitos išlygintos sekos antrinės struktūros įterpimus, nukirpimus, trūkius. Visos antrinės struktūros surašytos į failą, kuriame matosi kur vienodos ar skirtingos antrinės struktūros. Failą galima rasti priedų pirmame skyriuje.
+
+Sudarius kekvieno baltymo išlyginimą su jų atstovu galima buvo identifikuoti struktūrinius panašumus ir skirtumus. Tačiau šiuos panašumus bei skirtumus negalima bus sužymėti struktūroje, nes DaliLite gražina išlygintus struktūrų regionus, o regionai skyrėsi savo turiniu - gaunamos nevienodo ilgio sekos. Todėl naudojamas įrankis naudojantis DaliLite išlyginimus ir išveda sekas vienodais regionais.
+
+Gavus sekas su vienodais regionas beliko parašyti įranki, kuris atkurtu tarpus bei įrašytu nukirptas insercijas į išlygintas sekas. Įrankis vykdo globalų išlyginimą su gautą išvestį lyginą su DaliLite gauta išvestimi bei ieško įterpimu bei juos įdeda į Dali išlygintą seką. Pabaigoje sugalvotas patobulinimas, skaityti iš DaliLite išvesties ir tikrinti įterpimus  pagal mažąsiais aminorūgščių raides. Patobulinimas dar nerealizuotas, todėl pateikiama pirmoji programa.
+
+Taip pat sukurtas įrankis vykdantis DaliLite ir skaitantis išvestą Z reikšmę bei ją verčiantis į atstumą. Taip pat pridėtas funkcionalumas paversti Z reikšmę į P reikšmę bei sudaryti P reikšmių matricą
+
+ 
+\clearpage
+
+\section{Išvadų ir pasiūlymų skyrius}
+\hfill
+
+
+\textbf{Analitinio skyriaus išvados:} \\
+Pritaikius bioinformatikos žinias parašytas įrankis naudojamas DaliLite išvestų sekų tarpų išplėtimui bei patobulinta programa verčianti Z įverčius į atstumus bei pridėta funkcija sudaryti atstumų matricą. Programos pridėtas priedų antrame bei trečiame skyriuje. Taip pat sudaryta struktūrų skirtumų lentelė pateikta priedų pirmame skyriuje.\\
+\hfill
+
+
+\textbf{Pasiūlymai} \\
+Pasiūlymų kaip pagerinti darbo sąlygas neturiu. Patiko, kad iškilus klausimams visada paaiškinama bei pagelbėjama jį spręsti bei kad buvo kitų studentų praktikantų 
+
+\clearpage
+	
+\section{Šaltiniai}
+\begin{enumerate}
+	\item Altschul, S.F., Madden, T.L., Schäffer, A.A., Zhang, J., Zhang, Z., Miller, W. \& Lipman, D.J. Gapped BLAST and PSI-BLAST: a new generation of protein database search programs. Nucleic Acids Res. 25:3389-3402, PubMed, 1997.
+	
+	\item Holm, L., Rosenström, P. Dali server: conservation mapping in 3D. Nucl. Acids Res. 38, W545-549, 2010. 
+	
+	\item Weizhong, L., Jaroszewski, L., Godzik, A. CD-HIT:Clustering of highly homologous sequences to reduce the size of1 large protein database. Bioinformatics,  17:282-283, 2010
+	\item Berman, H.M., Westbrook, J., Feng, Z., Gilliland, G., Bhat, T.N., Weissig, H., Shindyalov, I.N., Bourne, P.E. RCSB: The Protein Data Bank, 2010. 
+	
+	\item Matsumiya,S., Ishino, Y., Morikawa, K. PCNA numeracija Department of Structural Biology, Biomolecular Engineering Research Institute (BERI), 6-2-3, Furuedai, Suita, Osaka 565-0874, Japan.
+	
+	\item Sasnauskas,K. Molekulinė biologija. Biotechnologijos institutas , Vilnius, 2006.
+	
+	\item  E. K. Spicer, N. G. Nossal and K.R. Williams , from the Department of Molecular Biophysics and Biochemistry, Yale University School of Medicine, New Haven, Connecticut 06510 and the Laboratory of Biochemical Pharmacology, National Institute of Arthritis, Diabetes, and Digestive and Kidney Diseases, Bethesda, Maryland 20205,1983
+	
+	\item \hypertarget{Zhihao}{Zhihao Zhuang and Yongxing Ai, Biochim Biophys Acta. 2010 May; 1804(5): 1081–1093, Publikuota viešai 2009 Jul 1. doi: 10.1016/j.bbapap.2009.06.01}
+	
+	\item \hypertarget{Kong}{Kong XP, Onrust R, O’Donnell M, Kuriyan J. 1992. Three-dimensional structure of the $\beta$ subunit of E. coli DNA polymerase III holoenzyme: A sliding DNA clamp. 69: 425–437}
+	
+	\item Krishna TS, Kong XP, Gary S, Burgers PM, Kuriyan J. 1994. Crystal structure of the eukaryotic DNA polymerase processivity factor PCNA. 79: 1233–1243.
+	
+	\item Gulbis JM, Kelman Z, Hurwitz J, O’Donnell M, Kuriyan J. 1996. Structure of the C-terminal region of p21(WAF1/CIP1) complexed with human PCNA. 87: 297–306.
+	
+	\item Moarefi I, Jeruzalmi D, Turner J, O’Donnell M, Kuriyan J. 2000. Crystal structure of the DNA polymerase processivity factor of T4 bacteriophage. 296: 1215–1223.
+	
+	\item \hypertarget{Gottlieb}{Gottlieb,J.,A.I.Marcy,D.M.Coen,andM.D.Challberg.1990.Theherpes simplex virus type1 UL42 gene product: a subunit of DNA polymerase that functions to increase processivity. J. Virol.64:5976–5987}
+	
+	\item \hypertarget{YaoN}{Yao N, Leu FP, Anjelkovic J, Turner J, O'Donnell M, J Biol Chem. 2000 Apr 14;275(15):11440-50.}
+
+	\item \hypertarget{swissprot}{Marco Biasini, Stefan Bienert, Andrew Waterhouse, Konstantin Arnold, Gabriel Studer, Tobias Schmidt, Florian Kiefer, Tiziano Gallo Cassarino, Martino Bertoni, Lorenza Bordoli, Torsten Schwede. (2014). SWISS-MODEL: modelling protein tertiary and quaternary structure using evolutionary information. Nucleic Acids Research; (1 July 2014) 42 (W1): W252-W258; doi: 10.1093/nar/gku340} 
+	
+	\item Arnold K., Bordoli L., Kopp J., and Schwede T. (2006). The SWISS-MODEL Workspace: A web-based environment for protein structure homology modelling. Bioinformatics, 22,195-201
+	
+	\item Kiefer F, Arnold K, Künzli M, Bordoli L, Schwede T (2009). The SWISS-MODEL Repository and associated resources. Nucleic Acids Research. 37, D387-D392.
+	
+	\item Guex, N., Peitsch, M.C., Schwede, T. (2009). Automated comparative protein structure modeling with SWISS-MODEL and Swiss-PdbViewer: A historical perspective. Electrophoresis, 30(S1), S162-S173.
+	
+
+	
+\end{enumerate}
+  
+\clearpage
+
+
+\section{Priedai}
+
+\subsection{Struktūriniai skirtumai}
+
+\vspace*{1cm}
+\begin{figure}[!tph]
+	\hspace*{-0.8cm}
+	\includegraphics[scale=0.45]{StructDifferences.png}
+	\includegraphics[scale=0.45]{StructDifferences2.png}
+\end{figure}
+
+\clearpage
+
+
+\subsection{Z įverčių į atstumų konvertavimo programa}
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, lastline=37]{DistByZvalues}
+\end{figure}	
+
+\vspace{-2cm}
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\vspace*{-1cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=38, lastline=85]{DistByZvalues}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=86, lastline=128]{DistByZvalues}
+\end{figure}
+	
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=129]{DistByZvalues}
+\end{figure}	
+\clearpage
+
+\subsection{Globalaus išlyginimo bei tarpų pridėjimo programa}
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, lastline=35]{GlobalAlignment}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=36, lastline=81]{GlobalAlignment}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\vspace*{-2cm}
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=82, lastline=132]{GlobalAlignment}
+\end{figure}
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\vspace*{-1cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=133, lastline= 183]{GlobalAlignment}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=184, lastline=239]{GlobalAlignment}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=240, lastline=288]{GlobalAlignment}
+\end{figure}	
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\vspace*{-2cm}
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=289, lastline=338]{GlobalAlignment}
+\end{figure}	
+
+
+\begin{figure}[htbp]
+	\hspace{-8cm}
+	\centering
+	\hspace*{-8cm}
+	\lstinputlisting[style=Python2, firstline=339]{GlobalAlignment}
+\end{figure}	
+
+\end{document}
