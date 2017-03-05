@@ -1,0 +1,55 @@
+#!/usr/bin/python
+import math
+
+def Trikampiu():
+	alfa = 0; h = float(b-a)/N
+	first = []; Fsum = []; end = [];rez = []
+	for i in range(0,100):
+		Fsum.append(0);
+		alfa = float(i)/100;
+		first.append( pow(2-a, alfa*a) )
+		for j in range(1, 100):
+			x = a+j*h
+			Fsum[i] += pow(2-x, alfa*x)
+		
+		end.append( pow(2-b, alfa*b) )
+		rez.append(round( (first[i]+2*Fsum[i]+end[i])*(h/2), 5) )
+		
+	return rez
+
+def Simpsono():
+	alfa = 0; h = float(b-a)/N;
+	first = []; Fsum = []; end = [];rez = []
+        for i in range(0,100):
+		j = 0; z = float(a)+h
+                Fsum.append(0);
+                alfa = float(i)/100;
+		rez.append( pow(2-a, alfa*a) + pow(2-b, alfa*b))
+		
+                while( z < b ):
+			if(j % 2 == 0):
+				Fsum[i] += 4*pow(2-z, alfa*z)
+			else:
+				Fsum[i] += 2*pow(2-z, alfa*z)
+			z += h; j += 1
+                
+		rez[i] = round( (rez[i] + Fsum[i]) * (h/3), 5)
+
+	return rez
+
+def print_all(arr1, arr2):
+	print "Trap\tSimpson"
+
+	for i in range(0, len(arr1)):
+		if(arr1[i] == 2):
+			arr1[i] = int(arr1[i])
+		if(arr2[i] == 2):
+			arr2[i] = int(arr2[i])
+		print str(arr1[i])+"\t"+str(arr2[i])
+
+a = -1
+b = 1
+N = 100
+Ftrik = Trikampiu()
+Fsimp = Simpsono()
+print_all(Ftrik, Fsimp)
