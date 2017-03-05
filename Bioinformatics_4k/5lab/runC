@@ -1,0 +1,8 @@
+rm machine
+if [ "$1" == "" ]
+then
+	echo "Input program name";
+	exit
+fi 
+g++ -std=c++11 -o machine -lm $1
+./machine $2
