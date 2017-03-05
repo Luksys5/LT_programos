@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lietuva</title>
+	<style type="text/css">
+                        @import url("map.css");
+        </style>
+	<script src="../javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+	</head>
+       
+<script>
+	$(document).ready(function(){
+		$('.mapping').mouseover(function() {
+			var myclass = $(this).attr('class');
+			var Ids = myclass.split(" ");
+			document.getElementById(Ids[0]).style.backgroundColor = "red";
+			//$('#'+Ids[0]).maphilight();
+		}).mouseout(function(){
+			alert('Mouseout....');      
+		});
+	});
+
+</script>
+<body>
+	 <a>
+	 <img src="Lietuva.jpg"
+	 width="1000" height="705"
+	 alt="Lietuva" usemap="#Lietuva"
+	 />
+	<map name="Lietuva">
+		<div id = "kaunas"> <area class="kaunas mapping" shape="circle" coords="560,420,30" href="Kaunas.html" alt="Kaunas"></div>
+		<div id = "Vilnius" ><area class="Vilnius mapping" shape="circle" coords="760,470,30" href="Vilnius.html" alt="Vilnius"></div>
+		<div id="Anyksciai"><area class="Anyksciai mapping" shape="circle" coords="727,256,15" href="Anyksciai.html" alt="Anyksciai"></div>
+	</map>
+	 
+</body>
+</html>

@@ -1,0 +1,38 @@
+#top
+	{
+	background-color:#FFA500;
+	top: 0px;
+	height: 50px;
+	float:left;
+	position:relative;
+	width:50%;
+	
+	}
+#side
+	{
+	position:relative;
+	width:50%;
+	float:left;
+	background-color:#FFB600;
+	}
+#container
+	{
+	top:0px;
+	background-color:#FFD700;
+	float:left;
+	width:49.4%;
+	position:absolute;
+	}
+#bot
+	{
+	background-color:#FFA500;
+	height: 50px;
+	float:left;
+	clear:both;
+	position:absolute;
+	width:49.4%;
+	}
+#br
+	{
+	line-height:22px;
+	}

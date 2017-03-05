@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<title> Test </title>
+	</head>
+<script>
+	function check(number){
+		var mystr = ""
+		for(var j = 0; j < number; j++){
+			mystr += document.getElementById('LName0'+j).value;
+		}
+		alert(mystr);
+	}
+	function tableCreate(number){
+		var body = document.getElementById("calc1");
+		var input = document.createElement('input');
+		var br = document.createElement('br');
+		br.setAttribute("style", "line-height:1.5em;");
+		var t = document.createTextNode("Percentage of the lipid in vesicle ");		
+		input.setAttribute("style", "width:100px;position:absolute;left:250px;");
+		body.appendChild(t);
+		body.appendChild(input);
+		body.appendChild(br);
+	}
+</script>
+
+<body>	
+	
+	<br id = "br">
+	<div id="calcs" class="section ">
+		<form id="check2" onsubmit="return rezults();" ></form>
+		<div id="calc1" class="section down" ><h2>Vesicles Content Calculator</h2>
+		<button onclick="tableCreate(2)">Create</button>
+		<button onclick="check(2)">Check</button><br>
+		</div>
+			
+
+	</div>
+</body>
+</html>

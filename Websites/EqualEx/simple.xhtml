@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://java.sun.com/jsf/html">
+<h:head>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+</h:head>
+<script>
+	function call(){
+		alert('smt');
+		$('#ramec').load("map.html");
+		//document.getElementById('ramec').innerHTML= '<iframe width="600" height="450" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=Anyk%C5%A1%C4%8Diai%2C%20Utena%20County%2C%20Lithuania&amp;key=AIzaSyAKRXuVfaPQp_csiVerD4Xs1O89kpIBH7Y"></iframe>';
+	}
+</script>
+<body>
+<a onclick="call()">Calls</a>
+<div id="ramec">
+
+</div>
+</body>
+</html>

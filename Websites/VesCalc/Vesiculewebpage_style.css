@@ -1,0 +1,42 @@
+html
+{
+    background: url(../pict/body.png) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.menubt
+{
+    font-size: 15pt;
+    font-family: serif;    
+    width: 12.5%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    position: fixed;
+    text-align: left;
+    left: 2px;
+    min-width: 15px;
+}
+
+.section
+{
+    width: 50%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    position: fixed;
+    min-width: 15px;
+    min-height: 15px;
+    
+}
+
+#container
+{
+    overflow-x: auto; /* for horizontal scrolling*/
+overflow-y: auto; /* for vertical scrolling */
+    position: absolute;
+    margin-left: 179px;
+    margin-top: 90px;
+    margin-bottom: 100px;
+}

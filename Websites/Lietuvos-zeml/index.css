@@ -1,0 +1,43 @@
+table,th,td
+		{
+		padding:3px;
+		border-spacing:5px;
+		border:1px solid black;
+		}
+#footer
+		{
+		color:#FFA500;
+		clear:both;
+		}
+#container
+		{
+		position: relative;
+		width: 1052px;
+		height: 125px;
+
+		}
+#container2
+		{
+		position: relative;
+		width: 1052px;
+		min-height: 200px;
+		
+		border: 1px solid black;
+		}
+#div1
+		{
+		position: relative;
+		top: 40px;
+		height:150px;
+		width:520px;
+		float:left;
+		left:40px;
+		}
+#div3
+		{
+		position: relative;
+		height:200px;
+		width:500px;
+		top: 40px;
+		float:left;
+		}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Profile</title>
+		<meta charset="utf-8">
+		<meta name="description" content="Vartotojas">
+		<script src="../javascripts/jquery-1.11.1.min.js" type="text/javascript"></script>
+		<script src="../javascripts/flickrshow-7.2.js" type="text/javascript"></script>
+		<script src="../javascripts/cookies.js" type="text/javascript"></script>
+	<script type = "text/javascript">
+		function hideit(who){
+			$("#" + who).hide();
+		}
+		function showit(who){
+			$("#" + who).show();
+		}
+		function hideexcept( who ){
+			$('.section').not("#" + who).hide();
+		}
+	</script>
+	
+	</head>
+<body>
+	<button onclick="showit('quest')">Show question</button>
+	<button onclick="showit('greeting')">Show question</button>
+	<button onclick="hideit('quest')">Hide question</button>
+	<button onclick="hideit('greeting')">Hide question</button>
+	<div id="greeting" class = 'section'>labas Hi Hello</div>
+	<div id="quest" class = 'section'>How is times two time</div>
+	<div id="smth" class = 'section'> Tell me something new </div>
+	<button onclick="hideexcept('smth')"> Leave only last</button>
+</body>
+</html>
