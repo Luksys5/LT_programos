@@ -1,0 +1,72 @@
+#!/usr/bin/python
+import sys
+
+def eiti(LAB, CX, CY, X , Y, N, M, BANDSK, yra):
+	print X, Y
+	if(X == 0) or (X == M-1) or (Y == 0) or (Y == N-1):
+		yra = 1
+	else:
+		K = -1
+		run = True
+		while(run):
+			K += 1
+			U = X + CX[K]
+			V = Y + CY[K]
+			if( LAB[U][U] == 0):
+				BANDSK += 1
+				L += 1
+				LAB[U][V] = L
+				yra = eiti(LAB, CX, CY, U, V, N, M, BANDSK, yra)
+				if not yra:
+					LAB[U][V] = -1
+					L -= 1
+			print "curr", U, V
+			if( K == 4 or yra == 1):
+				run = False
+	print yra
+	return yra
+global N, M, yra
+
+try:
+	N = int(sys.argv[1])
+	M = int(sys.argv[2])
+	fname = sys.argv[3]
+except IndexError:
+	print "Ivesti auksti, ploti, faila"
+	sys.exit()
+
+Lab = [[0 for x in range(N)] for x in range(M)]
+i = 0; j = 0
+with open(fname, 'r') as f:
+	for line in f:
+		splitted = line.split()
+		for x in splitted:
+			Lab[i][j] = x	
+			j += 1
+		i += 1; j = 0
+
+raw = raw_input("Parasykite agento padeti X Y: ")
+x = int(raw.split()[0])
+y = int(raw.split()[1])
+Lab[x][y] = 2
+cx = [-1, 0, 1, 0]; cy = [0, -1, 0, 1]
+yra = 0
+yra = eiti(Lab, cx, cy, x, y, N, M, 0, yra)
+for x in Lab:
+	for y in x:
+		sys.stdout.write(str(y) + " ")
+	sys.stdout.write("\n")
+
+#print yra
+if(yra):
+	print "Iseiti galima"
+else:
+	print "Iseit negalima"
+
+
+'''
+for i in range(0, len(Lab)):
+	for j in range(0, len(Lab[i])):
+		print Lab[i][j]
+	print "\n"
+'''

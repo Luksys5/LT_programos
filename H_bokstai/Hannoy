@@ -1,0 +1,65 @@
+#!/usr/bin/python
+import sys
+def hanoi(pegs, start, target, n):
+    global globz
+    global kiek
+    assert len(pegs[start]) >= n, 'not enough disks on peg'
+    if n == 1:
+        pegs[target].append(pegs[start].pop())
+	globz += 1	
+	targ = pegs[target][-1];
+	if(start == 0 and target == 1):
+		sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo A Ant virbo C ") 
+        	sys.stdout.write("A=" + str(pegs[start]) + ", B=" + str(pegs[2]) + ", C=" + str(pegs[target]) + "\n")
+	elif(start == 0):
+		sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo A Ant virbo B ")  
+                sys.stdout.write("A=" + str(pegs[start]) + ", B=" + str(pegs[target]) + ", C=" + str(pegs[1]) + "\n")
+	
+	if(start == 1 and target == 2):
+                sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo C Ant virbo B ")  
+                sys.stdout.write("A=" + str(pegs[0]) + ", B=" + str(pegs[target]) + ", C=" + str(pegs[start]) + "\n")
+        elif(start == 1):
+                sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo B Ant virbo C")
+                sys.stdout.write("A=" + str(pegs[target]) + ", B=" + str(pegs[start]) + ", C=" + str(pegs[2]) + "\n")
+	
+	if(start == 2 and target == 0):
+                sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo B Ant virbo A ")  
+                sys.stdout.write("A=" + str(pegs[target]) + ", B=" + str(pegs[start]) + ", C=" + str(pegs[1]) + "\n")
+        elif(start == 2):
+                sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo B Ant virbo C ")
+                sys.stdout.write("A=" + str(pegs[0]) + ", B=" + str(pegs[start]) + ", C=" + str(pegs[target]) + "\n")
+
+	'''
+	if(start != 1 and target != 1):
+		sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo " + st + " Ant virbo " + end  + "  ")
+        	sys.stdout.write(st + "=" + str(pegs[start]) + ", " + "B=" + str(pegs[1]) + ", " + end + "=" + str(pegs[target]) + "\n")	
+	elif(start != 2 and target != 2):
+		sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo " + st + " Ant virbo " + end  + "  ") 
+        	sys.stdout.write(st + "=" + str(pegs[start]) + ", " + end + "=" + str(pegs[target]) + ", C=" + str(pegs[2]) + "\n")
+	else:
+	
+	sys.stdout.write( str(globz)+". Perkeliamas diskas " + str(targ) + " Nuo virbo " + st + " Ant virbo " + end  + "  ")
+	sys.stdout.write(st + "=" + str(pegs[start]) + ", " + end + "=" + str(pegs[target]) + ", C=" + str(pegs[0]) + "\n")
+	'''#print '%i -> %i: %s' % (start, target, pegs)
+    else:
+        aux = 3 - start - target  # start + target + aux = 3
+        hanoi(pegs, start, aux, n-1)
+        hanoi(pegs, start, target, 1)
+        hanoi(pegs, aux, target, n-1)
+
+try:
+        N = int(sys.argv[1])
+except IndexError:
+        print "Irasykite bokstu skaiciu"
+        sys.exit()
+
+print "Atlikta Luko Tutkaus, Bioinformatika 4 kursas"
+print "Pradinis bokstu skaicius: " 
+
+global globz
+global kiek
+globz = 0
+kiek = N
+pegs = [[N-x for x in range(0, N)], [], []]
+sys.stdout.write("A=" + str(pegs[0]) + ", B=[], C=[]\n\n") 
+hanoi(pegs, 0, 1, N)    
