@@ -1,0 +1,45 @@
+#!/usr/bin/python
+import re
+import os, sys
+import fileinput
+
+def downloadNparse(name):
+	atoms_chains = {}
+	os.system("wget -O - http://www.pdb.org/pdb/files/" + name + ".pdb > tmp")
+	with open('tmp', 'r') as f:
+		for line in f:
+			if re.match('(^ATOM|^HETATM)', line):# or line.startswith('HETATM'):
+				atom_chain = line[21]
+				if len(atom_chain) > 1 or not re.match('[A-Z]', atom_chain):
+					print 'chain does not exist'+atom_chain+"\n"+line
+					sys.exit(1)
+				try:
+					atoms_chains[atom_chain].append(line)
+				except KeyError:
+					atoms_chains[atom_chain] = []
+					atoms_chains[atom_chain].append(line)
+	
+	for k, values in atoms_chains.iteritems():
+		fw = open('../pdbs_sep/'+name+'_'+k, 'w')
+		for val in values:
+			fw.write(val)
+		fw.close()
+ 
+
+try:
+	fg = open(sys.argv[1], 'r')
+except IndexError:
+	print "Input groups names"
+	sys.exit(1)
+
+fglines =  fg.readlines()
+
+for fgline in fglines:
+	fgline = fgline.rstrip('\n')
+	group_file = open("../"+fgline, 'r')
+	group_lines = group_file.readlines()
+	print "Downloading ../"+fgline
+	
+	for line in group_lines:
+		line = line.split()[1]
+		downloadNparse(line[:4])

@@ -1,0 +1,36 @@
+1iz4_A  βA1     αA1     βA2    βA3 βA4   α3  βA5   βA6   αA2     βA7     βA8        βA9     βA10    αA3       βA11     βA12  k  βA13     βA14    βA15 αA4    βA16  βA17    βA18
+1dml_E  βB1     αB1     βB2    βB3 βB4   α3  βB5   βB6   ?αB2    βB7  k  βB8        βB9     βB10    αB3       βB11     βB12  -  βB13 αB4 βB14    βB15 αB5    βB16  βB17  k βB18  
+1b77_A  -       αC1     βC1    βC2 βC3   -   βC3   βC4   αC2     βC5     βC6        βC7 a3  βC8     αC3       βC9      βC10  k  βC11     -       βC12 αC4    βC13  βC14    βC15 β
+1czd_C  -       αD1     βD1    βD2 βD3   -   βD3   βD4   αD2     βD5     βD6        βD7     βD8     αD3       βD9      βD10  k  βD11     -       βD12 αD4    βD13  βD14    βD15 β
+1rxz_A  βE1     αE1     βE2    βE3 βE4   a3  βE5   βE6   αE2     βE7     βE8        βE9 a3  βE10    αE3       βE11     βE12  -  βE13     βB14    βE15 αE4    βE16  βE17    βE18
+1t6l_A  βF1     αF1     βF2    βF3 βF4   a3  βF5   βF6   αF2     βF7     βF8        βF9     βF10    αF3       βF11     βF12  -  βF13     βF14    βF15 αF4    βF16  βF17    βF18
+1ud9_A  βG1     αG1     βG2    βG3 βG4   a3  βG5   βG6   αG2     βG7     βG8        βG9     βG10    αG3       βG11     βG12  k  βG13     βG14    βG15 αG4    βG16  βG17 α3 βG18
+1vpk_A  βH1     αH1 k   βH2    βH3 βH4   -   -     βH5   αH2     βH6     βH7        βH8 a3  βH9     αH3       βH10     βH11  -  βH12     βH13    βH14 αH4    βH15  βH16  k βH17 (praleista dalis domeno)
+2avt_A  βI1     αI1 α3  βI2    βI3 βI4   -   -     βI5   αI2     βI6     βI7        βI8 a3  βI9     αI3       βI10     βI11  -  βI12     βI13    βI14 αI4    βI15  βI16  k βI17 (praleista dalis domeno)
+2awa_A  βJ1     αJ1 α3  βJ2    βJ3 βJ4   -   βJ5   βJ6   αJ2     βJ7 a3  βJ8        βJ9 a3  βJ10    αJ3?  a3  βJ11     βJ12  -  βJ13     -       βJ15 αJ4    βJ16  βJ17    βJ18 (praleista dalis domeno)
+2ix2_B  βK1     αK1     βK2    βK3 βK4   a3  βK5   βK6   αK2     βK7     βK8        βK9     βK10    αK3       βK11     βK12  -  βK13     βK14    βK15 αK4    βK16  βK17    βK18
+2nti_C  βL1     αL1     βL2    βL3 βL4   a3  βL5   βL6   αL2     βL7     βL8        βL9     βL10    αL3       βL11     βL12  k  βL13     βL14    βL15 αL4 α3 βL16  βL17 a3 βL18
+2nti_D  βM1     αM1     βM2    βM3 βM4   a3  βM5   βM6   αM2     βM7     βM8        βM9     βM10    αM3       βM11     βM12  k  βM13     βM14    βM15 αM4    βM16  βM17    βM18
+2od8_A  βN1     αN1     βN2    βN2 βN4   a3  βN5   βN6   αN2     βN7     βN8        βN9     βN10    αN3       βN11     βN12  -  βN13  α3 βN14    βN15 αN4    βN16  βN17    βN18
+2xur_A  βO1     αO1 a3  βO2    βO3 βO4   -   βM5   βM6   αO2     βO7     βO8        βO9 a3  βO10    αO3   a3  βO11     βO11  -  βO12     βO12    βO12 αO4    βO13  βO14    βO15 (praleista dalis domeno)
+2z0l_A  βPi     αP1     βP2    βP3 βP4   a3  βM5 k βM6 k αP2     βP7     βP8        βP9 a3  βP10    αP3       βP11     βP12  -  βP13 βa3 βP14    βP15 αP4    βP16  βP17  k βP18 
+2zvv_A  βR1     αR1     βR2    βR3 βR4   α3  -?    βR6   αR2     βR7     βR8        βR9     βR10    αR3       βR11     βR12  -  βR13 k   βR14    βR15 αR4    βR16  βR17    βR18
+3a1j_A  βS1     αS1     βS2    βS3 βS4   α3  βS5 k βS6   αS2 a   βS7     βS8        βS9 βα  βS10    αS3       βS11     βS12  k  βS13     βS14    βS15 αS4    βS16  βS17    βS18
+3a1j_B  βT1     αT1     βT2    βT3 βT4   α3  βT5 k βT6   αT2 α3  βT7     βT8 k      βT9 βα3 βT10    αT3       βT11     βT12  -  βT13 kα  βT14    βT15 αT4    βT16  βT17    βT18
+3a1j_C  βU1     αU1     βU2    βU3 βU4   α3  βU5   βU6   αU2 k   βU7     βU8        βU9     βU10    +αU3      βU11     βU12  -  βU13     βU14    βU15 αU4    βU16  βU17    βU18
+3hi8_A  βV1     αV1     βV2    βV3 βV4   -   -     βV5   αV2     βV6     βV7        βV8 a3  βV9     αV3       βV11     βV12  k  βV13     -       βV15 αV4    βV16  βV17    βV18
+3hsl_X  βX1     αX1     βX2    βX3 βX4   -   βX5 k βX6 k αX2     βX7 k   βX8        βX9     βX10    αX3       βX11     βX12  -  βX13 k   βX14    βX15 αX4    βX16  βX17  k βX18
+3lx1_A  βY1     αY1     βY2    βY3 βY4   α3  βY5   βY6   αY2     βY7     βY8        -       -    k  αY3       βY11     βY12  -  βY13     -       βY15 αY4    βY16  βY17    βY18
+3lx2_A  βW1     αW1     βW2    βW3 βW4   α3  βW5   βW6   αW2     βW7     βW8        βW9     βW10    αW3       βW11     βW12  -  βW13     βW14    βW15 αW4    βW16  βW17    βW18
+
+## Po dssp atlikimo pymoly 1t6l mol. atsirado daugiau a310 helix
++ Struktura didesnė negu atstovo
+- Struktura mažesnė
+
+
+Klausimai
+Jei a310 ir Alpha kartu tai skaitau kaip viena a struktura jei atskirti su kilpa skaitau kad dvi strukturas
+Jei Trumpesne beta negu duota, ilgesne negu duota?
+Jei neuzklota beta juostos viena ant kitos?
+Ar a3 vietoj kilpos skaityt kaip a3 ar kilpa?
+Kaip skaityt kai vietoj - atsiranda trumpa beta juosta

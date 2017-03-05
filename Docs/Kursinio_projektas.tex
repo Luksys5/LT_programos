@@ -1,0 +1,462 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue, unicode]{hyperref}
+
+%\parindent=7mm
+\renewcommand{\contentsname}{Turinys}
+\usepackage[T1]{fontenc} 
+
+% Lukas paketai
+\usepackage{needspace}
+
+\usepackage{lmodern,textcomp}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+\usepackage{graphicx}
+\usepackage{verbatim}
+
+\usepackage{tabularx}% http://ctan.org/pkg/tabularx
+\usepackage[parfill]{parskip}
+\usepackage[unicode]{hyperref}
+\usepackage{hyperref}
+\usepackage{tocloft}
+\usepackage[dotinlabels]{titletoc}
+\usepackage[capposition=top]{floatrow}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{secdot}
+
+
+\begin{document}
+
+\graphicspath{./}
+\renewcommand{\cftdot}{.}	
+
+\begin{titlepage}
+\center 
+
+%----------------------------------------------------------------------------------------
+%	Vieta
+%----------------------------------------------------------------------------------------
+
+
+\textsc{\Large VILNIAUS UNIVERSITETAS\\
+MATEMATIKOS IR INFORMATIKOS FAKULTETAS\\
+MATEMATINĖS INFORMATIKOS KATEDRA}\\[1cm] 
+
+%----------------------------------------------------------------------------------------
+%	Autorius
+%----------------------------------------------------------------------------------------
+
+\vspace{2cm}
+\large 
+	{\bfseries{Lukas Tutkus}}\\[0.5cm]
+	\textsf{ Bioinformatikos studijų programa}
+\vspace{2cm}
+ 
+%----------------------------------------------------------------------------------------
+%	Pavadinimas
+%----------------------------------------------------------------------------------------
+
+\large 
+	{\bfseries{DNR replikacijos procesyvumo veiksnių struktūrų analizė}}\\[0.5cm] 
+	\textsf{ Kursinio darbo projektas }
+\vspace{1cm}
+
+%----------------------------------------------------------------------------------------
+%	Vadovas
+%----------------------------------------------------------------------------------------
+
+\vspace{1cm}
+\large 
+	\textsf{Vadovas:}
+	\textbf{dr. Darius Kazlauskas} \\
+	
+	\begin{flushright}
+		\textsf{Parašas:\_\_\_\_\_\_\_}
+	\end{flushright}
+
+	
+
+
+\vspace*{3.5cm}
+
+%----------------------------------------------------------------------------------------
+%	DATA
+%----------------------------------------------------------------------------------------
+\textsf{Vilnius 2016}
+
+\end{titlepage}
+
+\tableofcontents
+
+\clearpage
+\normalsize
+
+
+
+
+
+\section*{Įvadas}
+	
+
+
+	DNR replikacija – tai sudėtinga ir visoms ląstelėms gyvybiškai svarbi funkcija, vykstanti prieš ląstelės dalijimąsi. Dėl DNR replikacijos padvigubėja ląstelės genomas ir atsiranda galimybės susidaryti dviem genetiškai identiškoms dukterinėms ląstelėms. 
+	
+DNR replikaciją vykdo DNR replikazė (DNR polimerazė, žiedo struktūros procesyvumo faktorius ir jo užkelėjas). Procesyvumo faktorių funkcija šiame procese - palaikyti  DNR-Pol sankibą. Dėl tvirto ryšio išlaikymo padidėja replikacijos greitis bei procesyvumas. Procesyvumo faktorių sekos ląsteliniuose organizmuose yra labai skirtingos, tačiau struktūros ganėtinai panašios. 
+	
+Praeitame kursiniame darbe naudotos kristalinės struktūros, kurios dažniausiai turėjo trūkių, todėl nuspręsta naudoti struktūrų modelius.
+
+\label{sec:intro}
+\addcontentsline{toc}{section}{\nameref{sec:intro}}
+
+\clearpage
+
+\section{DNR sintezė ir procesyvumo faktoriai}
+
+\subsection{DNR replikacija}
+\qquad DNR replikacija – tai genetinės medžiagos kopijavimo procesas. Tai procesas, kuriame išvyniojama DNR grandinė, sintetinami ir naujoje DNR gijoje prijungiami nukleotidai. Sintetinimas vyksta iš 5' į 3' kryptį tiek vienpusėje, tiek dvipusėje replikacijoje. Čia veikiantys procesyvumo faktoriai užtikrina replikacijos efektyvumą.
+\smallskip
+
+\qquad Prokariotose replikaciją vykdo DNR polimerazė III. Ji kuria fosfodisterinius ryšius tarp deoksiribonukleotidų DNR grandinėje. Polimerazė III beta tuo metu palaiko Pol-DNR sąveiką.
+
+ 
+
+\subsection{Procesyvumo faktoriai}
+
+\qquad Procesyvumas - sugebėjimas nuosekliai katalizuoti virsmus be substrato paleidimo. DNR replikacijos polimerazės turi didelį procesyvumą, kur taisymo polimerazės turi mažą procesyvumą.
+ 
+\qquad Už DNR replikacijos didelį procesyvumą atsakingas DNR procesyvumo faktorius dar vadinamas slenkančiuoju žiedu. Pavyzdžiui, prokariotose slenkantysis žiedas – beta kompleksas, o užkėlėjas - gama kompleksas. Slenkančiojo žiedo užkelėjas naudoja ATP energiją tam, kad  reikiamu momentu praskirtų žiedą, uždėtų jį ant DNR ir vėl sujungtų. Užkėlėjas taip pat privalo reikiamą akimirką nuimti žiedą nuo DNR.
+
+\qquad DNR replikacijos metu per trumpą laiką reikia nukopijuoti apytikriai nuo tūkstančio iki milijardo nukleotidų. Pavienė DNR polimerazė prieš disociaciją susintetina tik keliasdešimt nukleotidų, todėl reikalingi procesyvumo faktoriai.  Jie  užtikrina DNA-Pol sankibą. Dėl tvirto ryšio padidėja procesyvumas ir replikacijos greitis tiek lydinčioje, tiek atsiliekančioje grandinėse.
+
+\qquad Replikacijos greitis visuose organizmuose nevienodas. Prokariotų, eukariotų, bakteriofagų, virusų DNR replikacija nėra labai greitas procesas, todėl jie naudoja slenkančiuosius žiedus. 
+
+\qquad Skirtingų organizmų procesyvumo faktorius sieja struktūriniai ir funkciniai panašumai. Procesyvumo faktoriai buvo rasti visuose organizmų tipuose, pavyzdžiui:
+
+\begin{itemize}
+	\item Eukariotose, archejose – trijų subvienetų  faktorius PCNA, 
+	\item baketriofagose – trijų subvienetų faktorius GP45,
+	\item E. coli – dviejų subvienetų faktorius beta,
+	\item herpes simplex viruse -  monomeras UL42.
+\end{itemize}
+
+
+\qquad E. Coli DNR replikaciją vykdo DNR polimerazės holofermentas. Holofermentas sudarytas iš 10 skirtingų subvienetų. Beta subvienetas-holofermento procesyvumo faktorius, kurį sudaro du subvienetai turintys po tris skirtingus domenus. Gama subvienetas atsakingas už beta komplekso užkėlimą ant polimerazės III šerdies. Jo aktyvumas priklauso nuo laisvo ATP kiekio(\hyperlink{YaoN}{Yao N, Leu FP, Anjelkovic J, Turner J, O'Donnell M}). 
+	
+\qquad Eukariotose žinomas procesyvumo faktorius PCNA, originaliai identifikuotas kaip antigenas transliuojamas lastelės ciklo DNR sintezės fazėje, ląstelės branduolyje. PCNA sudarytas iš trijų subvienetų, kur kekviename yra po du domenus. PCNA ir E. Coli beta žiedas išviso turi po šešis domenus. Tačiau jie turi ir pakankamai skirtumų. Pavyzdžiui, PCNA žiedas šešiakampės formos,  o gp45 subvienetai yra trikampio formos (\hyperlink{Zhihao}{Zhihao Zhuang; Yongxing Ai}).
+
+\qquad T4 bakteriofago procesyvumo faktorius sudaro slenkantis žiedas- gp45 ir užkelėjas – keturi gp44 subvienetai ir gp62 subvienetas(Spicer et al. 1984; Jarvis et al. 1989b). Prokariotų beta žiedas, PCNA ir T4 bakteriofagas yra funkciniai homologai. GP45 sudarytas iš 3 subvienetų, kurių išsidėstymas panašus į PCNA procesyvumo faktorių. Tačiau PCNA ir T4 lyginant su beta faktoriumi sekos  panašumų mažas (<10\%) (\hyperlink{Kong}{Kong et al. 1992; Krishna et al. 1994; Gulbis et al. 1996; Moarefi et al. 2000}). 
+
+\qquad Herpes simplex viruso DNR polimerazė sandara: katalizinis subvienetas procesyvumo subvienetas UL42. Šis faktorius – UL42 su kataliziniu subvienetu tiesiogiai jungiasi prie DNR. Nors ir turi skirtingą DNR priėjimo būdą, jo tikslas vis tiek išlieka toks pat, padidinti polimerazės procesyvumą (\hyperlink{Gottlieb}{Gottlieb,J.,A.I.Marcy,D.M.Coen,andM.D.Challberg}). Taigi funkciškai jis panašus į kitus minėtus procesyvumo faktorius.
+
+
+\clearpage 
+
+\section{Baltymų struktūrinė analizė}
+
+\subsection{Tyrimo tikslas ir problema}
+
+\textbf{Tikslas}\\
+\qquad Struktūriškai palyginti DNR procesyvumo veiksnių struktūras ir nustatyti jų tarpusavio skirtumus.
+
+
+\textbf{Problema}\\
+\qquad Praeitame kursiniame darbe struktūros turėjo didelius trūkius dėl to negalima buvo atlikti struktūrinę analizę. Todėl šiame darbe buvo naudojama ne procesyvumo veiksnių kristalinės struktūros, bet jų modeliai.
+
+
+\subsection{Darbo užduotys}
+\begin{enumerate}
+	\item Padaryti homologų paiešką pagal skirtingos kilmės baltymus,
+	\item Atsirinkti struktūras bei sudaryti grupes.
+	\item Rastom struktūrom sudaryti modelius.
+	\item Išlyginti bei sudaryti struktūrų grafus.
+\end{enumerate}
+
+\subsection{Užduoties vykdymas}
+
+\subsubsection{Pradinių baltymų homologų paieška}
+
+\qquad Iš baltymų duomenų bazės www.rcsb.org buvo paimti keturi pagrindiniai baltymai pagal kurių sekas buvo ieškoma homologų (pagrindiniai baltymai (pdb kodai) 1dml\_A, 1axc\_A, 1czd\_A, 3bep\_B).
+Pasirinkti baltymai atspindi visą PV įvairovę.
+
+\qquad Kekvienos paieškos rezultatuose buvo atrinkti baltymai, kurių Z reikšmė (angl. Z-score) buvo didesnė už tris.
+
+
+\floatfoot{Paieškos rezultatai (1pav.)}
+\begin{figure}[!tph]
+	\centering
+    \includegraphics[totalheight=7cm]{BLASTP_search.png}
+    \label{fig:verticalcell}
+\end{figure}
+
+
+\subsection{Struktūrų atrinkimas}
+
+\qquad Praeito darbo metu galutiniame rezultate gautos suklasterizuotos baltymų grupės. Šiame darbe pasinaudoju gautas grupes, kad būtų išrinkti skirtingų sekų baltymai, kurių struktūros buvo su maža rezoliucija bei mažai trūkių. Tokius baltymus lengva lyginti tarpusavyje.  
+
+\qquad Visų pirma išrašoma kekviena grupė bei joje esantys baltymai. Baltymai esantys per daug nutolę nuo pagrindinių grupių išmetami. Gaunama dešimt grupių sarašų ir su kekviena grupe atliekama tokia procedūra:
+\begin{enumerate}
+	\item Gaunamos visų baltymų grupėje sekos,
+	\item sekos įkeliamos į Jalview programą, kur parodo sekų identiškumą,
+	\item tada atrenkamos visos skirtingos sekos, o iš kelių vienodų sekų atrenkame vieną su didžiausiu sekos ilgu bei mažiausia struktūros rezoliuciją.
+\end{enumerate}
+
+Gaunamas baltymų su skirtingom sekom sąrašas, kurie sugrupuojami pagal organizmus ir prirašomi molekulių pavadinimai prie kekvieno baltymo.
+
+\subsubsection{Struktūrų modeliavimas}
+
+\qquad Praeitame žingsnyje atrinktų baltymų struktūros naudojamos kaip šablonai modeliui gauti. Modeliavimui naudota svetainė \hyperlink{swissprot}{http://swissmodel.expasy.org/}
+Sudarius modelį atsiunčiamas jo struktūrinis failas(.pdb). Atsiuntus visus struktūrinius failus galima atlikti struktūrinį išlyginimą
+
+\subsubsection{Struktūrų užklojimas}
+\qquad Pastebima, kad užklojimui naudojama programa turi būti pakankamai jautri, tam naudojama programa \hyperlink{DaliLite}{DaliLite}. \hyperlink{DaliLite}{DaliLite} porinis išlyginimas - procesas kuriame struktūros užklojamos viena ant kitos ir apskaičiuojami struktūriniai skirtumai porų sumos metodu. 
+
+\qquad \hyperlink{DaliLite}{DaliLite} įvestis reikalauja dviejų baltymų ir taip lyginamos baltymų poros, o palyginimo metu gaunamas struktūrų panašumų įvertis – Z reikšmė (angl. Zscore). \hyperlink{Cytoscape}{Cytoscape} programa naudoja Z įverčius iš kurių sudaromas \hyperlink{Cytoscape}{cytoscape} grafas bei atskiriamos grupės. Identifikuojamos struktūrų grupės.
+
+\subsection{Procesyvumo veiksnių grupių idnetifikavimas}
+
+\qquad Proceso metu gauta 4 grupės pagal Z įverčio ribą( >15 ). 2 paveikslėlyje pateikiamos visos keturios grupės ir trečiam paveikslėlį - viena grupė, atskirta nuo kitų padidinus Z įverčio ribą( >22 ). Abu grafikai pateikiami tuo pačiu metodu, tačiau rodomi atskirai siekiant aiškiau parodyti grupes. Tolimesniame darbe šie grafai bus papildyti struktūrų skirtumais. 
+\clearpage
+
+
+
+
+\floatfoot{Grafas su visomis grupėmis(Z-score > 15)(2 pav.)}
+\begin{figure}[!tph]
+	\centering
+	\hspace*{-2.5cm}
+    \includegraphics[totalheight=8cm]{Distance_network_allgroups.png}
+    \label{fig:verticalcell}
+\end{figure}
+
+\floatfoot{Grafas su PCNA grupe - Paaukštinta Z-score riba(Z-score > 22)(3 pav.)}
+\begin{figure}[!tph]
+	\centering
+	\hspace*{-5cm}
+    \includegraphics[totalheight=8.5cm]{Distance_network_onegroup.png}
+    \label{fig:verticalcell}
+\end{figure}
+\clearpage
+
+
+
+PV skiriasi ne tik sekos, kuriai žinoma struktūra, regione, bet ir jį supančiame sekos N gale(sekos praždioje) bei C gale(seko pabaigoje). Šių sekų ilgiai pateikti lentelėje.
+
+
+\vspace{1cm}
+\large
+\textbf{Herpes virusų PV}
+\normalsize
+
+\begin{frame}
+\centering
+\hspace*{-2cm}
+\begin{tabular}{|c|c|c|c|}		\hline
+\textbf{ Molekulės pavadinimas/organizmas } & \textbf{N galas} & 
+\textbf{Žinomos sekos ilgis} &  \textbf{C galas} 			\\ \hline
+
+1t6l\_A-ul44-Human\_herpesvirus\_5 & 9 & 261 & 63 					\\ \hline
+
+2z0l\_A-bmrf1-Human\_herpesvirus\_4 & -- & 299 & 105 				\\ \hline
+
+3hsl\_X-ORF59-pf8-Human\_herpesvirus\_8 & 3 & 297 & 99 				\\ \hline
+		
+1dml\_E-ul42-Human\_herpesvirus\_1 & 27 & 297 & 169 					\\ \hline
+\end{tabular} 
+\end{frame}\\
+
+\vspace{1cm}
+\large\textbf{Beta}
+\normalsize
+
+\begin{frame}
+\centering
+\hspace*{-2cm}
+\begin{tabular}{|c|c|c|c|} \hline
+
+\textbf{ Molekulės pavadinimas/organizmas } & \textbf{N galas} &  
+\textbf{Žinomos sekos ilgis} &  \textbf{C galas} 			\\ \hline
+
+1vpk\_A-BETA-Thermotoga\_maritima\_MSB8 & 3 & 366 & 99 				\\ \hline
+
+2xur\_A-BETA-Escherichia\_coli & -- & 366 & -- 						\\ \hline
+		
+2avt\_A-BETA-Streptococcus\_pyogenes & 1 &  377 & -- 				\\ \hline
+
+2awa\_A-BETA-Streptococcus\_pneumoniae\_TIGR4 & -- & 377 & 1 			\\ \hline
+\end{tabular} 
+\end{frame}\\
+
+\vspace{1cm}
+\large\textbf{GP45}
+\normalsize
+
+\begin{frame}
+\centering
+\hspace*{-2cm}
+\begin{tabular}{|c|c|c|c|} \hline
+\textbf{ Molekulės pavadinimas/organizmas } & \textbf{N galas} &  
+\textbf{Žinomos sekos ilgis} &  \textbf{C galas} 					\\ \hline
+
+1czd\_C-gp45-Enterobacteria\_phage\_T4 & -- & 228 & -- 				\\ \hline
+
+1b77\_A-gp45-Enterobacteria\_phage\_RB69 & -- & 228 & -- 				\\ \hline
+\end{tabular} 
+\end{frame}\\
+
+\clearpage
+
+\large\textbf{PCNA}
+\normalsize
+
+\begin{frame}
+\centering
+\hspace*{-2cm}
+\begin{tabular}{|c|c|c|c|} \hline
+\textbf{ Molekulės pavadinimas/organizmas } & \textbf{N galas} &  
+\textbf{Žinomos sekos ilgis} &  \textbf{C galas} 			\\ \hline
+
+3a1j\_A-RAD9A-isoform-1-Homo\_sapiens & -- & 291 & 125 				\\ \hline
+
+3a1j\_B-HUS1-Homo\_sapiens & -- & 280 & -- 							\\ \hline
+
+3a1j\_C-RAD1-Homo\_sapiens & 12 & 263 & 7 							\\ \hline
+
+2ix2\_B-PCNA-Sulfolobus\_solfataricus & -- & 245 & -- 				\\ \hline
+
+1iz4\_A-PCNA-Pyrococcus\_furiosus & 1 & 246 & 2 						\\ \hline
+
+1rxz\_A-PCNA-Archaeoglobus\_fulgidus\_DSM\_4304 & -- & 244 & 1 		\\ \hline
+
+1ud9\_A-PCNA-Sulfolobus\_tokodaii & 1 & 244 & -- 					\\ \hline
+
+3hi8\_A-PCNA-Haloferax\_volcanii & 1 & 247 & 4 						\\ \hline
+
+3lx1\_A-PCNA-Thermococcus\_kodakarensis & -- & 245 & 7 				\\ \hline
+
+2nti\_C-PCNA-Sulfolobus\_solfataricus\_P2 & 16 & 243 & -- 			\\ \hline
+
+2nti\_D-PCNA-Sulfolobus\_solfataricus\_P2 & -- & 249 & -- 			\\ \hline
+
+2od8\_A-PCNA-Saccharomyces\_cerevisiae\_S288c & -- & 258 & -- 		\\ \hline
+
+3lx2\_A-PCNA-Thermococcus\_kodakarensis & 1 & 246 & 6 				\\ \hline
+
+2zvv\_A-PCNA-Homo\_sapiens & -- & 261 & 4 							\\ \hline
+\end{tabular} 
+\end{frame}\\
+
+
+N galas - Sekos pradžia.\\
+C galas - Sekos pabaiga.\\
+
+\clearpage
+
+
+
+\section{IŠVADOS}
+
+Tyrimo metu pagal sumodeliuotas struktūras gauti tarpusavio panašumai bei išskirtos 4 procesyvumo faktorių grupės bei sugrupuotos grafe pagal panašumo lygmenį Z-Score.
+\begin{itemize}
+	\item PCNA (proliferating cell nuclear antigen)
+	\item BETA (DNA polymerase III subunit beta)
+	\item GP45 (DNA polymerase accessory protein)
+	\item Herpes virusų PV (Human herpes virus)
+\end{itemize}
+
+
+
+\qquad Tyrimo metu išmokta naudotis baltymų analizės metodais, išlyginta baltymų struktūra, atrinktos struktūrų grupės, pasiruošta struktūrų skirtumų nustatymui.
+
+\vspace{5cm}
+
+\subsection{Sąvokų apibrėžimai}
+
+\begin{enumerate}
+	\item FASTA –  aminorūgščių sekos formatas.
+	\item Pol – polimerazė.
+	\item PDB - baltymo struktūrinės informacijos formatas
+	\item PV - provesyvumo veiksniai.
+	\item DNR – deoksiribonukleorugštis.
+	\item \hyperlink{Cytoscape}{Cytoscape} – grafų programa.
+\end{enumerate}
+
+\clearpage
+	
+\section{Literatūra}
+
+\begin{enumerate}
+	\item Altschul, S.F., Madden, T.L., Schäffer, A.A., Zhang, J., Zhang, Z., Miller, W. \& Lipman, D.J. Gapped BLAST and PSI-BLAST: a new generation of protein database search programs. Nucleic Acids Res. 25:3389-3402, PubMed, 1997.
+	
+	\item Holm, L., Rosenström, P. Dali server: conservation mapping in 3D. Nucl. Acids Res. 38, W545-549, 2010. 
+	
+	\item Weizhong, L., Jaroszewski, L., Godzik, A. CD-HIT:Clustering of highly homologous sequences to reduce the size of1 large protein database. Bioinformatics,  17:282-283, 2010
+	\item Berman, H.M., Westbrook, J., Feng, Z., Gilliland, G., Bhat, T.N., Weissig, H., Shindyalov, I.N., Bourne, P.E. RCSB: The Protein Data Bank, 2010. 
+	
+	\item Matsumiya,S., Ishino, Y., Morikawa, K. PCNA numeracija Department of Structural Biology, Biomolecular Engineering Research Institute (BERI), 6-2-3, Furuedai, Suita, Osaka 565-0874, Japan.
+	
+	\item Sasnauskas,K. Molekulinė biologija. Biotechnologijos institutas , Vilnius, 2006.
+	
+	\item  E. K. Spicer, N. G. Nossal and K.R. Williams , from the Department of Molecular Biophysics and Biochemistry, Yale University School of Medicine, New Haven, Connecticut 06510 and the Laboratory of Biochemical Pharmacology, National Institute of Arthritis, Diabetes, and Digestive and Kidney Diseases, Bethesda, Maryland 20205,1983
+	
+	\item \hypertarget{Zhihao}{Zhihao Zhuang and Yongxing Ai, Biochim Biophys Acta. 2010 May; 1804(5): 1081–1093, Publikuota viešai 2009 Jul 1. doi: 10.1016/j.bbapap.2009.06.01}
+	
+	\item \hypertarget{Kong}{Kong XP, Onrust R, O’Donnell M, Kuriyan J. 1992. Three-dimensional structure of the $\beta$ subunit of E. coli DNA polymerase III holoenzyme: A sliding DNA clamp. 69: 425–437}
+	
+	\item Krishna TS, Kong XP, Gary S, Burgers PM, Kuriyan J. 1994. Crystal structure of the eukaryotic DNA polymerase processivity factor PCNA. 79: 1233–1243.
+	
+	\item Gulbis JM, Kelman Z, Hurwitz J, O’Donnell M, Kuriyan J. 1996. Structure of the C-terminal region of p21(WAF1/CIP1) complexed with human PCNA. 87: 297–306.
+	
+	\item Moarefi I, Jeruzalmi D, Turner J, O’Donnell M, Kuriyan J. 2000. Crystal structure of the DNA polymerase processivity factor of T4 bacteriophage. 296: 1215–1223.
+	
+	\item \hypertarget{Gottlieb}{Gottlieb,J.,A.I.Marcy,D.M.Coen,andM.D.Challberg.1990.Theherpes simplex virus type1 UL42 gene product: a subunit of DNA polymerase that functions to increase processivity. J. Virol.64:5976–5987}
+	
+	\item \hypertarget{YaoN}{Yao N, Leu FP, Anjelkovic J, Turner J, O'Donnell M, J Biol Chem. 2000 Apr 14;275(15):11440-50.}
+
+	\item \hypertarget{swissprot}{Marco Biasini, Stefan Bienert, Andrew Waterhouse, Konstantin Arnold, Gabriel Studer, Tobias Schmidt, Florian Kiefer, Tiziano Gallo Cassarino, Martino Bertoni, Lorenza Bordoli, Torsten Schwede. (2014). SWISS-MODEL: modelling protein tertiary and quaternary structure using evolutionary information. Nucleic Acids Research; (1 July 2014) 42 (W1): W252-W258; doi: 10.1093/nar/gku340} 
+	
+	\item Arnold K., Bordoli L., Kopp J., and Schwede T. (2006). The SWISS-MODEL Workspace: A web-based environment for protein structure homology modelling. Bioinformatics, 22,195-201
+	
+	\item Kiefer F, Arnold K, Künzli M, Bordoli L, Schwede T (2009). The SWISS-MODEL Repository and associated resources. Nucleic Acids Research. 37, D387-D392.
+	
+	\item Guex, N., Peitsch, M.C., Schwede, T. (2009). Automated comparative protein structure modeling with SWISS-MODEL and Swiss-PdbViewer: A historical perspective. Electrophoresis, 30(S1), S162-S173.
+	
+	\item  \hypertarget{Cytoscape}{Shannon P, Markiel A, Ozier O, Baliga NS, Wang JT, Ramage D, Amin N, Schwikowski B, Ideker T. Cytoscape: a software environment for integrated models of biomolecular interaction networks. Genome Research 2003 Nov; 13(11):2498-504}
+	
+	
+	
+\end{enumerate}
+  
+\clearpage
+  
+\vspace*{1cm}  
+  
+\section*{Santrauka}
+\qquad DNR replikacija – procesas, kurio metu kopijuojama DNR informacija. Naujos DNR sintezę atlieka DNR polimerazė. Procesyvumo faktoriai prilaiko DNR polimerazę prie DNR užtikrindami stabilią, greitą ir produktyvią DNR polimerizaciją. Procesyvumo faktoriai yra randami visuose gyvuose organizmuose. Siekiant geriau suprasti jų kilmę ir nustatyti specifinius prisitaikymus veikti tam tikrame organizme, gali būtu naudojami sekų ir struktūrų analizės metodai. Procesyvumo veiksnių sekos labai skirtingos, tačiau struktūros panašios, todėl pastarosios ir buvo naudotos šiame darbe.
+
+\label{sec:santr}
+\addcontentsline{toc}{section}{\nameref{sec:santr}}
+
+
+\vspace{3cm}
+  
+\section*{Summary}
+\qquad DNA replication is process of copying DNR information. Newly sintesized strand is complementary to paternal strand. Processivity factors ensure stable, fast and processive DNA  synthesis. Procesivity factors are found in all types of organisms.  Sequence and structure analysis methods can be used to determine processivity factors origin and identify adaptations, functions in specific organisms. Structural analysis is used in this research because factors sequences are very different but structures are similar
+
+
+\label{sec:summary}
+\addcontentsline{toc}{section}{\nameref{sec:summary}}
+
+
+
+\clearpage
+
+
+
+\end{document}

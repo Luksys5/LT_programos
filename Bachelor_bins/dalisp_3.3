@@ -1,0 +1,441 @@
+#!/usr/bin/perl -w
+
+use Getopt::Long;
+use File::Basename;
+use strict;
+
+import File::Basename qw/basename dirname/;
+
+my   $PROGNAME = basename( $0 );
+my   $DALI='~/DaliLite_3.3/DaliLite';
+my   $help = <<EOINPUT;
+
+Performs DaliLite superposition of target pdb file to enumerated 
+template ones; DaliLite output is converted to FASTA format.
+2004(C)Mindaugas Margelevicius <minmar\@ibt.lt>,IBT
+
+Usage:
+$PROGNAME <Parameters>
+
+Parameters:
+-i <in_file>      Filename of target pdb file
+-l <in_listfile>  Filename listing full filenames of template
+                  pdb structures to be superimposed with target
+-o <out_dir>      Directory to place output files in
+          default=directory of <in_file>
+-m <out_file>     Output filename of sequences in FASTA 
+          default=<standard output>
+-s [1]            Put DSSP information sequences in output file;
+                  if 1 is present after the option, put only the
+                  target's DSSP sequence 
+-p <progname>     Full pathname to DaliLite executable
+          default=$DALI
+-h                this text
+
+EOINPUT
+
+#-t            clear all redundant intermediate files; there will only 
+#              be left original pdb-, newly generated pdb and fasta
+#              files
+
+
+@ARGV || die("$help");
+
+my  $INCDSSP = -1;
+my  $target_pdb = $ARGV[1];
+my  $templates_pdb = $ARGV[2];
+my  $output_dir;
+my  $output_file;
+my  $clear;
+
+GetOptions( "i=s" => \$target_pdb, "l=s" => \$templates_pdb, "o:s" => \$output_dir,
+	    "m:s" => \$output_file, "s:i" => \$INCDSSP, "p=s" => \$DALI,
+	    't' => sub { $clear = 1; }, 'h' => sub { print("$help"); exit; });
+
+( $target_pdb && $templates_pdb ) || die("$help");
+
+if( $output_dir && ! -e $output_dir ) {
+    system( "mkdir $output_dir" ) && die("ERROR: Unable to create directory `$output_dir': $!");
+}
+
+$output_dir = dirname( $target_pdb ) if !$output_dir; chomp $output_dir; 
+die "ERROR: Unable to determine output directory." unless -e $output_dir && -d _;
+
+print "target file = $target_pdb\n",
+      "templates pdb file = $templates_pdb\n",
+      "output_dir = $output_dir\n\n";
+my $inline;
+my @structures;
+
+# ------------------------------------------------------------------------------
+    
+my %AASingle = (
+        A => 'ALA',     R => 'ARG',     N => 'ASN',     D => 'ASP',
+        C => 'CYS',     E => 'GLU',     Q => 'GLN',     G => 'GLY',
+        H => 'HIS',     I => 'ILE',     L => 'LEU',     K => 'LYS',
+        M => 'MET',     F => 'PHE',     P => 'PRO',     S => 'SER',
+        T => 'THR',     W => 'TRP',     Y => 'TYR',     V => 'VAL',
+);      
+
+# ------------------------------------------------------------------------------
+# Read pdb file list from the file
+#
+
+open( LIST, $templates_pdb ) || die("ERROR: Unable to open input list file `$templates_pdb'");
+
+while( $inline = <LIST> ) {
+    chomp( $inline );
+    next if $inline =~ /^$/;
+    next if $inline =~ /^#/ || length $inline < 2;
+    $inline =~ s/^\s+//;
+    $inline =~ s/\s+$//;
+    push @structures, $inline;
+}
+close( LIST );
+
+SpByDali( @structures ); 
+exit( 0 );
+
+# ------------------------------------------------------------------------------
+
+sub SpByDali {
+    my  @structures = @_;
+
+    my  $cmd; 
+    my  $log_file = "${output_dir}/log";
+    my ($new_name, $new_name1, $new_name2);
+    my  $name;
+
+    my %sequences;
+    my @orderarray;
+
+    my $which = 0; 
+    my $suffix = '_dssp';
+    my $daliprog = basename( $DALI );
+
+    $new_name1 = basename( $target_pdb ); 
+    $new_name1 =~ s/\.\w+$//; # trim extension
+
+    my $nCounter = 0;
+    foreach my $struct (@structures) 
+    {
+        # ----
+        # Dali Alignment
+        # ----
+        $cmd = "$DALI -pairwise $target_pdb $struct";
+        print "Superimposing $target_pdb and $struct...\n\n";
+        if( system("$cmd >$log_file")) 
+        {
+            print STDERR "ERROR: $daliprog failed: $?\n"; 
+            next;
+        }
+
+	    $new_name2 = basename( $struct ); $new_name2 =~ s/\.\w+$//; # trim extension
+	    my $Mol_name = "${new_name1}_${new_name2}_dali.pdb";
+        $name = 'mol2.dssp';
+        $name = 'mol2.dssp' unless -f $name;
+        system( "mv $name $output_dir/$Mol_name" ) && 
+        ( print STDERR "ERROR: mv to `$Mol_name' failed.\n" && next );
+        
+        my $Aln_name = $new_name1.'_'.$new_name2.'_dali_ali.html';
+        system( "mv mol1A.html $output_dir/$Aln_name" ) && 
+        ( print STDERR "ERROR: mv to `$Aln_name' failed.\n" && next );
+	
+
+	    print "\t(converting html -> fasta ...)\n";
+        ConvertOutput( "$output_dir/$Aln_name", $new_name1, $new_name2, $suffix, 
+               \%sequences, \@orderarray, $which++ ); 
+
+        my $CA_name = $new_name1.'_'.$new_name2.'_CA.pdb';
+        $name = 'mol1A.dat';
+        $name = 'mol1A.dat' unless -f $name;
+        system( "mv $name $output_dir/$CA_name" ) && 
+            ( print STDERR "ERROR: mv to `$CA_name' failed.\n" && next );
+
+        my $Ind_name = $new_name1.'_'.$new_name2.'_index.html';
+        system( "mv index.html $output_dir/$Ind_name" ) && 
+            ( print STDERR "ERROR: mv to `$Ind_name' failed.\n" && next );
+
+        CorrectIndexContents( "$output_dir/$Ind_name", $Mol_name, $Aln_name, $CA_name ); 
+    }	
+
+    `rm $output_file` if $output_file && -e $output_file && -f _;
+
+    $which = 0;
+    foreach( @orderarray ) 
+    {
+        if($_ =~ /_dssp/i)
+        {
+	        WriteFasta($output_file."_dssp", {$_ => $sequences{$_}} );
+        }
+
+        next unless exists $sequences{$_};
+        if( $_ =~ /$suffix$/i ) {
+            next if $INCDSSP != 0 && $INCDSSP != 1;
+            next if $INCDSSP == 1 && $which;
+            $which++;
+        }
+        next if $_ =~ /$suffix$/i && ( $INCDSSP != 0 && $INCDSSP != 1 );
+	    WriteFasta( $output_file, { $_ => $sequences{$_}} );
+	    delete $sequences{$_} if $_ =~ /$new_name1/;
+    }
+}
+
+# ------------------------------------------------------------------------------
+
+sub CorrectIndexContents {
+    my $ind_name = shift;
+    my $mol_name = shift;
+    my $aln_name = shift;
+    my $ca_name  = shift;
+
+    my $line;
+    my $text;
+
+    open( HTM, $ind_name ) || die( "ERROR: Unable to open `$ind_name': $!");
+
+    while( $line = <HTM> ) {
+	$text .= $line;
+    }
+    close( HTM );
+
+    $text =~ s/aln\.html/$aln_name/g;
+    $text =~ s/CA-1\.pdb/$ca_name/g;
+    $text =~ s/mol2-1\.pdb/$mol_name/g;
+
+    open( HTM, ">$ind_name" ) || die( "ERROR: Unable to open `$ind_name' for writing: $!");
+    print HTM $text;
+    close( HTM );
+}
+
+
+# ------------------------------------------------------------------------------
+
+sub ConvertOutput {
+    my  $filename = shift;
+    my  $target   = shift;
+    my  $subject  = shift;
+    my  $suffix   = shift;
+    my	$refS  	  = shift;   # reference to the hash
+    my	$refA	  = shift;   # reference to the array
+    my  $which    = shift;   # serial number of file being processed
+
+    my  @temp_array; 
+    my  %temp_seque;
+    my ( $key, $value );
+    my  $new_name = $filename; 
+
+    ReadDaliHtml( $filename, $target, $subject, $suffix, \%temp_seque, \@temp_array ); 
+    TranslateSequences( \%temp_seque ); 
+    DsspLoopSymbols( \%temp_seque, $suffix ); 
+
+    $new_name =~ s/\.\w*$//;
+    $new_name.= '.fa'; 
+
+    `rm $new_name` if -e $new_name && -f _;
+
+    foreach( @temp_array ) {
+	    WriteFasta( $new_name, { $_ => $temp_seque{$_}} );
+    }
+    
+    CondenseToMultipleAlignment( \%temp_seque, $target, $suffix );
+    
+    $$refS{"$target$which"} = $temp_seque{$target};
+    $$refS{"$target$suffix$which"} = $temp_seque{"$target$suffix"};
+
+    while(( $key,$value ) = each %temp_seque )
+    { 
+        $$refS{$key} = $value; 
+    }
+    push @{ $refA }, @temp_array ;
+
+}
+
+# ------------------------------------------------------------------------------
+
+sub ReadDaliHtml {
+    my	$filename = shift; 
+    my  $querytit = shift;
+    my  $sbjcttit = shift;
+    my  $suffix   = shift;   # dssp suffix for title
+    my	$refS  	  = shift;   # reference to the hash
+    my	$refA	  = shift;   # reference to the array
+    my  $index = 0;          # reference to serial index of the array
+    my  %lochash;
+    my	$line; 
+    my	$exp = qr/^<A HREF="#mol1A">back to top/;
+    my 	$end = qr/^<\/PRE>/;
+    my	$ind = 0; 
+    my	$cond = 0;
+
+
+    open( HTM, $filename ) || die( "ERROR: Unable to open `$filename': $!\n");
+
+WHILE:
+    while( $line = <HTM> ) {
+	    if( $line =~ $exp ) { $cond = 1;  next; };
+        if( $cond == 1 ){ $cond = 2; next; };
+        next if !$cond;
+	    last if $line =~ $end;
+	    next unless $line =~ /^(\S+)\s+(\S+)(\s+\d+)?$/;
+	    my $title = $1;
+	    my $seque = $2;
+        SWITCH: {
+            ( $title =~ /^DSSP$/i ) && do { 
+		        unless( $ind++ % 2 ) { $title = "$querytit$suffix"; }   # even occurence 
+		        else { $title = "$sbjcttit$suffix"; }   # odd occurence
+		        last SWITCH;
+	        };
+            ( $title =~ /^Query$/i ) && do { $title = "$querytit"; last SWITCH; };
+            ( $title =~ /^Sbjct$/i ) && do { $title = "$sbjcttit"; last SWITCH; };
+	        next WHILE;
+        }
+
+	    unless( $lochash{$title}) {
+	        $$refA[$index++]= $title;
+	        $lochash{$title}=1;
+	    }
+        $$refS{$title} .= $seque;
+    }
+    close( HTM );
+}
+
+# ------------------------------------------------------------------------------
+# sequences passed are supposed to be already translated to FASTA format
+#
+sub CondenseToMultipleAlignment {
+    my	$hr_seqs = shift;   # reference to hash of sequences 
+    my  $s_title = shift;   # of target sequence 
+    my  $suffix  = shift;   # suffix added to the dssp sequence
+    my	$columns = length $$hr_seqs{$s_title}; 
+    my	$gap; 
+    my	$res; 
+    my	$it = 0;
+
+    while( $it < $columns ) {
+    	$res = substr( $$hr_seqs{$s_title}, $it, 1 ); 
+    	$res = '\.' if $res eq '.'; 
+    	$gap = !scalar grep {/$res/i} keys %AASingle;
+        
+        foreach my $title ( keys %{ $hr_seqs }) {
+	        $res = substr( $$hr_seqs{$title}, $it, 1 ); 
+	        $res = '\.' if $res eq '.'; 
+            if( $gap ) {
+                substr( $$hr_seqs{$title}, $it, 1 )= ''; 
+                next;
+            }
+            substr( $$hr_seqs{$title}, $it, 1 ) = '-' if $title =~ /$suffix$/ && $res =~ /l/i;
+            # the latter statement overwrites 'L' symbol of the dssp sequence with '-'
+        }
+        unless( $gap ) { $it++; }
+        else { $columns--; }
+    }
+    
+
+}
+
+# ------------------------------------------------------------------------------
+
+sub DsspLoopSymbols {
+    my  $hr_seqs = shift;
+    my  $suffix  = shift;
+    foreach my $title ( keys %{$hr_seqs} ) {
+	next unless $title =~ /$suffix$/; 
+	for my $it ( 0 .. length( $$hr_seqs{$title}) - 1 ) {
+	    substr( $$hr_seqs{$title}, $it, 1 )= '-' if substr( $$hr_seqs{$title}, $it, 1 ) =~ /l/i;
+	}
+    }
+}
+
+# ------------------------------------------------------------------------------
+# writes sequence in FASTA format
+# <$file> - name of file the sequence to be written in; if not present, writing to STDOUT
+# <$refS> - reference to hash having keys assigned to titles and values to sequences;
+#           $sequences{$title}
+#
+    
+sub WriteFasta {
+    my  $file = shift;
+    my  $refS = shift;
+    my  $ref  = \*STDOUT;
+    my  $qual = ">"; 
+    my  $seq;
+
+    if( $file ) {
+        $qual = ">>" if -e $file; 
+        open( FAS, "$qual$file" ) || die("ERROR: Unable to open `$file' for writing: $!");
+        $ref = \*FAS;
+    }           
+
+    foreach my $title ( keys %{ $refS } ) 
+    {
+        printf $ref ">%s\n", $title;
+        $seq = $$refS{$title};
+        while( length( $seq )) 
+        {
+            my  $por = ( length( $seq ) < 60 )? length( $seq ): 60;
+            printf $ref "%s\n", substr( $seq, 0, $por );
+            $seq = substr( $seq, $por );
+        }
+    }
+
+    if( $file ) { close( FAS ); }
+}
+
+# ------------------------------------------------------------------------------
+# translates sequence to FASTA format;
+# removes columns that comprise only of the gaps.
+# <$refseq> - reference to hash of sequence strings to be translated to FASTA-
+#             compatible format
+#
+
+sub TranslateSequences {
+    my  $refseq = shift;
+    my  $columns= GetColumns( $refseq );
+    my  $gaps;
+    my  $res;
+    my  $it = 0;
+    
+    while( $it < $columns ) {
+        $gaps = OnlyGapsInColumn( $refseq, $it );
+        foreach my $title ( keys %{ $refseq }) {
+            $res = substr( $$refseq{$title}, $it, 1 );
+            $res = '\.' if $res eq '.';
+            substr( $$refseq{$title}, $it, 1 ) = uc $res if grep {/$res/i} keys %AASingle;
+            substr( $$refseq{$title}, $it, 1 ) = '-' unless $gaps || grep {/$res/i} keys %AASingle;
+            substr( $$refseq{$title}, $it, 1 ) = '' if $gaps;
+        }
+        unless( $gaps ) { $it++ }
+            else        { $columns--; }
+    }
+}
+
+# ------------------------------------------------------------------------------
+
+sub GetColumns {
+    my  $refseq = shift;
+    my  $len = 0;
+    my  $max = 0;
+    foreach( keys %{ $refseq }) {
+        $len = length( $$refseq{$_});
+        $max = $len if $len > $max;
+    }
+    return $max;
+}
+
+# ------------------------------------------------------------------------------
+
+sub OnlyGapsInColumn {
+    my  $refseq = shift;
+    my  $column = shift;
+    my  $count = 0;
+    my  $res;
+
+    foreach( keys %{ $refseq }) {
+        $res =  substr( $$refseq{$_}, $column, 1 );
+        $res = '\.' if $res eq '.';
+        $count++ unless( grep {/$res/i} keys %AASingle );
+    }
+    return $count == scalar keys %{$refseq };
+}
+
