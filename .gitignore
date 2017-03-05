@@ -1,12 +1,7 @@
 *.class
+*machine
 
 # Package Files #
 *.jar
 *.war
 *.ear
-*.log
-*.aux
-*.pdf
-*.toc
-*.out
-*.gz
