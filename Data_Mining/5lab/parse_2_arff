@@ -1,0 +1,49 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import sys
+max_attr = 0
+cline = 0
+with open(sys.argv[1], 'r') as f:
+	for line in f:
+		cline += 1
+		split_line = line.split()
+		for x in split_line:
+			x = int(x)
+			if x > max_attr:
+				max_attr = int(x)
+
+print "@relation įvykiai\n"
+for i in range(1, int(max_attr) + 1):
+	print "@attribute a" + str(i) + " {0, 1}"
+
+print "\n@data"
+start = int(cline * 0.42)
+end = int(cline * 0.55)
+cline = 0
+cc = 0
+with open(sys.argv[1], 'r') as f:
+	for line in f:
+		if cline >= start and cline <= end:
+			cc += 1
+			if cc > 1000:
+				break
+			line_split = line.split()
+			lastx = 0
+			for x in line_split:
+				x = int(x)
+				if(x - 1 != lastx):
+					for i in range(lastx, x - 1):
+						sys.stdout.write("?, ")
+				lastx = x
+				if(x == int(line_split[-1])):
+					sys.stdout.write("1")
+					for i in range(x + 1, int(max_attr) + 1):
+						sys.stdout.write(", ?")
+					sys.stdout.write("\n")
+				else:
+					sys.stdout.write("1, ")
+		elif cline > end:
+			break
+		
+		cline += 1
+

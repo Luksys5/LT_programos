@@ -1,0 +1,158 @@
+./Parse_weka_out
+
+outputs/LR_CVAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5975
+
+outputs/LR_CVAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5973
+
+outputs/LR_CVAdata_Changed.arff.arff
+
+outputs/LR_CVAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.7031
+=== Cross-validation ===
+Correlation coefficient                  0.6611
+
+outputs/LR_PSAdata.arff
+=== Error on training split ===
+Correlation coefficient                  0.5968
+=== Error on test split ===
+Correlation coefficient                  0.6144
+
+outputs/LR_PSAdata_Changed.arff
+=== Error on training split ===
+Correlation coefficient                  0.5968
+=== Error on test split ===
+Correlation coefficient                  0.6144
+
+outputs/LR_PSAdata_Changed.arff.arff
+
+outputs/LR_PSAdata_Removed.arff
+=== Error on training split ===
+Correlation coefficient                  0.7221
+=== Error on test split ===
+Correlation coefficient                  0.6381
+
+outputs/LR_STSAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/LR_STSAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/LR_STSAdata_Changed.arff.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/LR_STSAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/LR_TSAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5975
+
+outputs/LR_TSAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5973
+
+outputs/LR_TSAdata_Changed.arff.arff
+
+outputs/LR_TSAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.7031
+=== Cross-validation ===
+Correlation coefficient                  0.6611
+
+outputs/SLR_CVAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5975
+
+outputs/SLR_CVAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5973
+
+outputs/SLR_CVAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.7031
+=== Cross-validation ===
+Correlation coefficient                  0.6611
+
+outputs/SLR_PSAdata.arff
+=== Error on training split ===
+Correlation coefficient                  0.5968
+=== Error on test split ===
+Correlation coefficient                  0.6144
+
+outputs/SLR_PSAdata_Changed.arff
+=== Error on training split ===
+Correlation coefficient                  0.5968
+=== Error on test split ===
+Correlation coefficient                  0.6144
+
+outputs/SLR_PSAdata_Removed.arff
+=== Error on training split ===
+Correlation coefficient                  0.7221
+=== Error on test split ===
+Correlation coefficient                  0.6381
+
+outputs/SLR_STSAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/SLR_STSAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/SLR_STSAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6186
+=== Error on test data ===
+Correlation coefficient                  0.5726
+
+outputs/SLR_TSAdata.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5975
+
+outputs/SLR_TSAdata_Changed.arff
+=== Error on training data ===
+Correlation coefficient                  0.6057
+=== Cross-validation ===
+Correlation coefficient                  0.5973
+
+outputs/SLR_TSAdata_Removed.arff
+=== Error on training data ===
+Correlation coefficient                  0.7031
+=== Cross-validation ===
+Correlation coefficient                  0.6611
+

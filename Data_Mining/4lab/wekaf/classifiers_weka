@@ -1,0 +1,23 @@
+#!/bin/sh
+## Būtina prideti 2 direktorijas Resample ir outputs
+## Leidžiama ./classifiers_weka input.arff
+for line in $@
+do
+	echo $line."\n";
+	## Resample 70 ir 30
+	java -cp /usr/share/java/weka.jar weka.filters.unsupervised.instance.Resample -S 1  -Z 70.0 -no-replacement -V -i $line -o Resample/30$line
+	java -cp /usr/share/java/weka.jar weka.filters.unsupervised.instance.Resample -S 1  -Z 70.0 -no-replacement -i $line -o Resample/70$line
+	
+	java -cp /usr/share/java/weka.jar weka.classifiers.functions.LinearRegression -S 0 -R 10E-8 -t $line > outputs/LR_TS$line
+	java -cp /usr/share/java/weka.jar weka.classifiers.functions.LinearRegression -S 0 -R 10E-8 -t Resample/70$line -T Resample/30$line > outputs/LR_STS$line
+	java -cp /usr/share/java/weka.jar weka.classifiers.functions.LinearRegression -S 0 -R 10E-8 -t $line -x 10 > outputs/LR_CV$line
+	java -cp /usr/share/java/weka.jar weka.classifiers.functions.LinearRegression -S 0 -R 10E-8 -t $line -split-percentage 66 > outputs/LR_PS$line
+	
+	if [ "$line" != "test.arff" ]
+	then
+		java -cp /usr/share/java/weka.jar weka.classifiers.functions.SimpleLinearRegression -t $line > outputs/SLR_TS$line
+		java -cp /usr/share/java/weka.jar weka.classifiers.functions.SimpleLinearRegression -t $line -x 10 > outputs/SLR_CV$line
+		java -cp /usr/share/java/weka.jar weka.classifiers.functions.SimpleLinearRegression -t $line -split-percentage 66 > outputs/SLR_PS$line
+	fi
+done
+
