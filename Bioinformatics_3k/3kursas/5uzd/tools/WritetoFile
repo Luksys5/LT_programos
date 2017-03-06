@@ -1,8 +1,0 @@
-#!/bin/sh
-lines=$(ls ../cifs)
-for line in ${lines}
-do
-	echo "Starting to calculate ${line}"
-	perl ../../4uzd/pdbclashes 0.01 "../cifs/$line" >> ../outputs/CifsVdW
-	echo "Done with ${line}";
-done
