@@ -2,6 +2,5 @@
 *machine
 
 # Package Files #
-*.jar
 *.war
 *.ear
