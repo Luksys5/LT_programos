@@ -1,6 +1,0 @@
-#!/bin/sh
-
-while gtar xv 2>&1
-do
-    echo ---------------
-done

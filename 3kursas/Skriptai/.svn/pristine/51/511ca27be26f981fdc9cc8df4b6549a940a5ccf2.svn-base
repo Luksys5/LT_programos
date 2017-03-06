@@ -1,4 +1,0 @@
-#!/bin/sh
-
-find . -name .svn-ignore \
-	-exec sh -c 'svn propset svn:ignore -F {} `dirname {}`' \;

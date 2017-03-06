@@ -1,8 +1,0 @@
-#!/bin/bash
-
-awk -v term=`tty` 'BEGIN{
-   if(match(term,"tty[0-9]$"))
-      print "Terminal is a console"; 
-   else 
-      print "Not a console";
-}'

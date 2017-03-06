@@ -1,0 +1,4 @@
+#! /bin/sh
+# si programa spausdina argumentus
+./pdb_get_entry 1b77.cif
+./ciftofasta inputs/1b77.cif > output

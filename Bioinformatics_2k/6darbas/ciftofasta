@@ -1,0 +1,88 @@
+#! /bin/sh
+#-------------------------------------------------------------------------------
+# $AUTHOR: Luksys $
+# $REVISION$
+# $Date: 2014-11-17 17:07:27 +0200 (Pr, 17 Lap 2014) $
+# $URL: file:///mif/stud3/2012/lutu0929/project/repoz/trunk/bin/pdb_get_entry $
+#-------------------------------------------------------------------------------
+# This program fetches a PDB entry atomic coordinates
+# programa: atsiuncia PDB failus ir atrenka aminorugsciu duomenis
+#** USAGE:
+#**	$0 1knv.cif
+#**	$0 1knv.cif 2ixs.cif
+#**	$0 --options 
+#**	
+#** OPTIONS
+#** --version
+#** --grep
+#echo "pdb entry [ENTER]:"
+#read mypdb
+FILES=''
+set -ue
+Id='$id: pdb-fetch 3 2014-11-17 14:07:23Z Luksys $'
+
+#COUNTER=0
+BASENAME="$(basename $0)"
+while [ $# -gt 0 ]
+do 
+	case "$1" in
+	--version|--versio|--versi|--vers|--ver|--ve|--v)
+		echo "hello"
+		exit 0
+		;;
+ 	--help|--hel|--he|--h)
+		grep '^#\*\*' bin/pdb_get_entry | sed 's/^#\*\* \?//; s|$0|'$0'|'
+		exit
+		;;
+        --grep|--gre|--gr|--g)
+                echo "grep"
+                exit 0
+                ;;
+	*) FILES="$FILES '$1'" ;;
+        esac
+        shift
+done
+#echo ${FILES}
+eval set -- "${FILES}"
+eval set ${FILES}
+for FILE
+do
+	CHAINS="$(grep '^ATOM ' ${FILE} | awk '{print $7}' | sort | uniq)"
+	#echo CHAINS: $CHAINS
+	for CHAIN in $CHAINS
+	do
+		echo ">" $FILE"|"$CHAIN 
+		grep -E '^ATOM ' ${FILE} \
+		| awk '{if( $4 == "CA" && $7 == "'$CHAIN'") print $6}' \
+		| sed	's/LYS/K/;
+			 s/ALA/A/;
+			 s/VAL/V/;
+			 s/ILE/I/;
+        	         s/ARG/R/;
+        	         s/ASN/N/;
+			 s/ASP/D/;
+        	         s/CYS/C/;
+        	         s/GLN/Q/;
+			 s/GLU/E/;
+        	         s/GLY/G/;
+        	         s/HIS/V/;
+        	         s/LEU/K/;
+        	         s/MET/A/;
+        	         s/PHE/V/;
+        	         s/PRO/K/;
+        	         s/SER/S/;
+        	         s/THR/T/;
+		 	 s/TRP/W/;
+        	         s/TYR/Y/;
+			 ' \
+		| tr -d "\n" \
+		| fold -w 79 
+		echo ""
+	done
+done
+exit
+#echo "pdb entry [ENTER]:"
+#read mypdb
+#curl -sSL http://cod.ibt.lt/pdb/$mypdb > $mypdb
+##uzduotis isgriebti pdb seka kur yra atomu yrasuose ^ATOM ir paversti vienos aminorugsties kodu  
+

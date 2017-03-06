@@ -1,0 +1,16 @@
+cat $* | tr "\r\t" " " | perl -040 -1012 -ne 'print' | perl -CS -lne 'print join("",sort(split(""))) , " ", $_ ' | sort -k1 | uniq  | perl -lane
+	sub print_anagrams(@){
+		if f( @_ > 1 ) {
+			for( @_ ) { print $_ - >[1] }; print ""
+		}
+	}
+	if( !@p || $p [0][0] eq $F [0] ) {
+		unshift (@p ,[@F ])
+	} else {
+		print_anagrams( @p );
+		@p =([@F ])
+	}
+	END {
+		print_anagrams( @p );
+	}'
+

@@ -1,8 +1,0 @@
-#!/bin/sh
-
-echo '>'Complementary ${1+"$@"}
-
-revert $(grep -hv '^>' ${1+"$@"} | tr -d ' \n') \
-| tr ATCGatcg TAGCtagc
-
-# | fold -w 70

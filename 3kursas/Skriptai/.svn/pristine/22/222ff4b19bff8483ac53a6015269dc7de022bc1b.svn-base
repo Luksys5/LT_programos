@@ -1,4 +1,0 @@
-#!/bin/sh
-
-awk --posix \
-   '/^ *[0-9]{1,2}( [A-Z])* *$/{for(i=2;i<NF;i++) printf "%s", $i}' $1

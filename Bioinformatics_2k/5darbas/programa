@@ -1,0 +1,8 @@
+#! /bin/bash
+# si programa spausdina cif to fasta i output
+if [ "$1" == "-h" ]; then
+  echo "Usage: `basename $0` [somestuff]"
+  exit 0
+fi
+./pdb_get_entry $1
+./ciftofasta inputs/$1 > $1.out

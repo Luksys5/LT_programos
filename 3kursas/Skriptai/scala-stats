@@ -1,8 +1,0 @@
-#!/bin/sh
-
-awk ' \
-     /1\/resol\^2.*%poss Cm?%poss/,/Overall/{print} \
-     /1\/d\^2 Dmin.*R(fac|mrg)/,/Overall/{print} \
-    ' \
-${1+"$@"} \
-| grep -v "use a Java browser"

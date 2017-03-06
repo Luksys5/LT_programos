@@ -1,1 +1,0 @@
-cat $1 | awk -v item=${2} '{ if ( $1 == "ATOM" && $5 == item  ) print $0 }'

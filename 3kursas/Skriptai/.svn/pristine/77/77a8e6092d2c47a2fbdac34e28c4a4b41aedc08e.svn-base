@@ -1,8 +1,0 @@
-#!/bin/sh
-
-test -z "${XLOG_FONT}" && XLOG_FONT=9x15
-
-##  XLOG_FONT="-misc-fixed-medium-r-normal--20-140-100-100-c-100-iso8859-1"
-
-xterm -bg wheat -fg black \
-      -T "$@" -fn $XLOG_FONT -e rasmol "$@"

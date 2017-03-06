@@ -1,0 +1,22 @@
+#!/bin/bash
+FIRST=$1
+SECOND=$2
+FILES=''
+while [ $# -gt 0 ]
+do
+        case "$1" in
+        *) FILES="$FILES $1" ;;
+        esac
+        shift
+done
+
+for FILE in ${FILES}
+do
+	if [ -s $FILE ] ; then
+		z=1	
+	else
+		echo "$FILE tuscias arba neegzistuoja."
+		exit
+	fi ;
+done
+./ciftofasta $FIRST | diff - $SECOND

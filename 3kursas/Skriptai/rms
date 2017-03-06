@@ -1,1 +1,0 @@
-perl -ne 'print if /al rms|image FILE/' $1

@@ -1,0 +1,23 @@
+help
+#!/ bin/sh
+# Find all words that are anagrams in input files
+cat $* \
+| tr "\r\t" " " \
+| perl -040 -l012 -ne ÿprintÿ \
+| perl -CS -lne ÿprint join("",sort(split(""))) , " ", $_ ÿ \
+| sort -k1 | uniq \
+| perl -lane \
+ÿsub print_anagrams(@) {
+if( @_ > 1 ) {
+for( @_ ) { print $_ - >[1] }; print ""
+}
+}
+if( !@p || $p [0][0] eq $F [0] ) {
+unshift (@p ,[@F ])
+} else {
+print_anagrams( @p );
+@p =([@F ])
+}
+END {
+print_anagrams( @p );
+}

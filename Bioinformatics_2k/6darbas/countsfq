@@ -1,0 +1,29 @@
+#! /bin/bash
+FILES=''
+
+while [ $# -gt 0 ]
+do
+        case "$1" in
+        *) FILES="$FILES $1" ;;
+        esac
+        shift
+done
+for FILE in ${FILES}
+do
+	PTH="results"
+	case "$FILE" in 
+	*$PTH*)	PAR=$(cat $FILE) ;;
+	*     )	PAR=$(cat $FILE | grep -v ">" - | fold -w 1 | wc -l) ;;
+	esac
+	COUNT='ls results/*.cnt'
+	if [ COUNT != 0 ]
+	then
+		ALL=0
+		VARS=$(cat ./results/*.cnt)
+		for VAR in $VARS
+		do
+			ALL=$((ALL+VAR))
+		done
+		echo "scale=2; $PAR / $ALL" | bc
+	fi
+done

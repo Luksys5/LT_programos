@@ -1,0 +1,500 @@
+   31  ls
+   32  ls~ 
+   33  cd 5darb/AW
+   34  ls€“;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~;3~
+   35  lsADSGâ€“[1;3A€“[15;3~G[15;3~;3~[1;3AG[15;3~[1;3AG[1;3AA;3~;3~G;3~;3~[15;3~~H
+   36  lH~'s
+   37  cd inputs/
+   38  ls
+   39  cd ..
+   40  ls
+   41  vim ciftofasta 
+   42  ./ciftofasta inputs/1axc outputs/1axc.out
+   43  vim ciftofasta 
+   44  ./ciftofasta inputs/1axc outputs/1axc.out
+   45  vim ciftofasta ~'OS~'
+   46  ./ciftofasta inputs/1axc outputs/1axc.out~'~HH~
+   47  ./ciftofasta inputs/1axc > outputs/1axc.out;3~â€“G[15;3~AG
+   48  h~'~
+   49  gâ€“[15~'~hh~'~
+   50  ./ciftofasta inputs/1axc
+   51  ./ciftofasta inputs/1axc outputs/1axc.out~'~HH~
+   52  LS
+   53  6~~~~~~~~~~~~~
+   54  ls'~h~;3~~ 1=
+   55  ~ 1=-~~-1~â€“g~ 
+   56  awdh~'~
+   57  ls'~h~;3~~ 1=
+   58  ~ 1=-~~-1~â€“g~ 
+   59  ;3S;3~~;3~'~~'h~h~'~
+   60  ls â€“~'~h
+   61  ls~'~h~'~hh~'~
+   62  .[~h~
+   63  .'/~
+   64  lsgâ€“[1;3A
+   65  ./ciftofasta inputs/1axc > outputs/1axc.out 
+   66  ls
+   67  ls inputs/
+   68  ls outputs/
+   69  ls outputs/1axc.out ;3~€“;3~;3Sâ€“g;3~'~h
+   70  vim outputs/1axc.out AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA€“D€“gAaw€“â€“~'~hD
+   71  ls outputs/1axc.ou~'~h;3~D~'~h;3~;3~h~'~ 
+   72  cd 5darb/
+   73  ls
+   74  vim Makefile 
+   75  ls
+   76  cd 4darb/
+   77  cd ..
+   78  ls
+   79  cd 5darb/
+   80  ls
+   81  ls
+   82  ls
+   83  vim Makefile 
+   84  ls inputs/
+   85  cd inputs/
+   86  mv * *.inp
+   87  mv 1axc 1axc.in\
+   88  mv 1axc 1axc.in
+   89  mv 1knv 1knv.in
+   90  mv 1b77 1b77.in
+   91  mv 2ixs 2ixs.in
+   92  mv 3pge 3pge.in
+   93  cd ..
+   94  ls
+   95  vim Makefile 
+   96  ls
+   97  vim Makefile 
+   98  make clean
+   99  ls outputs/
+  100  amke
+  101  make
+  102  vim Makefile 
+  103  make
+  104  vim Makefile 
+  105  vim Makefile 
+  106  make
+  107  vim Makefile 
+  108  ls outputs/
+  109  make
+  110  cd ..
+  111  cd 5darb/
+  112  ls
+  113  vim Makefile 
+  114  make
+  115  vim Makefile 
+  116  cd ..
+  117  cd 4darb/
+  118  ls
+  119  cd branches/
+  120  ls
+  121  cd makefiles/
+  122  ls
+  123  vim Makefile 
+  124  ls
+  125  cd 5darb/
+  126  ls
+  127  ls
+  128  vim Makefile 
+  129  vim Makefile 
+  130  vim Makefile 
+  131  vim tstdiff 
+  132  vim Makefile 
+  133  vim tstdiff 
+  134  mkae
+  135  make
+  136  vim outputs/1axc.diff 
+  137  vim tstdiff 
+  138  make
+  139  vim Makefile 
+  140  make distclean
+  141  make
+  142  vim outputs/1axc.diff 
+  143  vim tstdiff 
+  144  make
+  145  make distclean
+  146  make
+  147  vim Makefile 
+  148  vim tstdiff 
+  149  make
+  150  vim tstdiff 
+  151  make
+  152  vim Makefile 
+  153  vim tstdiff 
+  154  cd 5darb/
+  155  ls
+  156  vim Makefile 
+  157  vim Makefile.swap
+  158  ls -all
+  159  vim .Makefile.swp 
+  160  vim Makefile 
+  161  make
+  162  ls
+  163  ls
+  164  ls outputs/
+  165  vim 1axc.out
+  166  vim outputs/1axc.out 
+  167  ls
+  168  cd 5darb/
+  169  ls
+  170  vim tstdiff 
+  171  vim tstdiff 
+  172  make
+  173  expr 'labas' : 'as\u\g'
+  174  echo 'expr "abcABC123ABCabc" : "\(.[b-c]*[A-Z]..[0-9]\)"'
+  175  stringZ=abcABC123ABCabc
+  176  echo `expr "$stringZ" : '\(.[b-c]*[A-Z]..[0-9]\)'` 
+  177  stringZ=abcABC123ABCabc.out
+  178  echo `expr "$stringZ" : '\(.[b-c]*[A-Z]..[0-9]\)'` 
+  179  echo `expr "$stringZ" : '\(.[b-c]*[A-Z]..[0-9])\'` 
+  180  echo `expr "$stringZ" : '\(.[b-c]*[A-Z]..[0-9]\)'` 
+  181  echo `expr "$stringZ" : '\(.[b-c]*[A-Z]*[0-9]*\)'` 
+  182  echo `expr "$stringZ" : '\(.[a-z]*[A-Z]*[0-9]*\)'` 
+  183  echo `expr "$stringZ" : '\(.([a-z]*[A-Z]*[0-9]*)*\)'` 
+  184  echo `expr "$stringZ" : '\(.([a-z]*[A-Z]*[0-9]*)+\)'` 
+  185  echo `expr "$stringZ" : '\([a-z]*[A-Z]*[0-9]*\)'` 
+  186  echo $stringZ
+  187  echo `expr "$stringZ" : '\\)'` 
+  188  echo `expr "$stringZ" : '\\'` 
+  189  echo `expr "$stringZ" : '\a\'` 
+  190  echo `expr "$stringZ" : '\(a\)'` 
+  191  echo `expr "$stringZ" : '\(*.\)'` 
+  192  echo `expr "$stringZ" : '\([a-Z][0-9]*.\)'` 
+  193  echo `expr "$stringZ" : '\([a-z][0-9]*.\)'` 
+  194  echo `expr "$stringZ" : '\([a-Z]*[0-9]*.\)'` 
+  195  echo ${stringZ/.out/}
+  196  vim tstdiff 
+  197  make
+  198  make distclean
+  199  make
+  200  vim Makefile 
+  201  vim tstdiff 
+  202  make
+  203  vim outputs/1b77.
+  204  vim outputs/1b77.diff 
+  205  vim outputs/1knv.out 
+  206  vim outputs/.diff 
+  207  rm outputs/.diff 
+  208  ls outputs/
+  209  vim outputs/1axc.diff 
+  210  ls
+  211  vim tstdiff 
+  212  make
+  213  vim outputs/1knv.diff 
+  214  vim outputs/3pge.diff 
+  215  vim Makefile 
+  216  make distclean
+  217  make
+  218  ls
+  219  vim outputs/2ixs.diff 
+  220  ls
+  221  vim Makefile 
+  222  make
+  223  make distclean
+  224  make
+  225  vim outputs/1knv.diff 
+  226  vim tstdiff 
+  227  make distclean
+  228  make
+  229  vim tstdiff 
+  230  make
+  231  vim tstdiff 
+  232  ./tstdiff 1axc.out
+  233  vim tstdiff 
+  234  ./tstdiff 1axc.out
+  235  vim Makefile 
+  236  vim tstdiff 
+  237  ./tstdiff 1axc.out
+  238  vim tstdiff 
+  239  ./tstdiff 1axc.out
+  240  vim tstdiff 
+  241  ./tstdiff 1axc.out
+  242  vim tstdiff 
+  243  ./tstdiff 1axc.out
+  244  vim tstdiff 
+  245  make
+  246  vim tstdiff 
+  247  ./tstdiff 
+  248  ./tstdiff 1axc.out
+  249  vim tstdiff 
+  250  ./tstdiff 1axc.diff
+  251  make
+  252  make distclean
+  253  make
+  254  vim outputs/3pge.diff 
+  255  vim tstdiff 
+  256  make
+  257  make distclean
+  258  make
+  259  vim outputs/3pge.diff 
+  260  ls
+  261  vim tstdiff 
+  262  make distclean
+  263  make
+  264  vim tstdiff 
+  265  make distclean
+  266  make
+  267  vim tstdiff 
+  268  make
+  269  vim outputs/3pge.diff 
+  270  vim outputs/1axc.out 
+  271  make distclean
+  272  make
+  273  vim Makefile 
+  274  ls
+  275  make
+  276  vim outputs/1axc.diff 
+  277  vim outputs/3pge.
+  278  vim outputs/3pge.diff 
+  279  make distclean
+  280  ls
+  281  svn:ignore outputs/*.diff
+  282  svn propset svn:ignore "./outputs/*.diff"
+  283  svn propset svn:ignore "*.diff" ./outputs
+  284  ls
+  285  ls
+  286  svn st
+  287  ls
+  288  svn commit
+  289  svn st
+  290  svn st
+  291  svn del .diff 
+  292  svn delete .diff 
+  293  svn delete -f .diff 
+  294  svn delete .diff 
+  295  ls
+  296  find ./ -name .diff
+  297  rm .diff
+  298  svn st
+  299  svn add tstdiff
+  300  svn del manual-computations/nucleases.sorted
+  301  ls
+  302  svn commit
+  303  ls
+  304  svn st
+  305  rm inputs/1axc.cif
+  306  svn rm inputs/1axc.cif
+  307  svn rm inputs/1knv.cif
+  308  svn rm inputs/2ixs.cif
+  309  svn rm inputs/2ixs
+  310  svn commit
+  311  ls
+  312  svn st
+  313  svn add inputs/
+  314  svn add inputs/*
+  315  svn commit
+  316  ls
+  317  svn st
+  318  svn add tests/*
+  319  svn commit
+  320  svn add outputs/*
+  321  svn commit
+  322  svn st
+  323  ls
+  324  vim test
+  325  vim Makefile 
+  326  ./tstdiff
+  327  ./tstdiff outputs/1axc.out 
+  328  vim tstdiff 
+  329  ./tstdiff 
+  330  vim tstdiff 
+  331  VIM tstdiff 
+  332  vim tstdiff 
+  333  vim tstdiff 
+  334  STR=${'labas'%.*}
+  335  STR=${labas%.*}
+  336  $STR
+  337  STR=${labas.out%.*}
+  338  $STR='labas.out'
+  339  $STR=labas.out
+  340  STR=labas.out
+  341  ${STR%.out}
+  342  STR='labas.out'
+  343  ${STR%.out}
+  344  ${STR%.out}
+  345  vim tstdiff 
+  346  INP=${STR%.out}
+  347  echo $INP
+  348  HELL=${INP%.out}
+  349  echo $HELL
+  350  ls
+  351  vim tstdiff 
+  352  ./tstdiff AABA
+  353  vim tstdiff 
+  354  ./tstdiff AABA
+  355  vim tstdiff 
+  356  ./tstdiff AABA
+  357  vim tstdiff 
+  358  ./tstdiff AABBB
+  359  vim tstdiff 
+  360  ./tstdiff AABBB outputs/1axc.out 
+  361  vim h~'~
+  362  vim tstdiff 
+  363  ./tstdiff AABBB outputs/1axc.out 
+  364  vim tstdiff
+  365  ./tstdiff AABBB outputs/1axc.out 
+  366  vim tstdiff 
+  367  ./tstdiff AABBB outputs/1axc.out 
+  368  vim tstdiff 
+  369  ./tstdiff AABBB outputs/1axc.out 
+  370  ls
+  371  vim tstdiff 
+  372  ./tstdiff AABBB outputs/1axc.out 
+  373  ./tstdiff AABBB outputs/1axc.out 
+  374  ls
+  375  vim~ tstdiff 
+  376  make
+  377  ls
+  378  LS
+  379  ls
+  380  ./tstdiff 1axc.out
+  381  vim tstdiff 
+  382  make distclean
+  383  make
+  384  vim tstdiff 
+  385  ./tstdiff outputs/1axc.diff 
+  386  ./tstdiff outputs/1axc.out
+  387  ls
+  388  ls outputs/
+  389  vim outputs/1axc.
+  390  vim outputs/1axc.diff 
+  391  make distclean
+  392  ls outputs/
+  393  make
+  394  vim outputs/1axc.
+  395  vim outputs/1axc.diff 
+  396  vim Makefile 
+  397  make distclean
+  398  make
+  399  vim tstdiff 
+  400  make distclean
+  401  make
+  402  make distclean
+  403  vim tstdiff 
+  404  vim tstdiff 
+  405  ./tstdiff outputs/1axc.out 
+  406  ls inputs/
+  407  vim tstdiff 
+  408  make
+  409  make
+  410  vim Makefile 
+  411  ls
+  412  ls
+  413  vim outputs/
+  414  vim tstdiff 
+  415  ls
+  416  cd~ outputs/
+  417  cd~ outputs/
+  418  cd outputs/
+  419  vim 1axc.out 
+  420  ls
+  421  cd ..
+  422  ./tstdiff AABBB outputs/1axc.out 
+  423  ./tstdiff AABBB outputs/1bb.out 
+  424  make distclean
+  425  mak~e
+  426  make
+  427  make
+  428  ls
+  429  svn st
+  430  svn commit Makefile 
+  431  vim tstdiff 
+  432  ls
+  433  ls inputs/
+  434  svn st
+  435  rm outputs/1axc.out 
+  436  svn st
+  437  svn commit tstdiff 
+  438  ls
+  439  svn st
+  440  svn update
+  441  svn st
+  442  pwd
+  443  date
+  444  whoami
+  445  ls -lh
+  446  ls
+  447  cd ..
+  448  ls
+  449  mkdir ndarb
+  450  cd ndarb/
+  451  pwd
+  452  svn checkout file:///stud3/2012/lutu0929/project/repoz/trunk .
+  453  ls
+  454  outocp 
+  455  ls outputs/
+  456  make
+  457  make clean
+  458  make distclean
+  459  make test
+  460  ls
+  461  vim outputs/
+  462  :q!
+  463  s
+  464  ls
+  465  cd inputs/
+  466  ls
+  467  vim 1axc.in 
+  468  ls
+  469  cd ..
+  470  ls
+  471  make distclean
+  472  make test
+  473  vim Makefile 
+  474  make distclean
+  475  make
+  476  make test
+  477  ls
+  478  vim Makefile 
+  479  ls
+  480  cd ..
+  481  ls
+  482  rm -rf 5darb/
+  483  ls
+  484  rm -rf 5darb/
+  485  ls
+  486  rm -rf 5darb
+  487  rm --help
+  488  rm --help > rmhelp
+  489  vim rmhelp 
+  490  rm -r 5darb
+  491  y
+  492  ls
+  493  cd 5darb/
+  494  ls
+  495  rm screenlog.0 
+  496  ls
+  497  svn checkout file:///stud3/2012/lutu0929/project/repoz/trunk 5darbas/
+  498  cd 5darbas/
+  499  ls -lh
+  500  ./ciftofasta inputs/1axc.in 
+  501  make test
+  502  vim Makefile 
+  503  ./tstdiff outputs/1axc.out 
+  504  ./tstdiff outputs/1axc.out outputs/1knv.out 
+  505  ./tstdiff AABBABABA
+  506  vim tstdiff 
+  507  ./tstdiff AABBABABA outputs/1axc.out 
+  508  ./tstdiff outputs/1xxx.out
+  509  vim outputs/tuscias
+  510  ./tstdiff outputs/tuscias 
+  511  make clean
+  512  make distclean
+  513  make
+  514  vim outputs/1axc.diff 
+  515  rm -rf outputs/tuscias 
+  516  svn commit
+  517  ls
+  518  vim version1.0 
+  519  rm version1.0 
+  520  vim outputs/1axc.out 
+  521  make
+  522  svn revert -R
+  523  svn revert -R outputs/1axc.out 
+  524  cd ..
+  525  cd 5darbas/
+  526  svn update
+  527  pwd
+  528  whoami
+  529  date
+  530  history > myhistory.txt

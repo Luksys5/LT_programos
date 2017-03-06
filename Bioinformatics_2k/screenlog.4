@@ -1,0 +1,1185 @@
+lutu0929@linux2:~$ whami
+bash: whami: komanda nerasta
+lutu0929@linux2:~$ wha[Koami
+lutu0929
+lutu0929@linux2:~$ ls -lgh[K[K[K[K
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m5darbas.tgz[0m              [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ date
+Sk Grd 28 23:06:08 EET 2014
+lutu0929@linux2:~$ user[K[K[K[Kpwd
+/stud3/2012/lutu0929
+lutu0929@linux2:~$ cd 3[K4darb/
+lutu0929@linux2:~/4darb$ ls
+[0m[01;34mbranches[0m  history.txt
+lutu0929@linux2:~/4darb$ cd branches/
+lutu0929@linux2:~/4darb/branches$ ls
+[0m[01;34mmakefiles[0m
+lutu0929@linux2:~/4darb/branches$ cd makefiles/
+lutu0929@linux2:~/4darb/branches/makefiles$ svn st
+M       Makefile
+?       inputs/Protein.inp
+?       inputs/saltBP.inp
+?       inputs/Survival.inp
+?       inputs/calcium.inp
+?       outputs/Protein.out
+?       outputs/saltBP.out
+?       outputs/Survival.out
+?       outputs/calcium.out
+M       outputs/sums
+lutu0929@linux2:~/4darb/branches/makefiles$ vim Makefile 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"Makefile" 25L, 441C[1;1HMY_LIST=$(wildcard outputs/list)
+IN_FILES=$(wildcard ./inputs/*.inp)
+OUT_FILES=${IN_FILES:./inputs/%.inp=./outputs/%.out}
+OUT_SUMS=outputs/sums
+OUT_SAME=outputs/pasikartoja
+
+.PHONY: clean all
+
+all: ${OUT_SAME}
+
+${OUT_SAME}: ${OUT_SUMS}[12;8H ./2pasikartoja $^ > $@
+
+./outputs/%.out: ./inputs/%.inp[15;8H sha1sum $< > $@
+
+${OUT_SUMS}: ${OUT_FILES}[18;8H ./sortlist $^ > $@
+
+distclean: clean[21;8H rm -f ${OUT_SAME}
+
+clean:[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[24;63H3[3;1H[34h[?25h[?25l[24;63H4[4;1H[34h[?25h[?25l[24;63H5[5;1H[34h[?25h[?25l[24;63H6[6;1H[34h[?25h[?25l[24;63H7[7;1H[34h[?25h[?25l[24;63H8[8;1H[34h[?25h[?25l[24;63H9[9;1H[34h[?25h[?25l[24;63H10,1[10;1H[34h[?25h[?25l[24;64H1[11;1H[34h[?25h[?25l[24;64H2[12;1H[34h[?25h[?25l[24;64H3[13;1H[34h[?25h[?25l[24;64H4[14;1H[34h[?25h[?25l[24;64H5[15;1H[34h[?25h[?25l[24;64H6[16;1H[34h[?25h[?25l[24;64H7[17;1H[34h[?25h[?25l[24;64H8[18;1H[34h[?25h[?25l[24;64H9[19;1H[34h[?25h[?25l[24;63H20[20;1H[34h[?25h[?25l[24;64H1[21;1H[34h[?25h[?25l[24;64H2[22;1H[34h[?25h[?25l[24;64H3[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;8H rm -f ${OUT_FILES}[24;63H[K[24;63H24,1[10C50%[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;8H rm -f ${OUT_SUMS}[24;63H[K[24;63H25,1[10CBot[23;1H[34h[?25h[?25l[24;64H4[22;1H[34h[?25h[?25l[24;64H3[21;1H[34h[?25h[?25l[24;64H2[20;1H[34h[?25h[?25l[24;64H1[19;1H[34h[?25h[?25l[24;64H0[18;1H[34h[?25h[?25l[24;63H19[17;1H[34h[?25h[?25l[24;64H8[16;1H[34h[?25h[?25l[24;64H7[15;1H[34h[?25h[?25l[24;64H6[14;1H[34h[?25h[?25l[24;64H5[13;1H[34h[?25h[?25l[24;64H4[12;1H[34h[?25h[?25l[24;64H3[11;1H[34h[?25h[?25l[24;64H2[10;1H[34h[?25h[?25l[24;64H1[9;1H[34h[?25h[?25l[24;64H0[8;1H[34h[?25h[?25l[24;63H9,1 [7;1H[34h[?25h[?25l[24;63H8[6;1H[34h[?25h[?25l[24;63H7[5;1H[34h[?25h[?25l[24;63H6[4;1H[34h[?25h[?25l[24;63H5[3;1H[34h[?25h[?25l[24;63H4[2;1H[34h[?25h[?25l[24;63H3[1;1H[34h[?25h[?25l[1;23r[1;1H[L[1;24r[1;1HIN_FILES=$(wildcard ./inputs/*.inp)[24;63H[K[24;63H2,1[11C50%[1;1H[34h[?25h[?25l[1;23r[1;1H[L[1;24r[1;1HMY_LIST=$(wildcard outputs/list)[24;63H[K[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[24;63H3[3;1H[34h[?25h[?25l[24;63H4[4;1H[34h[?25h[?25l[24;63H5[5;1H[34h[?25h[?25l[24;63H6[6;1H[34h[?25h[?25l[24;63H7[7;1H[34h[?25h[?25l[24;63H8[8;1H[34h[?25h[?25l[24;63H9[9;1H[34h[?25h[?25l[24;63H10,1[10;1H[34h[?25h[?25l[24;64H1[11;1H[34h[?25h[?25l[24;64H2[12;1H[34h[?25h[?25l[24;64H3[13;1H[34h[?25h[?25l[24;64H4[14;1H[34h[?25h[?25l[24;64H5[15;1H[34h[?25h[?25l[24;64H6[16;1H[34h[?25h[?25l[24;64H7[17;1H[34h[?25h[?25l[24;64H8[18;1H[34h[?25h[?25l[24;64H9[19;1H[34h[?25h[?25l[24;63H20[20;1H[34h[?25h[?25l[24;64H1[21;1H[34h[?25h[?25l[24;64H2[22;1H[34h[?25h[?25l[24;64H3[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;8H rm -f ${OUT_FILES}[24;63H[K[24;63H24,1[10C50%[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;8H rm -f ${OUT_SUMS}[24;63H[K[24;63H25,1[10CBot[23;1H[34h[?25h[?25l[24;64H4[22;1H[34h[?25h[24;1H[K[22;1H[?25l[24;63H24,1-8[8CBot[22;8H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"Makefile" 25L, 441C written
+[?1l>[34h[?25h[?1049llutu0929@linux2:~/4darb/branches/makefiles$ make comm[K[K[K[K[K[K[K[K[Ksvn commit
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"svn-commit.tmp" 5L, 102C[2;1H--This line, and those below, will be ignored--
+
+M    makefiles/Makefile
+M    makefiles/outputs/sums
+[1m[34m~                                                                               [7;1H~                                                                               [8;1H~                                                                               [9;1H~                                                                               [10;1H~                                                                               [11;1H~                                                                               [12;1H~                                                                               [13;1H~                                                                               [14;1H~                                                                               [15;1H~                                                                               [16;1H~                                                                               [17;1H~                                                                               [18;1H~                                                                               [19;1H~                                                                               [20;1H~                                                                               [21;1H~                                                                               [22;1H~                                                                               [23;1H~                                                                               [0m[24;63H1,0-1[9CAll[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CAll[1;1H[34h[?25h[?25lA[24;65H2[1;2H[34h[?25h[?25lAd[24;65H3[1;3H[34h[?25h[?25ldd[24;65H4[1;4H[34h[?25h[?25lde[24;65H5[1;5H[34h[?25h[?25led[24;65H6[1;6H[34h[?25h[?25l[24;65H7[1;7H[34h[?25h[?25l s[24;65H8[1;8H[34h[?25h[?25lsm[24;65H9[1;9H[34h[?25h[?25lmt[24;65H10[1;10H[34h[?25h[?25lth[24;66H1[1;11H[34h[?25h[?25lh?[24;66H2[1;12H[34h[?25h[?25l[2;23r[2;1H[L[1;24r[24;63H[K[24;63H2,1[11CAll[2;1H[34h[?25h[24;1H[K[2;1H[?25l[24;63H2,0-1[9CAll[2;1H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"svn-commit.tmp" 6L, 114C written
+[?1l>[34h[?25h[?1049lSending        makefiles/Makefile
+Sending        makefiles/outputs/sums
+Transmitting file data ..
+Committed revision 67.
+lutu0929@linux2:~/4darb/branches/makefiles$ svn st
+?       inputs/Survival.inp
+?       inputs/calcium.inp
+?       inputs/Protein.inp
+?       inputs/saltBP.inp
+?       outputs/saltBP.out
+?       outputs/Survival.out
+?       outputs/calcium.out
+?       outputs/Protein.out
+lutu0929@linux2:~/4darb/branches/makefiles$ svn[Kn update
+At revision 67.
+lutu0929@linux2:~/4darb/branches/makefiles$ ls
+[0m[01;32m2pasikartoja[0m  [01;34minputs[0m  Makefile  [01;34moutputs[0m  [01;32msortlist[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ svn[K[K[Krm inputs/Survival.inp [K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls inputs/
+1axc.inp  1u7b.inp  2ijx.inp  3seq.inp     [0m[01;32msaltBP.inp[0m
+1b77.inp  1ud9.inp  2io4.inp  78b1.inp     [01;32mSurvival.inp[0m
+1b87.inp  2hii.inp  2ix2.inp  [01;32mcalcium.inp[0m  tikraine1axc.inp
+1seq.inp  2hik.inp  2seq.inp  [01;32mProtein.inp[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ ls outputs/
+1axc.out  1u7b.out  2ijx.out  3seq.out     Protein.out   tikraine1axc.out
+1b77.out  1ud9.out  2io4.out  78b1.out     saltBP.out
+1b87.out  2hii.out  2ix2.out  calcium.out  sums
+1seq.out  2hik.out  2seq.out  pasikartoja  Survival.out
+lutu0929@linux2:~/4darb/branches/makefiles$ make
+make: Nothing to be done for `all'.
+lutu0929@linux2:~/4darb/branches/makefiles$ am[K[Kmake cleabn[K[Kn
+rm -f ./outputs/1axc.out ./outputs/1b77.out ./outputs/1b87.out ./outputs/1seq.out ./outputs/1u7b.out ./outputs/1ud9.out ./outputs/2hii.out ./outputs/2hik.out ./outputs/2ijx.out ./outputs/2io4.out ./outputs/2ix2.out ./outputs/2seq.out ./outputs/3seq.out ./outputs/78b1.out ./outputs/calcium.out ./outputs/Protein.out ./outputs/saltBP.out ./outputs/Survival.out ./outputs/tikraine1axc.out
+rm -f outputs/sums
+lutu0929@linux2:~/4darb/branches/makefiles$ make
+sha1sum inputs/1axc.inp > outputs/1axc.out
+sha1sum inputs/1b77.inp > outputs/1b77.out
+sha1sum inputs/1b87.inp > outputs/1b87.out
+sha1sum inputs/1seq.inp > outputs/1seq.out
+sha1sum inputs/1u7b.inp > outputs/1u7b.out
+sha1sum inputs/1ud9.inp > outputs/1ud9.out
+sha1sum inputs/2hii.inp > outputs/2hii.out
+sha1sum inputs/2hik.inp > outputs/2hik.out
+sha1sum inputs/2ijx.inp > outputs/2ijx.out
+sha1sum inputs/2io4.inp > outputs/2io4.out
+sha1sum inputs/2ix2.inp > outputs/2ix2.out
+sha1sum inputs/2seq.inp > outputs/2seq.out
+sha1sum inputs/3seq.inp > outputs/3seq.out
+sha1sum inputs/78b1.inp > outputs/78b1.out
+sha1sum inputs/calcium.inp > outputs/calcium.out
+sha1sum inputs/Protein.inp > outputs/Protein.out
+sha1sum inputs/saltBP.inp > outputs/saltBP.out
+sha1sum inputs/Survival.inp > outputs/Survival.out
+sha1sum inputs/tikraine1axc.inp > outputs/tikraine1axc.out
+./sortlist outputs/1axc.out outputs/1b77.out outputs/1b87.out outputs/1seq.out outputs/1u7b.out outputs/1ud9.out outputs/2hii.out outputs/2hik.out outputs/2ijx.out outputs/2io4.out outputs/2ix2.out outputs/2seq.out outputs/3seq.out outputs/78b1.out outputs/calcium.out outputs/Protein.out outputs/saltBP.out outputs/Survival.out outputs/tikraine1axc.out > outputs/sums
+./2pasikartoja outputs/sums > outputs/pasikartoja
+lutu0929@linux2:~/4darb/branches/makefiles$ vim Makefile 
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"Makefile" 25L, 441C[1;1HMY_LIST=$(wildcard outputs/list)
+IN_FILES=$(wildcard ./inputs/*.inp)
+OUT_FILES=${IN_FILES:./inputs/%.inp=./outputs/%.out}
+OUT_SUMS=outputs/sums
+OUT_SAME=outputs/pasikartoja
+
+.PHONY: clean all
+
+all: ${OUT_SAME}
+
+${OUT_SAME}: ${OUT_SUMS}[12;8H ./2pasikartoja $^ > $@
+
+./outputs/%.out: ./inputs/%.inp[15;8H sha1sum $< > $@
+
+${OUT_SUMS}: ${OUT_FILES}[18;8H ./sortlist $^ > $@
+
+distclean: clean[21;8H rm -f ${OUT_SAME}
+
+clean:[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;1H[1m-- INSERT --[0m[24;13H[K[24;63H1,1[11CTop[1;1H[34h[?25h[?25l[24;63H2[2;1H[34h[?25h[?25l[24;63H3[3;1H[34h[?25h[?25l[24;63H4[4;1H[34h[?25h[?25l[24;63H5[5;1H[34h[?25h[24;1H[K[5;1H[?25l[24;63H5,1[11CTop[5;1H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hw[?25l[34h[?25hq[?25l[34h[?25h[?25l"Makefile" 25L, 441C written
+[?1l>[34h[?25h[?1049llutu0929@linux2:~/4darb/branches/makefiles$ svn [K[K[K[Kls
+[0m[01;32m2pasikartoja[0m  [01;34minputs[0m  Makefile  [01;34moutputs[0m  [01;32msortlist[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ svn[K[K[Ksvn d[Kcommit[K[K[K[K[K[K[K[K[K[Ksvn st
+?       inputs/Survival.inp
+?       inputs/calcium.inp
+?       inputs/Protein.inp
+?       inputs/saltBP.inp
+?       outputs/Survival.out
+?       outputs/calcium.out
+?       outputs/Protein.out
+?       outputs/saltBP.out
+lutu0929@linux2:~/4darb/branches/makefiles$ s[Krm inputs/Survival.inp inputs/Cla[K[Kalciu inputs[K[K[K[K[K[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kiu m.in[K[K[K[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[Kcalciumm.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium.oout ot[Kutputs/Protein.out outpus[Kts/saltBP.out 
+rm: pašalinti paprastas failas „inputs/Survival.inp“? ^C
+lutu0929@linux2:~/4darb/branches/makefiles$ rm inputs/Survival.inp inputs/calciumm.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium.oout outputs/Protein.out outputs/saltBP.out [C[C[C[CM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[CM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium.[1@oMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C* inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium[1@.MM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C- inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calciu[1@mMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium[1PMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium.[1PMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C- inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium[1@.MM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cr inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calciu[1@mMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cf inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calci[1@uMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calc[1@iMM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+
+lutu0929@linux2:~/4darb/branches/makefiles$ svn st
+lutu0929@linux2:~/4darb/branches/makefiles$ svn up[da[K[K[Kdate
+At revision 67.
+lutu0929@linux2:~/4darb/branches/makefiles$ make distcleqan
+make: *** No rule to make target `distcleqan'.  Stop.
+lutu0929@linux2:~/4darb/branches/makefiles$ make distclean
+rm -f ./outputs/1axc.out ./outputs/1b77.out ./outputs/1b87.out ./outputs/1seq.out ./outputs/1u7b.out ./outputs/1ud9.out ./outputs/2hii.out ./outputs/2hik.out ./outputs/2ijx.out ./outputs/2io4.out ./outputs/2ix2.out ./outputs/2seq.out ./outputs/3seq.out ./outputs/78b1.out ./outputs/tikraine1axc.out
+rm -f outputs/sums
+rm -f outputs/pasikartoja
+lutu0929@linux2:~/4darb/branches/makefiles$ make clea[K[K[K[K[K
+sha1sum inputs/1axc.inp > outputs/1axc.out
+sha1sum inputs/1b77.inp > outputs/1b77.out
+sha1sum inputs/1b87.inp > outputs/1b87.out
+sha1sum inputs/1seq.inp > outputs/1seq.out
+sha1sum inputs/1u7b.inp > outputs/1u7b.out
+sha1sum inputs/1ud9.inp > outputs/1ud9.out
+sha1sum inputs/2hii.inp > outputs/2hii.out
+sha1sum inputs/2hik.inp > outputs/2hik.out
+sha1sum inputs/2ijx.inp > outputs/2ijx.out
+sha1sum inputs/2io4.inp > outputs/2io4.out
+sha1sum inputs/2ix2.inp > outputs/2ix2.out
+sha1sum inputs/2seq.inp > outputs/2seq.out
+sha1sum inputs/3seq.inp > outputs/3seq.out
+sha1sum inputs/78b1.inp > outputs/78b1.out
+sha1sum inputs/tikraine1axc.inp > outputs/tikraine1axc.out
+./sortlist outputs/1axc.out outputs/1b77.out outputs/1b87.out outputs/1seq.out outputs/1u7b.out outputs/1ud9.out outputs/2hii.out outputs/2hik.out outputs/2ijx.out outputs/2io4.out outputs/2ix2.out outputs/2seq.out outputs/3seq.out outputs/78b1.out outputs/tikraine1axc.out > outputs/sums
+./2pasikartoja outputs/sums > outputs/pasikartoja
+lutu0929@linux2:~/4darb/branches/makefiles$ a[Kcd ..
+lutu0929@linux2:~/4darb/branches$ cd ..
+lutu0929@linux2:~/4darb$ ce [K[K[Kcd ..
+lutu0929@linux2:~$ cd 4darb/
+lutu0929@linux2:~/4darb$ pwd
+/stud3/2012/lutu0929/4darb
+lutu0929@linux2:~/4darb$ ls
+[0m[01;34mbranches[0m  history.txt
+lutu0929@linux2:~/4darb$ date
+Sk Grd 28 23:12:06 EET 2014
+lutu0929@linux2:~/4darb$ cd ..
+lutu0929@linux2:~$ tar -cvfz 4darb.tgz 4darb/
+tar: 4darb.tgz: Cannot stat: Toks failas ar aplankas neegzistuoja
+4darb/
+4darb/.svn/
+4darb/.svn/entries
+4darb/.svn/props/
+4darb/.svn/text-base/
+4darb/.svn/prop-base/
+4darb/.svn/tmp/
+4darb/.svn/tmp/text-base/
+4darb/.svn/tmp/prop-base/
+4darb/.svn/tmp/props/
+4darb/history.txt
+4darb/branches/
+4darb/branches/makefiles/
+4darb/branches/makefiles/outputs/
+4darb/branches/makefiles/outputs/2ix2.out
+4darb/branches/makefiles/outputs/2hii.out
+4darb/branches/makefiles/outputs/1seq.out
+4darb/branches/makefiles/outputs/3seq.out
+4darb/branches/makefiles/outputs/2ijx.out
+4darb/branches/makefiles/outputs/1b87.out
+4darb/branches/makefiles/outputs/pasikartoja
+4darb/branches/makefiles/outputs/1u7b.out
+4darb/branches/makefiles/outputs/1axc.out
+4darb/branches/makefiles/outputs/.svn/
+4darb/branches/makefiles/outputs/.svn/entries
+4darb/branches/makefiles/outputs/.svn/prop-base/
+4darb/branches/makefiles/outputs/.svn/props/
+4darb/branches/makefiles/outputs/.svn/text-base/
+4darb/branches/makefiles/outputs/.svn/text-base/2hik.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/78b1.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b87.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1ud9.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/pasikartoja.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2hii.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b77.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ix2.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/3seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/tikraine1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ijx.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2io4.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1u7b.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/sums.svn-base
+4darb/branches/makefiles/outputs/.svn/tmp/
+4darb/branches/makefiles/outputs/.svn/tmp/props/
+4darb/branches/makefiles/outputs/.svn/tmp/text-base/
+4darb/branches/makefiles/outputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/outputs/78b1.out
+4darb/branches/makefiles/outputs/2hik.out
+4darb/branches/makefiles/outputs/1ud9.out
+4darb/branches/makefiles/outputs/2seq.out
+4darb/branches/makefiles/outputs/2io4.out
+4darb/branches/makefiles/outputs/tikraine1axc.out
+4darb/branches/makefiles/outputs/1b77.out
+4darb/branches/makefiles/outputs/sums
+4darb/branches/makefiles/.svn/
+4darb/branches/makefiles/.svn/text-base/
+4darb/branches/makefiles/.svn/text-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/text-base/Makefile.svn-base
+4darb/branches/makefiles/.svn/text-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/tmp/
+4darb/branches/makefiles/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/tmp/text-base/
+4darb/branches/makefiles/.svn/tmp/props/
+4darb/branches/makefiles/.svn/entries
+4darb/branches/makefiles/.svn/prop-base/
+4darb/branches/makefiles/.svn/prop-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/prop-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/props/
+4darb/branches/makefiles/.svn/props/shas1.svn-work
+4darb/branches/makefiles/sortlist
+4darb/branches/makefiles/Makefile
+4darb/branches/makefiles/2pasikartoja
+4darb/branches/makefiles/inputs/
+4darb/branches/makefiles/inputs/1u7b.inp
+4darb/branches/makefiles/inputs/.svn/
+4darb/branches/makefiles/inputs/.svn/entries
+4darb/branches/makefiles/inputs/.svn/tmp/
+4darb/branches/makefiles/inputs/.svn/tmp/text-base/
+4darb/branches/makefiles/inputs/.svn/tmp/props/
+4darb/branches/makefiles/inputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/inputs/.svn/props/
+4darb/branches/makefiles/inputs/.svn/prop-base/
+4darb/branches/makefiles/inputs/.svn/text-base/
+4darb/branches/makefiles/inputs/.svn/text-base/tikraine1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2io4.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1u7b.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ijx.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/3seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ix2.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b77.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1ud9.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hii.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hik.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/78b1.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b87.inp.svn-base
+4darb/branches/makefiles/inputs/1axc.inp
+4darb/branches/makefiles/inputs/2hik.inp
+4darb/branches/makefiles/inputs/tikraine1axc.inp
+4darb/branches/makefiles/inputs/1ud9.inp
+4darb/branches/makefiles/inputs/2seq.inp
+4darb/branches/makefiles/inputs/2io4.inp
+4darb/branches/makefiles/inputs/78b1.inp
+4darb/branches/makefiles/inputs/1b77.inp
+4darb/branches/makefiles/inputs/2ix2.inp
+4darb/branches/makefiles/inputs/2hii.inp
+4darb/branches/makefiles/inputs/1seq.inp
+4darb/branches/makefiles/inputs/2ijx.inp
+4darb/branches/makefiles/inputs/1b87.inp
+4darb/branches/makefiles/inputs/3seq.inp
+4darb/branches/.svn/
+4darb/branches/.svn/entries
+4darb/branches/.svn/props/
+4darb/branches/.svn/text-base/
+4darb/branches/.svn/tmp/
+4darb/branches/.svn/tmp/text-base/
+4darb/branches/.svn/tmp/prop-base/
+4darb/branches/.svn/tmp/props/
+4darb/branches/.svn/prop-base/
+tar: Exiting with failure status due to previous errors
+lutu0929@linux2:~$ ls
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m5darbas.tgz[0m              [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ du -L
+2	./.subversion/auth/svn.ssl.client-passphrase
+2	./.subversion/auth/svn.simple
+2	./.subversion/auth/svn.username
+2	./.subversion/auth/svn.ssl.server
+10	./.subversion/auth
+34	./.subversion
+330	./.texmf-var/fonts/pk/modeless/public/txfonts
+332	./.texmf-var/fonts/pk/modeless/public
+334	./.texmf-var/fonts/pk/modeless
+336	./.texmf-var/fonts/pk
+2	./.texmf-var/fonts/tfm/lh/lh-t2a
+4	./.texmf-var/fonts/tfm/lh
+6	./.texmf-var/fonts/tfm
+344	./.texmf-var/fonts
+346	./.texmf-var
+45	./.dbus/session-bus
+47	./.dbus
+2	./Visual Studio 2012/Settings
+2	./Visual Studio 2012/Templates/ProjectTemplates/Visual Web Developer
+2	./Visual Studio 2012/Templates/ProjectTemplates/Extensibility
+2	./Visual Studio 2012/Templates/ProjectTemplates/Visual C#
+2	./Visual Studio 2012/Templates/ProjectTemplates/JavaScript
+2	./Visual Studio 2012/Templates/ProjectTemplates/Visual C++ Project
+2	./Visual Studio 2012/Templates/ProjectTemplates/Visual Basic
+14	./Visual Studio 2012/Templates/ProjectTemplates
+2	./Visual Studio 2012/Templates/ItemTemplates/Extensibility
+2	./Visual Studio 2012/Templates/ItemTemplates/JavaScript
+2	./Visual Studio 2012/Templates/ItemTemplates/Visual Web Developer
+2	./Visual Studio 2012/Templates/ItemTemplates/Visual C++ Project
+2	./Visual Studio 2012/Templates/ItemTemplates/Visual Basic
+2	./Visual Studio 2012/Templates/ItemTemplates/Visual C#
+14	./Visual Studio 2012/Templates/ItemTemplates
+30	./Visual Studio 2012/Templates
+34	./Visual Studio 2012
+54	./.config/openbox
+4	./.config/xarchiver
+4	./.config/leafpad
+7	./.config/libreoffice/3/user/basic/Standard
+12	./.config/libreoffice/3/user/basic
+2	./.config/libreoffice/3/user/backup
+2	./.config/libreoffice/3/user/Scripts
+2	./.config/libreoffice/3/user/autocorr
+2	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc/images/Bitmaps
+4	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc/images
+2	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc/toolbar
+2	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc/menubar
+2	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc/statusbar
+12	./.config/libreoffice/3/user/config/soffice.cfg/modules/scalc
+14	./.config/libreoffice/3/user/config/soffice.cfg/modules
+16	./.config/libreoffice/3/user/config/soffice.cfg
+498	./.config/libreoffice/3/user/config
+12	./.config/libreoffice/3/user/gallery
+4	./.config/libreoffice/3/user/autotext
+2	./.config/libreoffice/3/user/template
+2	./.config/libreoffice/3/user/store
+2	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.executable.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.script.PackageRegistryBackend
+4	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.help.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.sfwk.PackageRegistryBackend
+4	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.configuration.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/bundled/registry/com.sun.star.comp.deployment.bundle.PackageRegistryBackend
+29	./.config/libreoffice/3/user/extensions/bundled/registry
+81	./.config/libreoffice/3/user/extensions/bundled
+2	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.bundle.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.script.PackageRegistryBackend
+4	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.configuration.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.executable.PackageRegistryBackend
+2	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.sfwk.PackageRegistryBackend
+4	./.config/libreoffice/3/user/extensions/shared/registry/com.sun.star.comp.deployment.help.PackageRegistryBackend
+29	./.config/libreoffice/3/user/extensions/shared/registry
+81	./.config/libreoffice/3/user/extensions/shared
+164	./.config/libreoffice/3/user/extensions
+1033	./.config/libreoffice/3/user/database/biblio
+1039	./.config/libreoffice/3/user/database
+2	./.config/libreoffice/3/user/uno_packages/cache/uno_packages
+2	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.script.PackageRegistryBackend
+4	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.configuration.PackageRegistryBackend
+4	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.help.PackageRegistryBackend
+2	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.component.PackageRegistryBackend
+2	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.sfwk.PackageRegistryBackend
+2	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.executable.PackageRegistryBackend
+2	./.config/libreoffice/3/user/uno_packages/cache/registry/com.sun.star.comp.deployment.bundle.PackageRegistryBackend
+29	./.config/libreoffice/3/user/uno_packages/cache/registry
+83	./.config/libreoffice/3/user/uno_packages/cache
+85	./.config/libreoffice/3/user/uno_packages
+2	./.config/libreoffice/3/user/wordbook
+2	./.config/libreoffice/3/user/temp
+2	./.config/libreoffice/3/user/psprint/driver
+2	./.config/libreoffice/3/user/psprint/fontmetric
+51	./.config/libreoffice/3/user/psprint
+1897	./.config/libreoffice/3/user
+1899	./.config/libreoffice/3
+1901	./.config/libreoffice
+4	./.config/pcmanfm/LXDE
+6	./.config/pcmanfm
+2	./.config/chromium/Crash Reports
+1028	./.config/chromium/Dictionaries
+5	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/css
+15	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_metadata
+92	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/images
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/html
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/lt
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/cs
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/pt_BR
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/pt_PT
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/nl
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/en
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/fr
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/en_GB
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/hr
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/fil
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/bg
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/et
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/nb
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/pl
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/es
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/hu
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/sr
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/hi
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/sl
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/ca
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/zh_TW
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/ro
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/it
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/da
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/sk
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/tr
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/zh_CN
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/el
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/th
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/vi
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/de
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/ja
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/uk
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/es_419
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/ru
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/id
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/fi
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/sv
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/ko
+4	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales/lv
+162	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0/_locales
+665	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda/0.0.6.1_0
+667	./.config/chromium/Default/Extensions/nmmhkkegccagdldgiimedpiccmgmieda
+669	./.config/chromium/Default/Extensions
+2	./.config/chromium/Default/Local Extension Settings
+66	./.config/chromium/Default/Local Storage
+2312	./.config/chromium/Default/Session Storage
+286	./.config/chromium/Default/GPUCache
+12	./.config/chromium/Default/databases
+9	./.config/chromium/Default/Extension State
+1244	./.config/chromium/Default/Application Cache/Cache
+1281	./.config/chromium/Default/Application Cache
+81	./.config/chromium/Default/Sync Data Backup
+79	./.config/chromium/Default/IndexedDB/https_www.google.lt_0.indexeddb.leveldb
+81	./.config/chromium/Default/IndexedDB
+6712	./.config/chromium/Default
+10813	./.config/chromium/pnacl/0.1.0.13367/_platform_specific/x86_32
+10815	./.config/chromium/pnacl/0.1.0.13367/_platform_specific
+6	./.config/chromium/pnacl/0.1.0.13367/_metadata
+10827	./.config/chromium/pnacl/0.1.0.13367
+10829	./.config/chromium/pnacl
+28753	./.config/chromium
+5	./.config/lxpanel/LXDE/panels
+9	./.config/lxpanel/LXDE
+2	./.config/lxpanel/Lubuntu
+13	./.config/lxpanel
+5	./.config/dconf
+14	./.config/gedit
+4	./.config/enchant
+30759	./.config
+2	./.qgis/cache/prepared
+2	./.qgis/cache/data7/5
+2	./.qgis/cache/data7/e
+2	./.qgis/cache/data7/b
+2	./.qgis/cache/data7/2
+2	./.qgis/cache/data7/8
+2	./.qgis/cache/data7/6
+2	./.qgis/cache/data7/f
+2	./.qgis/cache/data7/a
+2	./.qgis/cache/data7/1
+2	./.qgis/cache/data7/9
+2	./.qgis/cache/data7/3
+2	./.qgis/cache/data7/c
+2	./.qgis/cache/data7/d
+2	./.qgis/cache/data7/4
+2	./.qgis/cache/data7/0
+2	./.qgis/cache/data7/7
+34	./.qgis/cache/data7
+38	./.qgis/cache
+64	./.qgis
+2	./Custom Office Templates
+4	./.mc
+4	./Music/$RECYCLE.BIN
+7	./Music
+1284	./Atsiuntimai
+2	./.bluefish/autosave
+34	./.bluefish
+107	./.fontconfig
+4	./Downloads/$RECYCLE.BIN
+48	./Downloads/cnlabs
+106	./Downloads
+532	./.svn/text-base
+2	./.svn/prop-base
+2	./.svn/tmp/text-base
+2	./.svn/tmp/prop-base
+2	./.svn/tmp/props
+8	./.svn/tmp
+2	./.svn/props
+549	./.svn
+4	./.ssh
+du: negaliu pasiekti „./.pulse/aa3fda47cbac93be999ef48700000189-runtime“
+du: negaliu pasiekti „./.pulse/6109b555faf1e46545f93cb900000510-runtime“
+du: negaliu pasiekti „./.pulse/a59edba42d56e1e594e826b0523d620e-runtime“
+du: negaliu pasiekti „./.pulse/a4c5ff2e5e328cdbea9b779700087192-runtime“
+du: negaliu pasiekti „./.pulse/aab0542855c88b6bf2832e9952256b13-runtime“
+du: negaliu pasiekti „./.pulse/878d1fa2b09e41b3a37f8a43000e9942-runtime“
+du: negaliu pasiekti „./.pulse/9938ab4c922142829f1f6431522eb471-runtime“
+du: negaliu pasiekti „./.pulse/aec71a3117d4e0f757ade4970000010f-runtime“
+du: negaliu pasiekti „./.pulse/69bdb64352a13d88925497ed00105baa-runtime“
+du: negaliu pasiekti „./.pulse/f2b484f9d85a58bcabb278930001d11f-runtime“
+du: negaliu pasiekti „./.pulse/5f986707bd09e4ef5c7662e100187dc1-runtime“
+du: negaliu pasiekti „./.pulse/94a891c60d9b4fdf9b6379e852657804-runtime“
+du: negaliu pasiekti „./.pulse/81848cb9785179293861d4df00226971-runtime“
+du: negaliu pasiekti „./.pulse/0d68216703883f77472899eb534cde26-runtime“
+du: negaliu pasiekti „./.pulse/abf77bc4aa207d41fb0e5ca900000187-runtime“
+du: negaliu pasiekti „./.pulse/afd5188442eb7e536670c31f00211b26-runtime“
+du: negaliu pasiekti „./.pulse/42715a296e1e3baba189a59d534ce472-runtime“
+du: negaliu pasiekti „./.pulse/ed4795cc0ea01fa0039d4d29000000fb-runtime“
+du: negaliu pasiekti „./.pulse/d41a39751aff826d66759ba8000001db-runtime“
+du: negaliu pasiekti „./.pulse/a03f91d61ed02e0bc133b981000f3880-runtime“
+du: negaliu pasiekti „./.pulse/7eb7aa1417d4a9de52755eb1000000be-runtime“
+du: negaliu pasiekti „./.pulse/5ee73765f915bc9b21fc123e000000de-runtime“
+du: negaliu pasiekti „./.pulse/aeb81e7f19ff46fb6aaa86ff001a62e5-runtime“
+du: negaliu pasiekti „./.pulse/56a3a32bfae716499e26315c00000156-runtime“
+31	./.pulse
+2	./.emacs.d
+4	./.gconf/apps/gnome-terminal/profiles/Default
+7	./.gconf/apps/gnome-terminal/profiles
+4	./.gconf/apps/gnome-terminal/global
+13	./.gconf/apps/gnome-terminal
+15	./.gconf/apps
+17	./.gconf
+4	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys/#qsf.is.quoracdn.net
+4	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys/#s.ytimg.com
+4	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys/#keytarget.adnet.lt
+4	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys/#bbcdn-bbnaut.ibillboard.com
+4	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys/#static-trackers.adtarget.me
+21	./.macromedia/Flash_Player/macromedia.com/support/flashplayer/sys
+23	./.macromedia/Flash_Player/macromedia.com/support/flashplayer
+25	./.macromedia/Flash_Player/macromedia.com/support
+27	./.macromedia/Flash_Player/macromedia.com
+4	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/bbcdn-bbnaut.ibillboard.com/server-static-files/bbnaut-b.swf
+6	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/bbcdn-bbnaut.ibillboard.com/server-static-files
+8	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/bbcdn-bbnaut.ibillboard.com
+4	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/static-trackers.adtarget.me/flash/storage.swf
+6	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/static-trackers.adtarget.me/flash
+8	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/static-trackers.adtarget.me
+4	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/keytarget.adnet.lt/swf/storage.swf
+6	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/keytarget.adnet.lt/swf
+8	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/keytarget.adnet.lt
+4	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/qsf.is.quoracdn.net
+2	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY/s.ytimg.com
+30	./.macromedia/Flash_Player/#SharedObjects/2R9BTKDY
+32	./.macromedia/Flash_Player/#SharedObjects
+61	./.macromedia/Flash_Player
+63	./.macromedia
+2	./WINDOWS/system
+13	./WINDOWS
+4	./.thumbnails
+2	./6darb
+2	./Dokumentai
+4	./Pictures/$RECYCLE.BIN
+7	./Pictures
+2	./gretl
+4	./.mozilla/firefox/t19e6hjd.default/webapps
+6	./.mozilla/firefox/t19e6hjd.default/chrome
+17	./.mozilla/firefox/t19e6hjd.default/bookmarkbackups
+5167	./.mozilla/firefox/t19e6hjd.default
+5170	./.mozilla/firefox
+2	./.mozilla/extensions
+5174	./.mozilla
+4	./.cache
+^C
+lutu0929@linux2:~$ du -L[K[K[K[K[Klstar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccd ..[Ktar -cvfz 4darb.tgz 4darb/
+tar: 4darb.tgz: Cannot stat: Toks failas ar aplankas neegzistuoja
+4darb/
+4darb/.svn/
+4darb/.svn/entries
+4darb/.svn/props/
+4darb/.svn/text-base/
+4darb/.svn/prop-base/
+4darb/.svn/tmp/
+4darb/.svn/tmp/text-base/
+4darb/.svn/tmp/prop-base/
+4darb/.svn/tmp/props/
+4darb/history.txt
+4darb/branches/
+4darb/branches/makefiles/
+4darb/branches/makefiles/outputs/
+4darb/branches/makefiles/outputs/2ix2.out
+4darb/branches/makefiles/outputs/2hii.out
+4darb/branches/makefiles/outputs/1seq.out
+4darb/branches/makefiles/outputs/3seq.out
+4darb/branches/makefiles/outputs/2ijx.out
+4darb/branches/makefiles/outputs/1b87.out
+4darb/branches/makefiles/outputs/pasikartoja
+4darb/branches/makefiles/outputs/1u7b.out
+4darb/branches/makefiles/outputs/1axc.out
+4darb/branches/makefiles/outputs/.svn/
+4darb/branches/makefiles/outputs/.svn/entries
+4darb/branches/makefiles/outputs/.svn/prop-base/
+4darb/branches/makefiles/outputs/.svn/props/
+4darb/branches/makefiles/outputs/.svn/text-base/
+4darb/branches/makefiles/outputs/.svn/text-base/2hik.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/78b1.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b87.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1ud9.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/pasikartoja.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2hii.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b77.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ix2.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/3seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/tikraine1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ijx.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2io4.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1u7b.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/sums.svn-base
+4darb/branches/makefiles/outputs/.svn/tmp/
+4darb/branches/makefiles/outputs/.svn/tmp/props/
+4darb/branches/makefiles/outputs/.svn/tmp/text-base/
+4darb/branches/makefiles/outputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/outputs/78b1.out
+4darb/branches/makefiles/outputs/2hik.out
+4darb/branches/makefiles/outputs/1ud9.out
+4darb/branches/makefiles/outputs/2seq.out
+4darb/branches/makefiles/outputs/2io4.out
+4darb/branches/makefiles/outputs/tikraine1axc.out
+4darb/branches/makefiles/outputs/1b77.out
+4darb/branches/makefiles/outputs/sums
+4darb/branches/makefiles/.svn/
+4darb/branches/makefiles/.svn/text-base/
+4darb/branches/makefiles/.svn/text-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/text-base/Makefile.svn-base
+4darb/branches/makefiles/.svn/text-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/tmp/
+4darb/branches/makefiles/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/tmp/text-base/
+4darb/branches/makefiles/.svn/tmp/props/
+4darb/branches/makefiles/.svn/entries
+4darb/branches/makefiles/.svn/prop-base/
+4darb/branches/makefiles/.svn/prop-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/prop-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/props/
+4darb/branches/makefiles/.svn/props/shas1.svn-work
+4darb/branches/makefiles/sortlist
+4darb/branches/makefiles/Makefile
+4darb/branches/makefiles/2pasikartoja
+4darb/branches/makefiles/inputs/
+4darb/branches/makefiles/inputs/1u7b.inp
+4darb/branches/makefiles/inputs/.svn/
+4darb/branches/makefiles/inputs/.svn/entries
+4darb/branches/makefiles/inputs/.svn/tmp/
+4darb/branches/makefiles/inputs/.svn/tmp/text-base/
+4darb/branches/makefiles/inputs/.svn/tmp/props/
+4darb/branches/makefiles/inputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/inputs/.svn/props/
+4darb/branches/makefiles/inputs/.svn/prop-base/
+4darb/branches/makefiles/inputs/.svn/text-base/
+4darb/branches/makefiles/inputs/.svn/text-base/tikraine1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2io4.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1u7b.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ijx.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/3seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ix2.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b77.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1ud9.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hii.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hik.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/78b1.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b87.inp.svn-base
+4darb/branches/makefiles/inputs/1axc.inp
+4darb/branches/makefiles/inputs/2hik.inp
+4darb/branches/makefiles/inputs/tikraine1axc.inp
+4darb/branches/makefiles/inputs/1ud9.inp
+4darb/branches/makefiles/inputs/2seq.inp
+4darb/branches/makefiles/inputs/2io4.inp
+4darb/branches/makefiles/inputs/78b1.inp
+4darb/branches/makefiles/inputs/1b77.inp
+4darb/branches/makefiles/inputs/2ix2.inp
+4darb/branches/makefiles/inputs/2hii.inp
+4darb/branches/makefiles/inputs/1seq.inp
+4darb/branches/makefiles/inputs/2ijx.inp
+4darb/branches/makefiles/inputs/1b87.inp
+4darb/branches/makefiles/inputs/3seq.inp
+4darb/branches/.svn/
+4darb/branches/.svn/entries
+4darb/branches/.svn/props/
+4darb/branches/.svn/text-base/
+4darb/branches/.svn/tmp/
+4darb/branches/.svn/tmp/text-base/
+4darb/branches/.svn/tmp/prop-base/
+4darb/branches/.svn/tmp/props/
+4darb/branches/.svn/prop-base/
+tar: Exiting with failure status due to previous errors
+lutu0929@linux2:~$ tar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kls[Klutu0929@linux2:~$ ls[Klutu0929@linux2:~$ lstar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccd ..[K[1Pdate[2Plspwdcd 4darb/[4P..[1Pmake distcleanqan[5Psvn update[4Pstrm -rf  inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/callcium.out outputs/Protein.out outputs/saltBP.out M[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cinputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium.[5P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[CM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csvn st[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[4Plsvim Makefile make[K clean[Kls outputs/[1Pinputs/[Ksvn update[4Pstcommitvim Makefile [7Psvn stcd makefiles/ls[Kcd branches/ls[Kcd 4darb/[6Ppwddate[1Pls whoami[1Pamivim Makefile ls[K./ciftofasta inputs-data/1axc.cif [13P1axc.cif[K[4Pvim Makefile ls[Kgrep -w results/1axc.fa [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[10Pvim aa-counts[C./aa-counts 1axc.fa1[Ka 1axc.fa[K[2@vim [C[C[C[C[C[C[C[C[C[C./aa-counts 1axc.fa[5Pvim aa-counts ls[Kvim Makefile ls[K inputs-data/[2Pvim Makefile ls[Kcd ..[3Plsvim Makefile ls inputs-data/[Kvim Makefile ls[Kvim aa-counts ./aa-counts 1axc.fa[5Pvim aa-counts [2P./[C[C[C[C[C[C[C[C[C[Ca 1axc.fa11[Kaxc.fa[5Pvim aa-counts [10@grep -w results/1axc.fa[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls[Kvim Makefile ./ciftofasta 1axc.cifinputs-data/1axc.cif [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls[Kvim Makefile [8Pwhamioami[3Pls date[1Ppwdcd 4darb/ls[Kcd branches/ls[Kcd makefiles/[7Psvn stvim Makefile [3Psvn commit[4Pstupdatels[K inputs/outputs/[7Pmake clean[Kvim Makefile ls[Ksvn strm inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/calcium..out outputs/Protein.out outputs/saltBP.out M-rf  inputs/Survival.inp inputs/calcium.inp inputs/Protein.inp inputs/saltBP.inp outputs/Survival.out outputs/cal[5@cium.[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[CM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Csvn st[K
+[KM[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cupdatemake distcleqan[1Pan[Kcd ..4darb/[6Ppwd[1Plsdatecd ..tar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls[K[Ktar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ktar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Klstar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccd ..[K[Klutu0929@linux2:~$ cd ..[K[K[K[K[Kscp lutu0929@uosis.mif.vu.lt:5darb.tgz ./
+Password: 
+scp: 5darb.tgz: No such file or directory
+lutu0929@linux2:~$ scp lutu0929@uosis.mif.vu.lt:5darb.tgz ./[1@a[1@s
+Password: 
+5darbas.tgz                                     0%    0     0.0KB/s   --:-- ETA5darbas.tgz                                   100% 1852KB   1.8MB/s   00:00    
+lutu0929@linux2:~$ ls
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m5darbas.tgz[0m              [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ lsscp lutu0929@uosis.mif.vu.lt:5darbas.tgz ./[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kls
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m5darbas.tgz[0m              [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ rm[K[Kls 4darb/
+branches/    history.txt  .svn/        
+lutu0929@linux2:~$ ls 4darb/branches/
+makefiles/ .svn/      
+lutu0929@linux2:~$ ls 4darb/branches/
+makefiles/ .svn/      
+lutu0929@linux2:~$ ls 4darb/branches/makefiles/
+2pasikartoja  Makefile      sortlist      
+inputs/       outputs/      .svn/         
+lutu0929@linux2:~$ ls 4darb/branches/makefiles/inputs/
+1axc.inp          1u7b.inp          2ijx.inp          3seq.inp
+1b77.inp          1ud9.inp          2io4.inp          78b1.inp
+1b87.inp          2hii.inp          2ix2.inp          .svn/
+1seq.inp          2hik.inp          2seq.inp          tikraine1axc.inp
+lutu0929@linux2:~$ ls 4darb/branches/makefiles/inputs/
+1axc.inp          1u7b.inp          2ijx.inp          3seq.inp
+1b77.inp          1ud9.inp          2io4.inp          78b1.inp
+1b87.inp          2hii.inp          2ix2.inp          .svn/
+1seq.inp          2hik.inp          2seq.inp          tikraine1axc.inp
+lutu0929@linux2:~$ ls 4darb/branches/makefiles/inputs/[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kcd 4darb/branches/makefiles/
+lutu0929@linux2:~/4darb/branches/makefiles$ ls
+[0m[01;32m2pasikartoja[0m  [01;34minputs[0m  Makefile  [01;34moutputs[0m  [01;32msortlist[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ make clean
+rm -f ./outputs/1axc.out ./outputs/1b77.out ./outputs/1b87.out ./outputs/1seq.out ./outputs/1u7b.out ./outputs/1ud9.out ./outputs/2hii.out ./outputs/2hik.out ./outputs/2ijx.out ./outputs/2io4.out ./outputs/2ix2.out ./outputs/2seq.out ./outputs/3seq.out ./outputs/78b1.out ./outputs/tikraine1axc.out
+rm -f outputs/sums
+lutu0929@linux2:~/4darb/branches/makefiles$ make distclean
+rm -f ./outputs/1axc.out ./outputs/1b77.out ./outputs/1b87.out ./outputs/1seq.out ./outputs/1u7b.out ./outputs/1ud9.out ./outputs/2hii.out ./outputs/2hik.out ./outputs/2ijx.out ./outputs/2io4.out ./outputs/2ix2.out ./outputs/2seq.out ./outputs/3seq.out ./outputs/78b1.out ./outputs/tikraine1axc.out
+rm -f outputs/sums
+rm -f outputs/pasikartoja
+lutu0929@linux2:~/4darb/branches/makefiles$ ls outputs/
+lutu0929@linux2:~/4darb/branches/makefiles$ cd ..
+lutu0929@linux2:~/4darb/branches$ cd ..
+lutu0929@linux2:~/4darb$ cd ..
+lutu0929@linux2:~$ ls
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m5darbas.tgz[0m              [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ rm -rcv[K[Kf 5darbas.tgz 
+lutu0929@linux2:~$ trm -rf 5darbas.tgz ls[Kcd ..ls outputs/make distclean[4Pcleanls[Kcd 4darb/branches/makefiles/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cls[Kscp lutu0929@uosis.mif.vu.lt:5darbas.tgz ./[2P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[15Ptar -cvfz 4darb.tgz 4darb/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ktar -cvfz 4darb.tgz 4darb/
+tar: 4darb.tgz: Cannot stat: Toks failas ar aplankas neegzistuoja
+4darb/
+4darb/.svn/
+4darb/.svn/entries
+4darb/.svn/props/
+4darb/.svn/text-base/
+4darb/.svn/prop-base/
+4darb/.svn/tmp/
+4darb/.svn/tmp/text-base/
+4darb/.svn/tmp/prop-base/
+4darb/.svn/tmp/props/
+4darb/history.txt
+4darb/branches/
+4darb/branches/makefiles/
+4darb/branches/makefiles/outputs/
+4darb/branches/makefiles/outputs/.svn/
+4darb/branches/makefiles/outputs/.svn/entries
+4darb/branches/makefiles/outputs/.svn/prop-base/
+4darb/branches/makefiles/outputs/.svn/props/
+4darb/branches/makefiles/outputs/.svn/text-base/
+4darb/branches/makefiles/outputs/.svn/text-base/2hik.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/78b1.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b87.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1ud9.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/pasikartoja.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2hii.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b77.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ix2.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/3seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/tikraine1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ijx.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2io4.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1u7b.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/sums.svn-base
+4darb/branches/makefiles/outputs/.svn/tmp/
+4darb/branches/makefiles/outputs/.svn/tmp/props/
+4darb/branches/makefiles/outputs/.svn/tmp/text-base/
+4darb/branches/makefiles/outputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/
+4darb/branches/makefiles/.svn/text-base/
+4darb/branches/makefiles/.svn/text-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/text-base/Makefile.svn-base
+4darb/branches/makefiles/.svn/text-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/tmp/
+4darb/branches/makefiles/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/tmp/text-base/
+4darb/branches/makefiles/.svn/tmp/props/
+4darb/branches/makefiles/.svn/entries
+4darb/branches/makefiles/.svn/prop-base/
+4darb/branches/makefiles/.svn/prop-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/prop-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/props/
+4darb/branches/makefiles/.svn/props/shas1.svn-work
+4darb/branches/makefiles/sortlist
+4darb/branches/makefiles/Makefile
+4darb/branches/makefiles/2pasikartoja
+4darb/branches/makefiles/inputs/
+4darb/branches/makefiles/inputs/1u7b.inp
+4darb/branches/makefiles/inputs/.svn/
+4darb/branches/makefiles/inputs/.svn/entries
+4darb/branches/makefiles/inputs/.svn/tmp/
+4darb/branches/makefiles/inputs/.svn/tmp/text-base/
+4darb/branches/makefiles/inputs/.svn/tmp/props/
+4darb/branches/makefiles/inputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/inputs/.svn/props/
+4darb/branches/makefiles/inputs/.svn/prop-base/
+4darb/branches/makefiles/inputs/.svn/text-base/
+4darb/branches/makefiles/inputs/.svn/text-base/tikraine1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2io4.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1u7b.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ijx.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/3seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ix2.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b77.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1ud9.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hii.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hik.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/78b1.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b87.inp.svn-base
+4darb/branches/makefiles/inputs/1axc.inp
+4darb/branches/makefiles/inputs/2hik.inp
+4darb/branches/makefiles/inputs/tikraine1axc.inp
+4darb/branches/makefiles/inputs/1ud9.inp
+4darb/branches/makefiles/inputs/2seq.inp
+4darb/branches/makefiles/inputs/2io4.inp
+4darb/branches/makefiles/inputs/78b1.inp
+4darb/branches/makefiles/inputs/1b77.inp
+4darb/branches/makefiles/inputs/2ix2.inp
+4darb/branches/makefiles/inputs/2hii.inp
+4darb/branches/makefiles/inputs/1seq.inp
+4darb/branches/makefiles/inputs/2ijx.inp
+4darb/branches/makefiles/inputs/1b87.inp
+4darb/branches/makefiles/inputs/3seq.inp
+4darb/branches/.svn/
+4darb/branches/.svn/entries
+4darb/branches/.svn/props/
+4darb/branches/.svn/text-base/
+4darb/branches/.svn/tmp/
+4darb/branches/.svn/tmp/text-base/
+4darb/branches/.svn/tmp/prop-base/
+4darb/branches/.svn/tmp/props/
+4darb/branches/.svn/prop-base/
+tar: Exiting with failure status due to previous errors
+lutu0929@linux2:~$ tar -cvfz 4darb.tgz 4darb/[C[Cbranches/makefiles/
+tar: 4darb.tgz: Cannot stat: Toks failas ar aplankas neegzistuoja
+4darb/branches/makefiles/
+4darb/branches/makefiles/outputs/
+4darb/branches/makefiles/outputs/.svn/
+4darb/branches/makefiles/outputs/.svn/entries
+4darb/branches/makefiles/outputs/.svn/prop-base/
+4darb/branches/makefiles/outputs/.svn/props/
+4darb/branches/makefiles/outputs/.svn/text-base/
+4darb/branches/makefiles/outputs/.svn/text-base/2hik.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/78b1.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b87.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1ud9.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/pasikartoja.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2hii.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b77.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ix2.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/3seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/tikraine1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ijx.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2io4.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1u7b.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/sums.svn-base
+4darb/branches/makefiles/outputs/.svn/tmp/
+4darb/branches/makefiles/outputs/.svn/tmp/props/
+4darb/branches/makefiles/outputs/.svn/tmp/text-base/
+4darb/branches/makefiles/outputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/
+4darb/branches/makefiles/.svn/text-base/
+4darb/branches/makefiles/.svn/text-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/text-base/Makefile.svn-base
+4darb/branches/makefiles/.svn/text-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/tmp/
+4darb/branches/makefiles/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/tmp/text-base/
+4darb/branches/makefiles/.svn/tmp/props/
+4darb/branches/makefiles/.svn/entries
+4darb/branches/makefiles/.svn/prop-base/
+4darb/branches/makefiles/.svn/prop-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/prop-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/props/
+4darb/branches/makefiles/.svn/props/shas1.svn-work
+4darb/branches/makefiles/sortlist
+4darb/branches/makefiles/Makefile
+4darb/branches/makefiles/2pasikartoja
+4darb/branches/makefiles/inputs/
+4darb/branches/makefiles/inputs/1u7b.inp
+4darb/branches/makefiles/inputs/.svn/
+4darb/branches/makefiles/inputs/.svn/entries
+4darb/branches/makefiles/inputs/.svn/tmp/
+4darb/branches/makefiles/inputs/.svn/tmp/text-base/
+4darb/branches/makefiles/inputs/.svn/tmp/props/
+4darb/branches/makefiles/inputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/inputs/.svn/props/
+4darb/branches/makefiles/inputs/.svn/prop-base/
+4darb/branches/makefiles/inputs/.svn/text-base/
+4darb/branches/makefiles/inputs/.svn/text-base/tikraine1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2io4.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1u7b.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ijx.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/3seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ix2.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b77.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1ud9.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hii.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hik.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/78b1.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b87.inp.svn-base
+4darb/branches/makefiles/inputs/1axc.inp
+4darb/branches/makefiles/inputs/2hik.inp
+4darb/branches/makefiles/inputs/tikraine1axc.inp
+4darb/branches/makefiles/inputs/1ud9.inp
+4darb/branches/makefiles/inputs/2seq.inp
+4darb/branches/makefiles/inputs/2io4.inp
+4darb/branches/makefiles/inputs/78b1.inp
+4darb/branches/makefiles/inputs/1b77.inp
+4darb/branches/makefiles/inputs/2ix2.inp
+4darb/branches/makefiles/inputs/2hii.inp
+4darb/branches/makefiles/inputs/1seq.inp
+4darb/branches/makefiles/inputs/2ijx.inp
+4darb/branches/makefiles/inputs/1b87.inp
+4darb/branches/makefiles/inputs/3seq.inp
+tar: Exiting with failure status due to previous errors
+lutu0929@linux2:~$ la[Ks
+[0m[01;34m3darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;34m4darb[0m                    [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+[01;32mDefault.rdp[0m              [01;34mMATLAB[0m       rmhelp
+lutu0929@linux2:~$ cd 4darb/
+lutu0929@linux2:~/4darb$ ls
+[0m[01;34mbranches[0m  history.txt
+lutu0929@linux2:~/4darb$ cd branches/
+lutu0929@linux2:~/4darb/branches$ ls
+[0m[01;34mmakefiles[0m
+lutu0929@linux2:~/4darb/branches$ cd makefiles/
+lutu0929@linux2:~/4darb/branches/makefiles$ ls
+[0m[01;32m2pasikartoja[0m  [01;34minputs[0m  Makefile  [01;34moutputs[0m  [01;32msortlist[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ vimn [K[K[K[K[Kvim inputs/
+[?1049h[?1h=[1;24r[34l[34h[?25h[23m[24m[0m[H[J[?25l[24;1H"inputs/" Illegal file name[1;1H" ============================================================================
+" Netrw Directory Listing[39C (netrw v145)
+"   /mif/stud3/2012/lutu0929/4darb/branches/makefiles/inputs
+"   Sorted by      name
+"   Sort sequence: [\/]$,\<core\%(\.\d\+\)\=\>,\.h$,\.c$,\.cpp$,\~\=\*$,*,\.o$,\[6;1H"   Quick Help: <F1>:help  -:go up dir  D:delete  R:rename  s:sort-by  x:exec
+" ============================================================================
+../
+.svn/
+1axc.inp
+1b77.inp
+1b87.inp
+1seq.inp
+1u7b.inp
+1ud9.inp
+2hii.inp
+2hik.inp
+2ijx.inp
+2io4.inp
+2ix2.inp
+2seq.inp
+3seq.inp
+78b1.inp[24;63H8,1[11CTop[8;1H[34h[?25h[?25l[24;63H9[9;1H[34h[?25h[?25l[24;63H10,1[10;1H[34h[?25h[?25l[24;64H1[11;1H[34h[?25h[?25l[24;64H2[12;1H[34h[?25h[?25l[24;64H3[13;1H[34h[?25h[?25l[24;64H4[14;1H[34h[?25h[?25l[24;64H5[15;1H[34h[?25h[?25l[24;64H6[16;1H[34h[?25h[?25l[24;64H7[17;1H[34h[?25h[?25l[24;64H8[18;1H[34h[?25h[?25l[24;64H9[19;1H[34h[?25h[?25l[24;63H20[20;1H[34h[?25h[?25l[24;64H1[21;1H[34h[?25h[?25l[24;64H2[22;1H[34h[?25h[?25l[24;64H3[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;1Htikraine1axc.inp[24;1H[K[24;63H24,1[10C50%[23;1H[34h[?25h[?25l[1;23r[23;1H
+[1;24r[23;1H.swp[24;63H[K[24;63H25,1[10CBot[23;1H[34h[?25h[?25l[24;63H[K[24;1H:[34h[?25hq[?25l[34h[?25h![?25l[34h[?25h[?25l[24;1H[K[24;1H[?1l>[34h[?25h[?1049llutu0929@linux2:~/4darb/branches/makefiles$ s
+bash: s: komanda nerasta
+lutu0929@linux2:~/4darb/branches/makefiles$ ls
+[0m[01;32m2pasikartoja[0m  [01;34minputs[0m  Makefile  [01;34moutputs[0m  [01;32msortlist[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ ls -all
+viso 15
+drwxr-xr-x 5 lutu0929 lutu0929   8 Grd 28 23:17 [0m[01;34m.[0m
+drwxr-xr-x 4 lutu0929 lutu0929   4 Grd 28 23:05 [01;34m..[0m
+-rwxr-xr-x 1 lutu0929 lutu0929 207 Grd 18 22:15 [01;32m2pasikartoja[0m
+drwxr-xr-x 3 lutu0929 lutu0929  18 Grd 28 23:17 [01;34minputs[0m
+-rw-r--r-- 1 lutu0929 lutu0929 441 Grd 28 23:06 Makefile
+drwxr-xr-x 3 lutu0929 lutu0929   3 Grd 28 23:16 [01;34moutputs[0m
+-rwxr-xr-x 1 lutu0929 lutu0929  45 Grd 15 17:50 [01;32msortlist[0m
+drwxr-xr-x 6 lutu0929 lutu0929   7 Grd 28 23:08 [01;34m.svn[0m
+lutu0929@linux2:~/4darb/branches/makefiles$ cd ..
+lutu0929@linux2:~/4darb/branches$ ls[K[Kcd ..
+lutu0929@linux2:~/4darb$ ls
+[0m[01;34mbranches[0m  history.txt
+lutu0929@linux2:~/4darb$ cd ..
+lutu0929@linux2:~$ cd ..[3Plscd ..ls -all[K[1Psvim inputs/ls[Kcd makefiles/ls[Kcd branches/ls[Kcd 4darb/ls[Ktar -cvfz 4darb.tgz 4darb/branches/makefiles/[Kbranches/makefiles/[1P
+4darb/branches/makefiles/
+4darb/branches/makefiles/outputs/
+4darb/branches/makefiles/outputs/.svn/
+4darb/branches/makefiles/outputs/.svn/entries
+4darb/branches/makefiles/outputs/.svn/prop-base/
+4darb/branches/makefiles/outputs/.svn/props/
+4darb/branches/makefiles/outputs/.svn/text-base/
+4darb/branches/makefiles/outputs/.svn/text-base/2hik.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/78b1.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b87.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1ud9.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/pasikartoja.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2hii.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1b77.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ix2.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/3seq.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/tikraine1axc.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2ijx.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/2io4.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/1u7b.out.svn-base
+4darb/branches/makefiles/outputs/.svn/text-base/sums.svn-base
+4darb/branches/makefiles/outputs/.svn/tmp/
+4darb/branches/makefiles/outputs/.svn/tmp/props/
+4darb/branches/makefiles/outputs/.svn/tmp/text-base/
+4darb/branches/makefiles/outputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/
+4darb/branches/makefiles/.svn/text-base/
+4darb/branches/makefiles/.svn/text-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/text-base/Makefile.svn-base
+4darb/branches/makefiles/.svn/text-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/tmp/
+4darb/branches/makefiles/.svn/tmp/prop-base/
+4darb/branches/makefiles/.svn/tmp/text-base/
+4darb/branches/makefiles/.svn/tmp/props/
+4darb/branches/makefiles/.svn/entries
+4darb/branches/makefiles/.svn/prop-base/
+4darb/branches/makefiles/.svn/prop-base/2pasikartoja.svn-base
+4darb/branches/makefiles/.svn/prop-base/sortlist.svn-base
+4darb/branches/makefiles/.svn/props/
+4darb/branches/makefiles/.svn/props/shas1.svn-work
+4darb/branches/makefiles/sortlist
+4darb/branches/makefiles/Makefile
+4darb/branches/makefiles/2pasikartoja
+4darb/branches/makefiles/inputs/
+4darb/branches/makefiles/inputs/1u7b.inp
+4darb/branches/makefiles/inputs/.svn/
+4darb/branches/makefiles/inputs/.svn/entries
+4darb/branches/makefiles/inputs/.svn/tmp/
+4darb/branches/makefiles/inputs/.svn/tmp/text-base/
+4darb/branches/makefiles/inputs/.svn/tmp/props/
+4darb/branches/makefiles/inputs/.svn/tmp/prop-base/
+4darb/branches/makefiles/inputs/.svn/props/
+4darb/branches/makefiles/inputs/.svn/prop-base/
+4darb/branches/makefiles/inputs/.svn/text-base/
+4darb/branches/makefiles/inputs/.svn/text-base/tikraine1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2io4.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1u7b.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ijx.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/3seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1axc.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2ix2.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b77.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1seq.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1ud9.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hii.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/2hik.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/78b1.inp.svn-base
+4darb/branches/makefiles/inputs/.svn/text-base/1b87.inp.svn-base
+4darb/branches/makefiles/inputs/1axc.inp
+4darb/branches/makefiles/inputs/2hik.inp
+4darb/branches/makefiles/inputs/tikraine1axc.inp
+4darb/branches/makefiles/inputs/1ud9.inp
+4darb/branches/makefiles/inputs/2seq.inp
+4darb/branches/makefiles/inputs/2io4.inp
+4darb/branches/makefiles/inputs/78b1.inp
+4darb/branches/makefiles/inputs/1b77.inp
+4darb/branches/makefiles/inputs/2ix2.inp
+4darb/branches/makefiles/inputs/2hii.inp
+4darb/branches/makefiles/inputs/1seq.inp
+4darb/branches/makefiles/inputs/2ijx.inp
+4darb/branches/makefiles/inputs/1b87.inp
+4darb/branches/makefiles/inputs/3seq.inp
+lutu0929@linux2:~$ ls
+[0m[01;34m3darb[0m                    [01;32mDefault.rdp[0m  [01;34mMATLAB[0m         rmhelp
+[01;34m4darb[0m                    [01;34mDesktop[0m      myhist         screenlog.0
+[01;31m4darb.tgz[0m                [01;32mdesktop.ini[0m  [01;34mMusic[0m          screenlog.5
+[01;34m6darb[0m                    [01;34mdna-tools[0m    [01;34mMuzika[0m         temp.pl
+[01;34m6darbas[0m                  [01;34mDokumentai[0m   [01;34mPaveikslėliai[0m  [01;34mVideos[0m
+[01;34mAppData[0m                  [01;34mDownloads[0m    [01;34mPictures[0m       [01;34mVisual Studio 2012[0m
+[01;34mAtsiuntimai[0m              [01;34mgretl[0m        [01;34mproject[0m        [01;34mWINDOWS[0m
+bin.dat                  [01;34minputs[0m       [01;34mProlog[0m         [01;34mwww[0m
+conflict                 key.pub      [01;34mR[0m              z
+[01;34mCustom Office Templates[0m  [01;34mMaildir[0m      [01;34m$RECYCLE.BIN[0m
+lutu0929@linux2:~$ exit

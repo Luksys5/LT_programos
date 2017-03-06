@@ -1,2 +1,0 @@
-outputs
-/path/to/prepare: could not find template for task 'non-existent-template' in '../templates'

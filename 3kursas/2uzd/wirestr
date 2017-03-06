@@ -1,2 +1,0 @@
-zap; load "file:///home/luksys/Downloads/Baltymai/1BND.cif";if (_loadScript = '' && defaultLoadScript == '' && _filetype == 'Pdb') { select protein or nucleic;cartoons Only;color structure; select * }
-wireframe 10;spacefill 0.1;center selected;

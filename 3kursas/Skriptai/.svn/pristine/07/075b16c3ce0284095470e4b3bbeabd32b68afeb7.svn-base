@@ -1,9 +1,0 @@
-#!/usr/ucb/sh
-
-while [ "$1" != "" ]
-do
-   NAME=`echo $1 | sed -e 's/\.[^\./]*$//'`
-   ovid2tex < $1 > $NAME.tex
-   echo $1 "-->" $NAME.tex
-   shift
-done

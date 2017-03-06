@@ -1,0 +1,500 @@
+  229  ls
+  230  cd darbine/
+  231  ls
+  232  cd trunk/u
+  233  ls
+  234  cd trunk/u
+  235  cd trunk/
+  236  ls
+  237  cd ..
+  238  ls
+  239  cd ..
+  240  ls
+  241  cd ..
+  242  ls
+  243  ls
+  244  rm screenlog.0 screenlog.5
+  245  date
+  246  time
+  247  whoami
+  248  pwd
+  249  ls
+  250  mv 6as/ 6darbas/
+  251  svn checkout file:///stud3/2012/lutu0929/project/repoz/branches/skaiciavimo-uzduotis 6darbas/
+  252  cd 6darbas/
+  253  ls
+  254  svn st
+  255  svn update
+  256  ./ciftofasta 1axc.cif
+  257  ./ciftofasta inputs-data/1axc.cif
+  258  ls
+  259  ./countsfq 500
+  260  ./countsfq inputs-data/1axc.cif 
+  261  pwd
+  262  date
+  263  whoami
+  264  ls
+  265  mkdir 6darbas
+  266  svn checkout file:///stud3/2012/lutu0929/project/repoz/branches/skaiciavimo-uzduotis/ 6darbas/
+  267  ls
+  268  cd 6darbas/
+  269  ls
+  270  svn update
+  271  ./ciftofasta inputs-data/1axc.cif > 1axc.cnt
+  272  cat 1axc.cnt 
+  273  ./countsfq 1axc.cnt 
+  274  cd ..
+  275  ls
+  276  cd 6darbas/
+  277  vim countsfq 
+  278  ./countsfq inputs-data/1axc.cif 
+  279  ./countsfq 1axc.cnt 
+  280  ./countsfq 1axc.cnt results/1knv.cnt 
+  281  vim results/1axc.fq 
+  282  vim results/1axc.fa 
+  283  ls
+  284  rm 0 
+  285  ls
+  286  svn commit
+  287  ls
+  288  ./countsfq kazko-nera
+  289  ls
+  290  rm 0 
+  291  vim countsfq 
+  292  ./countsfq kazko-nera
+  293  ls
+  294  ./countsfq 1axc.cnt 
+  295  ls
+  296  ls
+  297  cd ..
+  298  ls
+  299  svn mkdir tags/version1.0
+  300  svn ls
+  301  svn
+  302  svn mkdir project/repoz/tags/version1.0
+  303  svn mkdir --parents project/repoz/tags/version1.0
+  304  ls
+  305  cd project/repoz/tags/
+  306  ls
+  307  cd ..
+  308  cd ..
+  309  cd ..
+  310  svn cp 6darbas/* project/repoz/tags/version1.0/
+  311  svn cp 6darbas/* project/repoz/tags/version1.0/
+  312  cd 6darbas/
+  313  ls
+  314  make clean
+  315  make distclean
+  316  cd ..
+  317  svn cp 6darbas/* project/repoz/tags/version1.0/
+  318  cd 6darbas/
+  319  svn st
+  320  rm 1axc.cnt 
+  321  ls
+  322  svn commit
+  323  ls
+  324  cd ..
+  325  ls
+  326  svn cp 6darbas/* project/repoz/tags/version1.0/
+  327  svn cp 6darbas/* project/darbine/tags/release-1.0/
+  328  rm -rf  project/darbine/tags/release-1.0/bin/
+  329  svn cp 6darbas/* project/darbine/tags/release-1.0/
+  330  svn rm --force project/darbine/tags/release-1.0/bin/
+  331  svn commit project/darbine/tags/release-1.0/
+  332  ls
+  333  svn cp 6darbas/* project/darbine/tags/release-1.0/
+  334  ls
+  335  cd project/darbine/tags/release-1.0/
+  336  ls
+  337  rm -rf bin/
+  338  svn cp file:///stud3/2012/lutu0929/project/repoz/branches/skaiciavimo-uzduotis/
+  339  svn cp file:///stud3/2012/lutu0929/project/repoz/branches/skaiciavimo-uzduotis/ ./
+  340  svn st
+  341  svn cleanup
+  342  ls
+  343  svn st
+  344  svn cp file:///stud3/2012/lutu0929/project/repoz/branches/skaiciavimo-uzduotis/ ./
+  345  ls
+  346  ls
+  347  cd skaiciavimo-uzduotis/
+  348  ls
+  349  ls
+  350  svn commit
+  351  ./ciftofasta inputs-data/1axc.cif | ./countsfq -
+  352  ./ciftofasta inputs-data/1axc.cif | ./countsfq - > out
+  353  cat out
+  354  rm out
+  355  cat results/1axc.cnt 
+  356  cat results/1axc.cnt | ./countsfq -
+  357  vim countsfq 
+  358  cat results/1axc.cnt | ./countsfq -
+  359  cat results/1axc.cnt
+  360  vim countsfq 
+  361  cat results/1axc.cnt | ./countsfq -
+  362  vim countsfq 
+  363  ./countsfq 100
+  364  vim countsfq 
+  365  ./countsfq 100
+  366  vim countsfq 
+  367  ./countsfq 100
+  368  ./countsfq 804
+  369  cat results/1axc.cnt | ./countsfq -
+  370  cat results/1axc.cnt 
+  371  cat results/1axc.cnt | ./countsfq 100
+  372  cat results/1axc.cnt | ./countsfq -
+  373  vim countsfq 
+  374  cat results/1axc.cnt | ./countsfq -
+  375  vim countsfq 
+  376  cat results/1axc.cnt | ./countsfq -
+  377  cat results/1axc.cnt | ./countsfq -
+  378  ls
+  379  ./countsfq 210
+  380  vim countsfq 
+  381  ./countsfq 210
+  382  vim ocun
+  383  vim countsfq 
+  384  ./countsfq 210
+  385  ./ciftofasta inputs-data/1axc.cif 
+  386  ./ciftofasta inputs-data/1axc.cif | ./countsfq -
+  387  cat results/1axc.cnt | ./countsfq -
+  388  vim countsfq 
+  389  cat results/1axc.cnt | ./countsfq -
+  390  ./countsfq 201
+  391  echo 201 | ./countsfq -
+  392  ls
+  393  ./countsfq 500
+  394  ./countsfq echo 500
+  395  vim countsfq 
+  396  ./countsfq 500
+  397  cat results/1axc.cnt | ./countsfq -
+  398  vim countsfq 
+  399  cat results/1axc.cnt | ./countsfq -
+  400  ls
+  401  vim countsfq 
+  402  ls
+  403  cat results/1axc.cnt 
+  404  cat results/1axc.cnt | ./countsfq 
+  405  ls
+  406  cat 500
+  407  echo 560 | ./countsfq 
+  408  echo 560 | ./countsfq -
+  409  xargs
+  410  cat results/1axc.cnt | xargs
+  411  cat results/1axc.cnt | ./countsfq xargs
+  412  cat results/1axc.cnt | xargs ./countsfq
+  413  svn commit
+  414  ls
+  415  ls
+  416  cd ..
+  417  ls
+  418  tar -cvf skaiciavimo-uzduotis.tar skaiciavimo-uzduotis/
+  419  ls
+  420  cd skaiciavimo-uzduotis
+  421  ls
+  422  make
+  423  ls
+  424  vim Makefile 
+  425  make clean
+  426  make distclean
+  427  make
+  428  ls
+  429  cd ..
+  430  cd ..
+  431  cd ..
+  432  cd ..
+  433  c d..
+  434  cd ..
+  435  ls
+  436  cd 6darbas/
+  437  svn update
+  438  ls
+  439  date
+  440  whoami
+  441  pwd
+  442  history > myhist.txt
+  443  vim myhist.txt 
+  444  cd ..
+  445  tar cvfz 6as-darbas.tgz 6darbas/
+  446  ls
+  447  ls -lh
+  448  ls -lh >size
+  449  vim size 
+  450  ls
+  451  vim screenlog.0 
+  452  mv screenlog.6
+  453  mv screenlog.0 screenlog.6.
+  454  mv screenlog.6. screenlog.6
+  455  ls
+  456  ls
+  457  ls
+  458  pwd
+  459  whoami
+  460  date
+  461  svn checkout file:///stud3/2012/lutu0929/
+  462  mkdir 4darbas
+  463  svn checkout file:///stud3/2012/lutu0929/project/repoz/branches 4darbas/
+  464  ls
+  465  cd 4darbas/
+  466  cd makefiles/
+  467  ls
+  468  svn rm -rf inputs/ outputs/ Makefile 
+  469  svn rm -r inputs/ outputs/ Makefile 
+  470  svn rm -r inputs/
+  471  svn rm inputs/
+  472  svn rm outputs/
+  473  rm Makefile 
+  474  ls
+  475  svn rm Makefile
+  476  svn commit *
+  477  ls
+  478  ls -lh
+  479  mkdir inputs/ outputs
+  480  ls
+  481  svn commit
+  482  svn add inputs/ outputs/
+  483  svn commit
+  484  svn revert inputs/
+  485  rm -rf inputs/
+  486  svn revert outputs/
+  487  rm -rf outputs/
+  488  ls
+  489  vim 2pasikartoja 
+  490  ls
+  491  cd ..
+  492  ls
+  493  ls
+  494  cd skaiciavimo-uzduotis/
+  495  ls
+  496  cd ..
+  497  cd ..
+  498  rm -rf 4darbas/
+  499  mkdir 4darbas
+  500  pwd
+  501  date
+  502  whoami
+  503  mkdir 4darbas
+  504  svn co file:///stud3/2012/lutu0929/project/repoz/branches 4darbas/
+  505  cd 4darbas/
+  506  mkdir makefiles
+  507  svn add makefiles/
+  508  svn commit
+  509  cd makefiles/
+  510  mkdir inputs/ outputs/
+  511  cd ..
+  512  ls
+  513  svn mv 2pasikartoja makefiles/
+  514  svn commit
+  515  ls
+  516  svn mv sortlist makefiles/
+  517  svn commit
+  518  ls
+  519  cd makefiles/
+  520* wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1MWP > inputs/1
+  521  ls
+  522  mv fasta.txt\?structureIdList\=1MWP 1MWP
+  523  ls
+  524  cat 1MWP 
+  525  mv 1MWP inputs/
+  526  ls
+  527  wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1OWT > inputs/1OWT
+  528  wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=3NYL > inputs/3NYL
+  529  vim BAE
+  530  ls
+  531  ls inputs/
+  532  ls inputs/ | wc -l
+  533  ls
+  534  rm -rf fasta.txt\?structureIdList\=
+  535* rm -rf fasta.txt\?structureIdList\=10
+  536  ls
+  537  rm -rf fasta.txt\?structureIdList\=3NYL 
+  538  rm -rf fasta.txt\?structureIdList\=1OWT 
+  539  ls
+  540  ls -lh 
+  541  cd inputs/
+  542  ls -lh
+  543  cat 1OWT 
+  544  rm 1OWT 
+  545  rm 3NYL 
+  546* wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1OW
+  547  cat 1OWT 
+  548  ls
+  549  rm 1OWT 
+  550  ls
+  551  mv fasta.txt\?structureIdList\=1OWT  1OWT
+  552  ls
+  553  wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=3NYL -o 3MYL
+  554  cat 3MYL 
+  555  ls
+  556  rm 3MYL 
+  557  mv fasta.txt\?structureIdList\=3NYL 3NYL
+  558  ls
+  559  ls -lh | wc -l
+  560  ls
+  561  rm 3NYL
+  562  cd ..
+  563  ls
+  564  ls
+  565  vim Makefile
+  566  make
+  567  ls
+  568  ls outputs/
+  569  make
+  570  vim Makefile 
+  571  make
+  572  vim Makefile 
+  573  ls
+  574  cd inputs/
+  575  mv * *.inp
+  576  cd ..
+  577  vim Makefile 
+  578  make
+  579  vim Makefile 
+  580  make
+  581  ls
+  582  ls outputs/
+  583  vim Makefile 
+  584  make
+  585  vim Makefile 
+  586  make
+  587  ls -all
+  588  ls -all  outputs/ 
+  589  ls
+  590  vim Makefile 
+  591  vim Makefile 
+  592  make
+  593  ls inputs/
+  594  cd inputs/
+  595  mv seqdump\(1\).txt >1seqdump
+  596  mv seqdump\(1\).txt 1seqdump
+  597  ls
+  598  mv seqdump\(2\).txt 2seqdump
+  599  mv seqdump\(3\).txt 3seqdump
+  600  mv seqdump\(4\).txt 4seqdump
+  601  mv seqdump\(5\).txt 5seqdump
+  602  mv seqdump\(6\).txt 6seqdump
+  603  ls
+  604  wget http://www.rcsb.org/pdb/files/fasta.txt?structureIdList=1NYL -O 1NYL
+  605  ls
+  606  cat 1NYL 
+  607  ls
+  608  cd ..
+  609  ls
+  610  vim Makefile 
+  611  rm outputs/*
+  612  make
+  613  rm -rf outputs/*
+  614  vim Makefile 
+  615  ls
+  616  svn st
+  617  vim Makefile 
+  618  make
+  619  rm -f outputs/*
+  620  make
+  621  vim Makefile 
+  622  make
+  623  vim Makefile 
+  624  make
+  625  ls
+  626  ls outputs/
+  627  ls inputs/
+  628  vim Makefile 
+  629  make
+  630  rm -rf outputs/*
+  631  vim Makefile 
+  632  make
+  633  ls outputs/
+  634  vim outputs/pasikartoja 
+  635  vim outputs/sums 
+  636  ls
+  637  vim Makefile 
+  638  vim 2pasikartoja 
+  639  ls
+  640  ls
+  641  ls
+  642  svn add Makefile 
+  643  svn commit
+  644  svn add inputs/
+  645  svn commit
+  646  rm -rf outputs/*
+  647  svn add outputs/
+  648  svn commit
+  649  ls
+  650  vim Makefile 
+  651  vim Makefile 
+  652  make
+  653  vim 2pasikartoja 
+  654  make
+  655  make clean
+  656  ls outputs/
+  657  make
+  658  vim 2pasikartoja 
+  659  make clean
+  660  make
+  661  vim 2pasikartoja 
+  662  make clean
+  663  make
+  664  ls
+  665  vim 2pasikartoja 
+  666  ls outputs/
+  667  touch outputs/pasikartoja 
+  668  cat outputs/pasikartoja 
+  669  vim 2pasikartoja 
+  670  make clean
+  671  make
+  672  vim 2pasikartoja 
+  673  ./2pasikartoja inputs/1OWT 
+  674  cd inputs/
+  675  ls
+  676  rm seqdump.txt 
+  677  cp 1MWP pasikartojantis
+  678  ls
+  679  cd ..
+  680  ls
+  681  vim 2pasikartoja 
+  682  make clean
+  683  make
+  684  vim outputs/pasikartoja
+  685  svn commit
+  686  make
+  687  ls
+  688  cd inputs/
+  689  ls
+  690  cp 1MWP 1pdb
+  691  cp 1NYL 2pdb
+  692  ls
+  693  cat 2pdb 
+  694  cp 2seqdump 3pdb
+  695  cp 3seqdump 4pdb
+  696  cp 4seqdump 5pdb
+  697  ls -lh | wc -l
+  698  ls
+  699  cd ..
+  700  ls
+  701  make
+  702  cat outputs/pasikartoja
+  703  ls
+  704  svn commit
+  705  vim Makefile 
+  706  make
+  707  make clean
+  708  make distclean
+  709  make
+  710  vim Makefile 
+  711  make all
+  712  make
+  713  make clean distclean
+  714  make all
+  715  make clean distclean
+  716  make
+  717  make clean distclean
+  718  svn commit
+  719  ls
+  720  cd ..
+  721  cd ..
+  722  cd 4darbas/
+  723  svn update
+  724  date
+  725  whoami
+  726  pwd
+  727  ls
+  728  history > myhistory.txt

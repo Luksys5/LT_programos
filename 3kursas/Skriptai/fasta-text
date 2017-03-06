@@ -1,5 +1,0 @@
-grep -v "\*\*" $1 |\
-	awk '/DISK/{print substr($0,22)}\
-	     /OC/{print substr($0,3)}\
-	     /OS/{print substr($0,3)}' |\
-	awk -F\; '/EM_PRO/{print $1} !/EM_PRO/{print $0}' 

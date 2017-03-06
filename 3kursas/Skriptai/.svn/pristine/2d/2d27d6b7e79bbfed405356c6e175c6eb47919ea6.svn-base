@@ -1,5 +1,0 @@
-#!/bin/sh
-
-grep -v "\\end{document}" ${HOME}/tex/templates/document.template.tex
-cat $1
-echo "\\end{document}"

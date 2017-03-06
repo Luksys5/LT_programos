@@ -1,3 +1,0 @@
-#!/bin/sh
-
-fast2pgm $1 | pgmnorm | pnmdepth 254 | pnmtotiff > $1.tif

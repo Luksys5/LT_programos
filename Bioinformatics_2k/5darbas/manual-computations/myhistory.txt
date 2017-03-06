@@ -1,0 +1,112 @@
+
+  100  curl -sSL~ http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  101  curl -i -sSL http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  102  color: red
+  103  sleep $^Crl -i -sSL http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  104  echo $RANDOM
+  105  echo $RANDOM
+  106  expr 10 \* $RANDOM /32000
+  107  > expr 10 \* $RANDOM /32000
+  108  > sleep $(expr 20 \* $RANDOM /32000); curl -i -sSL http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  109  > sleep $(expr 20 \* $RANDOM / 32000); curl -i -sSL http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  110   sleep $(expr 20 \* $RANDOM / 32000); curl -i -sSL http://www.uniprot.org/uniparc/UPI000000001F.fasta
+  111  querry = http://www.uniprot.org/uniprot/?query=reviewed:yes+AND+created:[current TO *]
+  112   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL http://www.uniprot.org/uniprot/?query=colagen&format=fasta&limit=10
+  113   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL http://www.uniprot.org/uniprot/?query=colagen&format=fasta&limit=10'
+  114   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL http://www.uniprot.org/uniprot/?query=collagen&format=fasta&limit=10'
+  115   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=collagen&format=fasta&limit=10'
+  116   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=collagen&format=fasta&limit=10' | tee collagen.fasta
+  117  less collagen.fasta 
+   119   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=collagen&format=fasta&limit=10'| grep '^>' collagen.fasta
+  120  vim collagen.fasta 
+  127  grep -v '^>' collagen.fasta  | sort -n | uniq -c
+  128  grep -v '^>' collagen.fasta  | uniq -c | sort -n
+  129  grep -v '^>' collagen.fasta  | sort uniq -c
+  130  grep -v '^>' collagen.fasta > suquences
+  131  sort -n suquences | uniq -c 
+  137  grep -v '^>' collagen.fasta  | fold -w 1 | sort -n | uniq -c
+  138  uniq 
+  139  uniq --help
+  143  grep -v '^>' collagen.fasta  | fold -w 1 | sort -n | uniq -c
+  144  grep -v '^>' collagen.fasta  | fold -w 1 | sort | uniq -c | sort -nr -k1.1
+  145  grep -v '^>' collagen.fasta  | fold -w 1 | sort | uniq -c | sort -nr -k1,1
+  146   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=collagen&format=fasta&limit=1000' | grep -v '^>' | fold -w 1 | sort | uniq -c | sort -nr -k1,1 | tee collagen.lst 
+  147  head -n 20 collagen.lst 
+  148   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=protease&format=fasta&offset=24814&limit=1000' | grep -v '^>' | fold -w 1 | sort | uniq -c | sort -nr -k1,1 | tee proteases.lst 
+  149  vim proteases.lst 
+  150   sleep $(expr 10 \* $RANDOM / 32000); curl -sSL 'http://www.uniprot.org/uniprot/?query=nucleases&format=fasta&offset=24814&limit=1000' | grep -v '^>' | fold -w 1 | sort | uniq -c | sort -nr -k1,1 | tee nucleases.lst 
+
+  152  less nucleases.lst 
+  153  head -n 5 nucleases.lst proteases.lst 
+  172  paste collagen.lst nucleases.lst proteases.lst | head -n 20
+  181  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst 
+  182  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst head -n 20
+  183  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst head -20
+  184  \
+  185  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst | head -n 20
+  186  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst | head -n20 frequence.lst
+  187  paste proteases.lst collagen.lst nucleases.lst PDB-protein-x-ray-IDs.lst | head -n20 > frequence.lst
+  188* 
+  189  vim PDB-protein-x-ray-IDs.lst 
+  198  head -n 20 collagen.lst | awk '{print $1}'
+  199  head -n 20 collagen.lst | awk '{print $1, $2}'
+  200  head -n 20 collagen.lst | awk '{print $1, $2; sum +=$1}'
+  201  head -n 20 collagen.lst | awk '{print $1, $2; print $sum +=$1}'
+  202  head -n 20 collagen.lst | awk '{print $1, $2; print $sum +=$1}'
+  203  head -n 20 collagen.lst | awk '{print $1, $2; print $sum +=$1}'
+  204  head -n 20 collagen.lst | awk '{print $1, $2; print $sum +=$1}'
+  205  head -n 20 collagen.lst | awk '{print $1, $2; print sum +=$1}'
+  206  head -n 20 collagen.lst | awk '{print $1, $2; print sum +=$1}'
+  207  head -n 20 collagen.lst | awk '{print $1, $2; print sum +=$1}END{print sum}'
+  208  head -n 20 collagen.lst | awk '{sum +=$1}END{print sum}'
+  209  head -n 20 collagen.lst | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'
+  210* head -n 20 nucleases.lst | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}' |
+  211  head -n 20 proteases.lst | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'
+  212  head -n 20 proteases.lst | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}' | head -n 20 nucleases.lst | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'
+  213  for FILE  in *.lst ; do echo $FILE; done
+  214  vim frequence.lst 
+  215  mv frequence.lst frequence
+  216  mv PDB-protein-x-ray-IDs.lst PDB
+  217  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}; done
+
+  218  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}; done'; 
+  219  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'; done
+  220  history
+  221  $219:p
+  222  $_
+  223  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'; done
+  224  $_
+  225  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}'; done > dazniai
+  226  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}' > count.cnt ; done
+  227  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}' > $FILE.cnt ; done
+  228  ls
+  229  cm collagen.lst.cnt 
+  230  rm nucleases.lst.cnt 
+  231  rm nucleases.lst.cnt 
+  232  rm collagen.lst.cnt 
+  233  rm proteases.lst.cnt 
+  234  for FILE  in *.lst ; do head -n 20 $FILE | awk 'BEGIN{sum = 0}{sum +=$1}END{print sum}' > ${FILE}.cnt ; done
+  235  cat nucleases.lst.cnt  
+  236  cat nucleases.lst.cnt  
+  237  echo \cat nucleases.lst.cnt  
+  238  echo COUNT = cat nucleases.lst.cnt  
+  239  echo COUNT = 999
+  240  echo COUNT = $(cat nucleases.lst.cnt)
+  241  for FILE  in *.lst ; do head -n 20 $FILE | awk -c COUNT=$(cat ${FILE}.cnt '{print $1/COUNT, $1, $2}' > ${FILE}.cnt ; done
+  242  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt '{print $1/COUNT, $1, $2}' > ${FILE}.cnt ; done
+  243  for FILE  in *.lst ; do head -n 20 $FILE | awk -vCOUNT=$(cat ${FILE}.cnt '{print $1/COUNT, $1, $2}' > ${FILE}.cnt ; done
+  244  for FILE  in *.lst ; do head -n 20 $FILE | awk -vCOUNT=$(cat ${FILE}.cnt '{print $1/COUNT, $1, $2}'; done
+  245  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt '{print $1/COUNT, $1, $2}'; done
+  246  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt) '{print $1/COUNT, $1, $2}'; done
+  247  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt) '{print $1/COUNT, $1, $2}' > ${FILE}.norm; done
+  248  history
+  249  history > myhistory.txt
+  250  vim myhistory.txt 
+  251  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt) '{printf "%7.4f %s/n", 100*$1/COUNT, $1, $2}' > ${FILE}.norm; done
+  252  vim nucleases.lst.norm 
+  253  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt) '{printf "%7.4f %s\n", 100*$1/COUNT, $1, $2}' > ${FILE}.norm; done
+.
+.
+  377  for FILE  in *.lst ; do head -n 20 $FILE | awk -v COUNT=$(cat ${FILE}.cnt) '{print $1*100/COUNT,"%", $1, $2}' > ${FILE}.norm; done
+
+

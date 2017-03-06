@@ -1,2 +1,0 @@
-#!/bin/sh
-strings ${1+"$@"} | awk '/<x:xmpmeta/,/<\/x:xmpmeta/'

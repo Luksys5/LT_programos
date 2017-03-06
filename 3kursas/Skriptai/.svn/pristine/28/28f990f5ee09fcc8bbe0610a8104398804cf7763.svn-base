@@ -1,8 +1,0 @@
-#!/bin/sh
-
-cat ${1+"$@"} \
-| sed -e 's/<[^>]*>//g;s/\&nbsp\;/ /g' \
-| tr '\r' '\n' \
-| sed -e 's/^ *$//' \
-| cat -s \
-| fold -w 80 -s

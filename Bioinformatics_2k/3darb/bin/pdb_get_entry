@@ -1,0 +1,56 @@
+#! /bin/sh
+#-------------------------------------------------------------------------------
+# $AUTHOR: Luksys $
+# $REVISION$
+# $Date: 2014-11-24 16:20:16 +0200 (Pr, 24 Lap 2014) $
+# $URL: file:///mif/stud3/2012/lutu0929/project/repoz/trunk/bin/pdb_get_entry $
+#-------------------------------------------------------------------------------
+#*
+# This program fetches a PDB entry atomic coordinates
+# programa: parasyti skript kad ivedus pdb koda gautumem ji
+#** USAGE:
+#**	$0 1knv
+#**	$0 1knv 2ixs
+#**	$0 --options 
+#**	
+#** OPTIONS
+#** --version
+#** --grep
+FILES=''
+set -ue
+Id='$id: pdb-fetch 3 2014-11-17 14:07:23Z Luksys $'
+
+#COUNTER=0
+BASENAME="$(basename $0)"
+while [ $# -gt 0 ]
+do 
+	case "$1" in
+	--version|--versio|--versi|--vers|--ver|--ve|--v)
+		echo "hello"
+		exit 0
+		;;
+ 	--help|--hel|--he|--h)
+		grep '^#\*\*' bin/pdb_get_entry | sed 's/^#\*\* \?//; s|$0|'$0'|'
+		exit
+		;;
+        --grep|--gre|--gr|--g)
+                echo "grep"
+                exit 0
+                ;;
+	*) FILES="$FILES '$1'" ;;
+        esac
+        shift
+done
+#echo ${FILES}
+eval set -- "${FILES}"
+eval set ${FILES}
+for FILE
+do
+	curl -sSL http://cod.ibt.lt/pdb/${FILE} > inputs/${FILE}
+done
+exit
+echo "pdb entry [ENTER]:"
+read mypdb
+curl -sSL http://cod.ibt.lt/pdb/$mypdb > $mypdb
+##uzduotis isgriebti pdb seka kur yra atomu yrasuose ^ATOM ir paversti vienos aminorugsties kodu  
+

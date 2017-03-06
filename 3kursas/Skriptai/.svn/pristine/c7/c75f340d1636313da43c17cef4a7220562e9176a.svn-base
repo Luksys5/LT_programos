@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if ps ax | grep '?.* X' | grep -vq grep; then 
-   echo X runs
-else 
-   echo No X
-fi

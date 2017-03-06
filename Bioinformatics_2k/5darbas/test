@@ -1,0 +1,12 @@
+TEST_DIR = ./tests
+INPUTS_DIR = ./inputs
+OUTPUTS_DIR = ./outputs
+
+TEST_INPUTS = $(wildcard ${INPUTS_DIR}/*.in)
+TEST_CASES =  $(wildcard ${TEST_DIR}/*.in)
+TEST_OUTPUTS = ${TEST_CASES:${TEST_DIR}/%.inp=${OUTPUTS_DIR}/%.out}
+all: ${TEST_DIFFS}
+
+outputs out: ${TEST_OUTPUTS}	
+${OUPUTS_DIR}/%.out: ${TEST_DIR}/%.in
+	if [ -f $@ ]; then touch $@; else bin/ciftofasta $< $@ fi

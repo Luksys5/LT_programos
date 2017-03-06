@@ -1,5 +1,0 @@
-#!/bin/sh
-
-echo "This is a `basename $0` script."
-echo "Its purpose is to ask user interactively for all the necessary"
-echo "information for the final setup of the working directory."
