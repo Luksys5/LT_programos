@@ -1,0 +1,34 @@
+#!/bin/sh
+path=$(pwd)
+"$path"/pdbboxes $1 | head -1
+while [ "$1" != "" ]
+do
+cat $1 | grep -E '^ATOM|^HETATM' | awk 'BEGIN {xmax = ""; ymax = ""; zmax = ""; xmin = ""; ymin = ""; zmin = "";}{
+if( NF == 12){ 
+	if(xmax < $7 || xmax == ""){xmax=$7;} 
+	if(xmin>$7 || xmin == ""){xmin=$7;}
+	if(ymax < $8 || ymax == ""){ymax=$8;}
+	if(ymin>$8 || ymin == ""){ymin=$8;}
+	if(zmax < $9 || zmax == ""){zmax=$9;}
+	if(zmin>$9 || zmin == ""){zmin=$9;}
+}else if(NF == 11){
+	if(xmax < $6 || xmax == ""){xmax=$6;}
+	if(xmin > $6 || xmin == ""){xmin=$6;}
+	if(ymax < $7 || ymax == ""){ymax=$7;}
+	if(ymin > $7 || ymin == ""){ymin=$7;}
+	if(zmax < $8 || zmax == ""){zmax=$8;}
+	if(zmin > $8 || zmin == ""){zmin=$8;}
+}else if(NF == 13){
+	if(xmax < $8 || xmax == ""){xmax=$8;}
+	if(xmin > $8 || xmin == ""){xmin=$8;}
+	if(ymax < $9 || ymax == ""){ymax=$9;}
+	if(ymin > $9 || ymin == ""){ymin=$9;}
+	if(zmax < $10 || zmax == ""){zmax=$10;}
+	if(zmin > $10 || zmin == ""){zmin=$10;}
+}}END{
+	printf "%s ",xmax-xmin;
+	printf "%s ", ymax-ymin;
+	printf "%s ", zmax-zmin;
+}'
+echo $1 && shift;
+done;
