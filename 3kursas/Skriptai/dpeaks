@@ -1,0 +1,78 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2001/06/12 13:44:36 $ 
+#$Locker:  $
+#$Revision: 1.4 $
+#$Source: /home/saulius/src/data-processing/RCS/dataverage,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+use strict;
+
+use SOptions;
+use SUsage;
+
+my $Id = '$Id: dataverage,v 1.4 2001/06/12 13:44:36 saulius Exp $'; #'
+
+my $title = "";
+my $output_file = "";
+my @columns = ( 1 ); 
+my $format = "%6.2f";
+
+my $number = '^ [-+]? ([0-9]+(\.[0-9]*)? | (\.[0-9]+)) ([eE][-+]?[0-9]+)? $'; #'
+
+@ARGV = getOptions(
+    "-c,--columns" => \@columns,
+    "-f,--format"  => \$format,
+    "-o,--output"  => \$output_file,
+
+    "--version"      => sub { print "$Id\n"; exit 0 },
+    "--help,--usage" => sub { SUsage::usage(); exit },
+);
+
+print("Please give a data file name on the command line\n") && die
+    if @ARGV < 1 and -t STDIN;
+
+@columns = map { split(",") } @columns if @columns;
+
+#---------------------------------------------------------------------------
+
+if( $output_file ) {
+    close(STDOUT);
+    open(STDOUT, ">$output_file" ) or
+        die("Could not open file '$output_file' for writing: $!");
+}
+
+my @data = ();
+
+local $" = " ";
+local $\ = "\n";
+while(<>) {
+    if(/^\s*\#/) { print; next; }
+    if(/^\s*$/) { print; next }
+    chomp;
+    my $i = 0;
+    push( @data, [ split ] );
+    if( @data == 3 ) {
+	my $col;
+	for $col (@columns) {
+	    if( $data[1][$col] > $data[0][$col] &&
+		$data[1][$col] > $data[2][$col]) {
+		print "@{$data[1]} MAX";
+		last;
+	    }
+	}
+	for $col (@columns) {
+	    if( $data[1][$col] < $data[0][$col] &&
+		$data[1][$col] < $data[2][$col]) {
+		print "@{$data[1]} MIN";
+		last
+	    }
+	}
+	shift( @data );
+    }
+}

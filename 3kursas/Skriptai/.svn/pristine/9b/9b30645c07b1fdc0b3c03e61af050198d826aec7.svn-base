@@ -1,0 +1,140 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+#  List keywords from a BibTeX file
+#**
+
+use strict;
+
+use Encode 'decode_utf8';
+
+use SOptions;
+use SUsage;
+
+binmode( STDIN, "utf8" );
+binmode( STDOUT, "utf8" );
+binmode( STDERR, "utf8" );
+
+my $print_counts = 0;
+my $use_Perl_parser = 0;
+
+@ARGV = getOptions( 
+    "-c,--counts" => sub { $print_counts = 1 },
+    "-c-,--no-counts" => sub { $print_counts = 0 },
+
+    "--use-Perl-parser" => sub { $use_Perl_parser = 1 },
+    "--use-C-parser"    => sub { $use_Perl_parser = 0 },
+
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+if( $use_Perl_parser ) {
+    use IO::File;
+    use BibTeX::Parser;
+} else {
+    use Text::BibTeX;
+}
+
+undef $/; # "slurp" mode
+
+unless( @ARGV ) {
+    push( @ARGV, "-" );
+    print STDERR "# $0: reading from stdin...\n" if -t STDIN;
+}
+
+my %keywords; # Counters for each keyword
+
+foreach my $filename (@ARGV) {
+
+    my $text;
+    if( $filename ne "-" ) {
+        open( BIBTEX, "<:utf8", $filename ) or
+            die( "could not open file '$filename' for reading: $!" );
+        $text = <BIBTEX>;
+        close( BIBTEX );
+    } else {
+        $text = <STDIN>;
+    }
+
+    if( $text =~ /^\s*$/ ) {
+        warn( "empty file '$filename'" );
+        next
+    }
+
+    my @entries = map { m/^\s*$/ ? () : ( m/^\s*%/ ? $_ : "@" . $_ ) }
+        split( "@", $text );
+
+    ## my $bibfile = new Text::BibTeX::File( $filename );
+    ## my $entry;
+    ## while( $entry = new Text::BibTeX::Entry( $bibfile )) {
+
+    for my $entry_text (@entries) {
+
+        # Remove non-alphanumeric chars from BibTeX keys befor presenting
+        # them to the 'btparse' BibTeX parser, to avoid syntax errors:
+
+        $entry_text =~ s/@(\w+)\{(.*),/my $type = $1; my $key = $2;
+        $key =~ s,["'{}],,g;
+        "@".$type."{".$key.","/xe; #/# finish this RE for Emacs...
+
+        if( $entry_text !~ /^@/ ) {
+            next
+        }
+
+        my $entry;
+
+        if( $use_Perl_parser ) {
+            use IO::String;
+            use BibTeX::Parser;
+            my $bib_io_string = new IO::String( $entry_text );
+            $bib_io_string->binmode( ":utf8" );
+            my $parser = BibTeX::Parser->new( $bib_io_string );
+            $entry = $parser->next;
+        } else {
+            $entry = new Text::BibTeX::Entry;
+            $entry->parse_s( $entry_text );
+        }
+
+        unless( $entry && $entry->parse_ok ) {
+            my $entry_start = substr($entry_text,0,40);
+            $entry_start =~ s/\n/ /g;
+            $entry_start =~ s/\r//g;
+            warn "could not parse entry ", $entry_start, "... \n";
+            print STDERR $entry_text;
+            next
+        }
+
+        unless( $use_Perl_parser || $entry->metatype == &BTE_REGULAR ) {
+            next
+        }
+
+        my %fieldlist = map {($_,1)} $entry->fieldlist;
+
+        if( exists $fieldlist{keywords} ) {
+            my $key = "keywords";
+            my $keywords = decode_utf8( $use_Perl_parser ?
+                                        $entry->field( $key ) :
+                                        $entry->get( $key ));
+            my @keywords = map {s/^\s*|\s*$//g; $_} split( ",", $keywords );
+            for my $keyword (@keywords) {
+                $keywords{$keyword} ++;
+            }
+        }
+
+    }
+}
+
+if( %keywords ) {
+    for my $key (sort keys %keywords) {
+        print $keywords{$key}, "\t" if $print_counts;
+        print $key, "\n";
+    }
+}

@@ -1,0 +1,106 @@
+#!/bin/sh
+#!perl  -w
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2001/06/12 13:44:36 $ 
+#$Locker:  $
+#$Revision: 1.4 $
+#$Source: /home/saulius/src/KOLIBRIS/data-processing/RCS/dataverage,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+use strict;
+
+use GetOptions;
+
+my $Id = '$Id: dataverage,v 1.4 2001/06/12 13:44:36 saulius Exp $';
+
+my $title = "";
+my $output_file = "";
+my $calc_sigma = 1;
+my @columns = (); 
+my $format = "%6.2f";
+
+my $number = '^ [-+]? ([0-9]+(\.[0-9]*)? | (\.[0-9]+)) ([eE][-+]?[0-9]+)? $';
+
+getOptions({
+    "-c"  => \@columns,             "--columns"   => "-c",
+    "-f"  => \$format,              "--format"    => "-f",
+    "-o"  => \$output_file,         "--ouput"     => "-o",
+    "-s"  => sub{ $calc_sigma = 1}, "--sigmas"    => "-s",
+    "-s-" => sub{ $calc_sigma = 0}, "--no-sigmas" => "-s-",
+    "-t"  => \$title,               "--title"     => "-t",
+
+    "--version" => sub { print "$Id\n"; exit 0 },
+    "--usage"   => sub { usage(); exit },
+    "--help"    => "--usage",
+});
+
+print("Please give a data file name on the command line\n") && die
+    if @ARGV < 1 and -t STDIN;
+
+@columns = map { split(",") } @columns if @columns;
+
+#---------------------------------------------------------------------------
+
+if( $output_file ) {
+    close(STDOUT);
+    open(STDOUT, ">$output_file" ) or
+        die("Could not open file '$output_file' for writing: $!");
+}
+
+my @data = ();
+my $count = 0;
+
+while(<>) {
+   if(/^\s*#/) { print and next; }
+   if(/^\s*$/ or eof) {
+       if( !/^\s*$/ ) {
+           my $i = 0;
+           foreach (split) { push(@{$data[$i++]}, $_) };
+           $count ++;
+       }
+       next if $count == 0; 
+       print_average( $count, @data );
+       $count = 0;
+       @data = ();
+       next
+   }
+   chomp;
+   my $i = 0;
+   foreach (split) { push(@{$data[$i++]}, $_) }
+   $count ++;
+}
+
+print_average( $count, @data ) if $count != 0;
+
+sub print_average
+{
+    my $count = shift;
+    my ($mean, $sigma);
+    my $column;
+
+    foreach $column (@_) {
+        if( $$column[0] !~ /$number/x ) { print "$$column[0]\t"; next }
+
+        $mean = 0;
+        $sigma = 0;
+        foreach (@$column) { $mean += $_ }
+        $mean /= $count;
+        printf "$format\t", $mean;
+
+        if( $calc_sigma ) {
+            if( $count > 1 ) {
+            	foreach (@$column) { $sigma += ($mean - $_)**2 }
+            	$sigma /= ($count - 1);
+            	printf "$format\t", sqrt($sigma);
+            } else {
+            	printf "$format\t", 0.0;
+            }
+        }
+
+    }
+    printf "\n";
+}

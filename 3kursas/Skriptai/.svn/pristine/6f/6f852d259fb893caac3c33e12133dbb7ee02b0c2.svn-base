@@ -1,0 +1,6 @@
+#!/bin/sh
+
+while gtar tv 2>&1
+do
+    echo ---------------
+done

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+svn st \
+| grep '^!' \
+| sed 's/^\! *//' \
+| awk '{printf "%s@\0", $0}' \
+| xargs -0 --no-run-if-empty  svn del --force \
+${1+"$@"}

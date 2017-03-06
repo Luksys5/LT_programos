@@ -1,0 +1,47 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my @eq = grep !/^\s*#/, <>;
+my @sys = map {[split]} @eq;
+
+for (@sys) {
+    print join( "\t", map {sprintf("%7.3f", $_)} @$_ ), "\n";
+}
+
+my ($i, $j);
+for $i (0..int(@sys)-1) {
+    @{$sys[$i]} = map { $_ / $sys[$i][$i] } @{$sys[$i]};
+    for $j ($i+1 .. int(@sys)-1) {
+        @{$sys[$j]} = map { $_ / $sys[$j][$i] } @{$sys[$j]};
+        @{$sys[$j]} = substract( $sys[$j], $sys[$i] );
+    }
+}
+
+print "\n";
+for (@sys) {
+    print join( "\t", map {sprintf("%7.3f", $_)} @$_ ), "\n";
+}
+
+my @res = ();
+
+my $last = int(@sys);
+for( $i = int(@sys)-1; $i >= 0; $i-- ) {
+   my $sum = 0.0;
+   for( $j = $last-1; $j >= $i+1; $j-- ) {
+       $sum += $res[$j] * $sys[$i][$j];
+   }
+   $res[$i] = $sys[$i][$last] - $sum;
+}
+
+print "\n";
+print join( "\t", map {sprintf("%7.3f", $_)} @res ), "\n";
+
+#------------------------------------------------------------------------------
+
+sub substract
+{
+    my ($a, $b) = @_;
+    my $i = 0;
+    return map {$_ - $$b[$i++]} @$a;
+}

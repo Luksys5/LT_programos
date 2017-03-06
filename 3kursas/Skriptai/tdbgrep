@@ -1,0 +1,53 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/02/07 09:02:00 $ 
+#$Locker:  $
+#$Revision: 1.1 $
+#$Source: /home/grazulis/src/tdb/RCS/tdbgrep,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# extract records from the tagged database (.tdb) that match a pattern
+# (regular expression).
+#**
+
+use strict;
+
+my $invert = 0;
+my $case = 1;
+
+while( @ARGV && $ARGV[0] =~ /^-/ ) {
+    if( $ARGV[0] eq "-v" ) { $invert = 1; shift @ARGV; next }
+    if( $ARGV[0] eq "-i" ) { $case = 0; shift @ARGV; next }
+    if( $ARGV[0] eq "--" ) { shift @ARGV; last }
+    die( "unknown option '$ARGV[0]'" );
+}
+ 
+my $regexp = shift(@ARGV);
+
+$/ = "";
+
+while(<>) {
+    my $paragraph = $_;
+    my @paragraph = split( "\n", $paragraph );
+    my @persistent = grep /^\s*#=/, @paragraph;
+
+    for(@persistent) {
+	print "$_\n";
+    }
+    print "\n" if @persistent;
+
+    @paragraph = grep !/^\s*#/, @paragraph;
+    next if !@paragraph;
+    if( $case ) {
+	print if ((grep /$regexp/, @paragraph) ||
+		  $paragraph =~ /$regexp/) xor $invert;
+    } else {
+	print if ((grep /$regexp/i, @paragraph) ||
+		  $paragraph =~ /$regexp/i) xor $invert;
+    }
+}

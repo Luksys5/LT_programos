@@ -1,0 +1,10 @@
+#!/bin/sh
+
+test -z "${XLESS_FONT}" && \
+    XLESS_FONT="7x13"
+
+##    XLESS_FONT="9x15"
+
+xterm \
+    -geometry 139x40 -T "rlog $@" -fn $XLESS_FONT \
+    -e sh -c "rlog '$@' | less" 

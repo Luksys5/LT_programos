@@ -1,0 +1,54 @@
+#!/bin/sh
+
+extension()       
+{ 
+   echo $1 | awk -F. '{print $NF}'
+}
+
+removeExtension() 
+{ 
+   basename $1 | sed -e 's/\.[^\./]*$//'
+}
+
+set +u
+
+READ_MOL=$0.molecules
+READ_SCRIPTS=$0.scripts
+LABELS=$0.labels
+
+rm -f $READ_MOL $READ_SCRIPTS $LABELS
+touch $READ_MOL $READ_SCRIPTS $LABELS
+
+i=1
+s=1
+while [ "$1" != "" ]
+do
+   case "`extension $1`" in
+      "ps")  OUTPUT_PS=$1 ;;
+      "pdb")
+             echo "read mol$i \"$1\";" >> $READ_MOL
+             echo "label 0.0 "`echo "scale=2; -($i/0.5+35.0)" | bc`" 0.0 \"$1\";" >> $LABELS
+             i=`expr $i + 1`
+             test -z "$OUTPUT_PS" && OUTPUT_PS=`removeExtension $1`.ps ;;
+       *)
+             cat $1 >> $READ_SCRIPTS
+             s=`expr $s + 1` ;;
+   esac
+   shift
+done
+
+cat $LABELS
+
+set +e
+
+molscript > $OUTPUT_PS <<- eof-molscript
+plot noframe
+
+  @$READ_MOL
+  @$READ_SCRIPTS
+  @$LABELS
+
+end_plot
+eof-molscript
+
+rm -f $READ_MOL $READ_SCRIPTS $LABELS

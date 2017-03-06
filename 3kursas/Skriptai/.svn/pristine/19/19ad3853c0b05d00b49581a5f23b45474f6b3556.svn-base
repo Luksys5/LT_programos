@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -ue
+
+for i in ${1+"$@"}
+do
+    echo `bzip2 -dc $i | md5sum | sed -e 's/ -$//'`" "`echo $i | sed -e 's/\.bz2$//'`
+done

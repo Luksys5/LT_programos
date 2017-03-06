@@ -1,0 +1,21 @@
+#!/bin/sh
+
+
+awk -F- \
+    '{
+       is_ver = 0;
+       ver = "";
+       name = "";
+       for( i=1; i<=NF; i++ ){
+	  if( match( $i,"[0-9]" )) {
+             is_ver = 1;
+          }
+	  if( is_ver ) {
+              ver=ver?ver"-"$i:$i
+	  } else {
+	      name=name?name"-"$i:$i
+          }
+       }
+       print $0, name, ver, "\n"
+     }' \
+${1+"$@"}

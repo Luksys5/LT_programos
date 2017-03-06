@@ -1,0 +1,17 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my @m = map {[split]} grep !/^\s*#|^\s*$/, <>;
+
+## $\ = "\n";
+## $, = ", ";
+## for (@m) { print @$_ }
+
+$[ = 1;
+my $det = 
+      $m[1][1] * $m[2][2]
+    - $m[1][2] * $m[2][1];
+
+printf "%10.6f\n", $det;
+

@@ -1,0 +1,22 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/08/04 13:04:25 $ 
+#$Locker: saulius $
+#$Revision: 1.2 $
+#$Source: /home/saulius/src/epstools/RCS/pscut,v $
+#$State: Exp $
+#------------------------------------------------------------------------------
+#*
+# Fix PS header so that it conforms to EPS specification.
+#**
+
+use strict;
+
+while( <> ) {
+    s/^(%!PS-Adobe-)([0-9.]+) *$/$1$2 EPSF-$2/;
+    print
+}

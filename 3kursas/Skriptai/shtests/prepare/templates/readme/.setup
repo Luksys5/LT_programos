@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo "This is a `basename $0` script."
+echo "Its purpose is to finish automatic (non-interactive) setup of the"
+echo "working directory."

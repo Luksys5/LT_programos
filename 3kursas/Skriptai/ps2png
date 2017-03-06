@@ -1,0 +1,74 @@
+#!/bin/sh
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2008-05-15 08:05:22 +0300 (Kt, 15 Geg 2008) $ 
+#$Revision: 130 $
+#$URL: svn://saulius-grazulis.lt/scripts/ps2png $
+#------------------------------------------------------------------------
+#*
+# Convert PostScript file to PNG with a given resolution.
+# Calls 'gs' (ghost script)
+#**
+
+ID='$Id: ps2png 130 2008-05-15 05:05:22Z saulius $'
+
+set -ue
+
+OUT_FILE=""
+INP_FILE=""
+O_FORMAT=pngalpha
+
+RESOLUTION=""
+
+gs=gs
+
+#**OPTIONS:
+#** -o, --output outfile.png   name of the output PNG file
+#** -r, --resolution 600        use resolution 600dpi
+#**
+#** --script                    do not execute gs, print the command to
+#**                             the STDOUT instead
+#**
+#** --help, --usage             print short usage message (this message)
+#**                             and exit
+#**
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+	-o|--output|--outpu|--outp|--out|--ou|--o)
+	    OUT_FILE="$2" ; shift
+	    ;;
+	-r|--resolution|--resolutio|--resoluti|--resolut|--resolu|--resol|\
+	--reso|--res|--re|--r)
+	    RESOLUTION="-r$2" ; shift
+	    ;;
+
+	--script|--scrip|--scri|--scr|--sc|--s)
+	    gs="echo ${gs}"
+	    ;;
+	--help|--hel|--he|--h|--usage|--usage|--usag|--usa|--us|--u)
+	    usage $0 '[options] psfile.ps'
+	    exit
+	    ;;
+	-*) echo "$0: unknown option '$1'" ; exit 1 ;;
+	 *) INP_FILE="$1" ;;
+    esac
+    shift
+done
+
+if [ "${INP_FILE}" != "" -a "${INP_FILE}" != "-" ]
+then
+    test -z "${OUT_FILE}" && OUT_FILE="`basename ${INP_FILE} .ps`.png"
+else
+    test -z "${OUT_FILE}" && OUT_FILE="-"
+fi
+
+test "${gs}" != "echo gs" && set -x
+
+${gs} -q -dNOPAUSE -dBATCH \
+    ${RESOLUTION} \
+    -dEPSCrop \
+    -sDEVICE=${O_FORMAT} \
+    -sOutputFile="${OUT_FILE}" \
+    "${INP_FILE}"

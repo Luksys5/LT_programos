@@ -1,0 +1,158 @@
+#!/usr/bin/perl -w
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 1997/09/14 12:43:05 $ 
+#$Header:
+#$Locker:  $
+#$Log: oligo,v $
+#Revision 1.1  1997/09/14 12:43:05  saulius
+#Initial revision
+#
+#$Revision: 1.1 $
+#$Source: /home/saulius/src/scripts/RCS/oligo,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+use lib "$ENV{HOME}/lib/perl5";
+use strict;
+use GetOptions;
+
+my ($rev, $comp) = ( 0, 0 );
+getOptions({ "-r" => sub{$rev = 1}, "-c" => sub{$comp = 1} });
+
+my %pairs = ( "A"=>"T", "C"=>"G", "G"=>"C", "T"=>"A" );
+
+while( @ARGV ) {
+    my ($first_seq, $second_seq) = &getTwoSequences(\@ARGV);   
+    my @m = &matrix( $first_seq, $second_seq );
+
+    my ($row, $col);
+    my ($i, $j) = (0) x 1;
+    print " " x 3, join( " ", split(//,$first_seq)), "\n";
+    foreach $row ( split(//, $second_seq) ) {
+        print "$row: ";
+        foreach $col ( split(//, $first_seq) ) {
+            print $m[$i][$j] ? "O " : ". ";
+            $j++;
+        }
+        $i++;
+        print "\n";
+    }
+
+}
+
+#---------------------------------------------------------------------
+# building an interaction matrix
+#
+
+sub matrix
+{
+    my @matrix = ();
+    my ($i, $j) = (0, 0);
+
+    my ( $first_seq, $second_seq ) = @_;
+
+    my ($row, $col);
+    foreach $row ( split(//, $second_seq) ) {
+        foreach $col ( split(//, $first_seq) ) {
+            $matrix[$i][$j] = $pairs{$col} eq $row ? 1 : 0;
+            $j++;
+        }
+        $i++;
+    }
+    return @matrix;
+}
+
+#---------------------------------------------------------------
+# Build all possible sequence alignments 
+# (diagonals of the matrix)
+#
+
+sub diagonal
+{
+
+}
+
+#---------------------------------------------------------------
+# Auxilary functions
+#
+
+#
+# Calculate a Tm of the oligo
+#
+
+$::Na = 1.0;
+
+sub Tm
+{
+   no integer;
+   my ( $sequence, $complementary ) = @_;
+   my $Tm = 81.5 + 16.6 * log($::Na) + 41.0 * 
+            gc_percent($sequence . $complementary) -
+            &mismatches($sequence, $complementary);
+   return $Tm;
+}
+
+sub gc_percent
+{
+    no integer;
+    my $sequence = shift;
+    my $length = length($sequence);
+    $sequence =~ s/[^GC]//g;
+    my $GC = length($sequence);
+    return $GC / $length;
+}
+
+sub mismatches
+{
+    use integer;
+    my ($seq1, $seq2) = @_;
+    my ($mismatches, $i) = 0;
+    foreach $i ( 0 .. length($seq1)-1 ) {
+        if( substr($seq1, $i, 1) ne substr($seq2, $i, 1) )
+            { $mismatches++ }
+    }
+    return $mismatches;
+}
+
+#
+# Get two sequences from the command line
+#
+
+sub getTwoSequences
+{
+    my $argv = shift;
+    my $first = uc( shift(@$argv) );
+    $first =~ s/[- ._]//g;
+    my $second = @$argv > 0 ? uc( shift(@$argv) ) : 
+           $comp ? &comp($first) : $first;
+    $second =~ s/[- ._]//g;
+    $second = &rev($second) if $rev;
+    return ($first, $second);
+}
+
+#
+# Revert the sequence (string)
+#
+
+sub rev
+{
+   my @ret = ();
+   foreach ( split(//,$_[0]) ) {
+       unshift(@ret, $_);
+   }
+   return join( "", @ret );
+}
+
+#
+# Generate a complementary sequence
+#
+
+sub comp
+{
+   my @ret = ();
+   foreach ( split(//,$_[0]) ) {
+       push(@ret, $pairs{$_});
+   }
+   return join( "", @ret );
+}

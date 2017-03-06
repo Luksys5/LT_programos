@@ -1,0 +1,50 @@
+#!/bin/sh
+
+set -ue
+## set -x
+
+HOME_BASENAME=`basename ${HOME}`
+HOSTNAME=`hostname`
+DEST_BASENAME=${HOME_BASENAME}-${HOSTNAME}
+
+REMOTE_SERVER=localhost
+REMOTE_DRCTRY=Backup
+
+REMOTE_ABSPTH=${HOME}/${REMOTE_DRCTRY}
+REMOTE_OLDDIR=${REMOTE_ABSPTH}/${DEST_BASENAME}-old-files/`date +%Y.%m.%d`
+
+BASENAME=`basename $0`
+
+case $BASENAME in
+    *-*) REMOTE_SERVER=`echo $BASENAME | awk -F- '{print $2}'` ;;
+esac
+
+## ssh ${REMOTE_SERVER} mkdir -p ${REMOTE_DRCTRY}
+## ssh ${REMOTE_SERVER} mkdir -p ${REMOTE_OLDDIR}
+
+set -x
+
+rsync \
+    --rsh=ssh \
+    --verbose \
+    --delete \
+    --backup \
+    --backup-dir=${REMOTE_OLDDIR} \
+    --archive \
+    --partial \
+    --progress \
+    --sparse \
+    --exclude "Cache/*" \
+    --exclude "sdcard/*" \
+    --exclude ".ssh" \
+    --exclude ".opencm/*" \
+    --exclude ".svn" \
+    --exclude "*.map" \
+    --exclude "*.omap" \
+    --exclude "*.skel" \
+    --exclude ".wine*" \
+    --exclude ".thumbnails" \
+    --delete-excluded \
+    ${HOME}/ \
+    ${REMOTE_SERVER}:${REMOTE_DRCTRY}/${DEST_BASENAME}/ \
+${1+"$@"}

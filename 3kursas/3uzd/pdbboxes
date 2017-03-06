@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+#-------------------------------
+#$Author: Lukas_Tutkus $
+#$Date: 2015-05-05 20:38:00 +0300 (An, 05 Geg 2015) $
+#$Revision: 243 $
+#$URL: svn://saulius-grazulis.lt/praktikos-darbai-2015/Lukas_Tutkus/trunk/dbox/pdbboxes $
+#$Id: pdbboxes 243 2015-05-05 17:38:00Z Lukas_Tutkus $
+#-------------------------------
+#*
+#	Perl script which reads input and check sum of vectors and outputs it to 	STDOUT.
+#*
+use Scalar::Util qw(looks_like_number); ## Subroutine for checking if char is numeric.
+use strict;
+use warnings;
+
+my $Idset = '#$Id: pdbboxes 243 2015-05-05 17:38:00Z Lukas_Tutkus $'."\n";
+print $Idset;
+my $count = 0;	# Files count
+my $ATOMS = 0; 	# ATOM and HETATM count
+
+## Explicit package for coordinates.
+my($line, $xmax, $xmin, $ymax, $ymin, $zmax, $zmin);
+my $input = $ARGV[0];
+## Reading file
+while(<>){
+	$line = $_;
+	chomp($line);
+
+	if ($line =~ m/(^ATOM|^HETATM)/){
+		## X coordinate
+		my $xcord = substr($line,31,7);
+		if ($xcord =~ /^ *$/){
+			die "Found whitespace In x coordinate 31-38";
+		}
+		$xcord =~ s/( *|\?)//g;
+		
+		## Y coordinate
+		my $ycord = substr($line,39,7);
+		if ($ycord =~ /^ *$/){
+			die "Found whitespace in Y coordinate 39-46";
+		}
+		$ycord =~ s/( *|\?)//g;
+		
+		## Z coordinate
+		my $zcord = substr($line,47,7);
+		if ($zcord =~ /^ *$/){
+			die "found whitespace In Z coordinate 47-54";
+		}
+		$zcord =~ s/( *|\?)//g;
+
+		## Checking numbers format.
+		if(!looks_like_number($xcord)){die "Need number, got this $xcord"};
+		if(!looks_like_number($ycord)){die "Need number, got this $ycord";}
+		if(!looks_like_number($zcord)){die "Need number, got this $zcord";}
+		
+		if($ATOMS == 0){
+			$xmax = $xcord;$xmin = $xcord;
+			$ymin = $ycord;$ymax = $ycord;
+			$zmin = $zcord;$zmax = $zcord;
+		}else{
+			$xmax = $xcord if $xcord > $xmax;
+			$xmin = $xcord if $xcord < $xmin;
+			$ymin = $ycord if $ycord < $ymin;
+			$ymax = $ycord if $ycord > $ymax;
+			$zmin = $zcord if $zcord < $zmin;
+			$zmax = $zcord if $zcord > $zmax;
+		}
+		$ATOMS += 1;
+	}
+	if (eof || /^\s*$/ || /^\#/){
+		if($ATOMS < 2){
+			die "Need more atoms\n";
+		}
+		my $xdiff = $xmax - $xmin;
+		my $ydiff = $ymax - $ymin;
+		my $zdiff = $zmax - $zmin;
+		print $xdiff." ".$ydiff." ".$zdiff." ".$input."\n";
+		
+		## Checking if more arguments exists.
+
+		## Reinitializing ATOMS value to count multiple files.
+		$ATOMS = 0;
+		$input = $ARGV[0] if defined $ARGV[0];
+	}
+}

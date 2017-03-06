@@ -1,0 +1,141 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date:  $ 
+#$Locker: saulius $
+#$Revision: 1.0 $
+#$Source: $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Calculate derivatives of the specified columns in the .dat file
+#**
+
+use strict;
+use SOptions;
+use SUsage;
+
+my @columns = ();
+my $xcolumn = 1;
+my $format = "%10.7f";
+
+#**OPTIONS:
+#** -F, --format "%10.7f"       output format to use for numbers
+#** -x, --xcolumn 0             use column 0 (the first column) as
+#**                             argument x for differentiation df/dx
+#** -u, --use-columns 1,3,6-8   specify which columns to differentiate
+#** -c, --columns 1,3,6-8       same as '--use'
+#**
+#** --help, --usage   pritn short usage message (this message) and exit
+
+@ARGV = getOptions(
+    "-F,--format"      => \$format,
+    "-x,--xcolumn"     => \$xcolumn,
+    "-u,--use-columns" => \@columns,
+    "-c,--columns"     => \@columns,
+    "--help,--usage" => sub {
+	print "Usage:\n";
+	print "    $0 [options] file1.dat [file2.dat ...]:\n";
+        SUsage::usage();
+	exit;
+    },
+);
+
+if( @columns ) {
+    @columns = map {$_-1} map {split(" ")} map {split(",")} @columns;
+} else {
+    @columns = ( 1 );
+}
+
+$xcolumn--;
+
+my $line1;
+my $line2;
+my @last1;
+my @last2;
+
+$" = " ";
+
+my $xlabel = "";
+my $ylabel = "";
+
+while(<>) {
+    if( /^\s*#=?XLABEL\s+(.*)$/ ) {
+	$xlabel = $1;
+	next;
+    }
+    if( /^\s*#=?YLABEL\s+(.*)$/ ) {
+	$ylabel = $1;
+	next;
+    }
+    if( /^\s*#=/ ) {
+	print;
+	next;
+    }
+    if( /^\s*#@/ ) {
+	chomp;
+	print "$_ ";
+	$_ =~ /^\s*#@(.*)$/;
+	my @col_names = split( " ", $1 );
+	my $i;
+	for $i (@columns) {
+	    print( "d${col_names[$i]}/d${col_names[$xcolumn]}", " " );
+	}
+	print "\n";	
+	print "#=XLABEL $xlabel\n";
+	print "#=YLABEL d($ylabel)/d($xlabel)\n";
+	next;
+    }
+    if( /^\s*#/ ) {
+	next;
+    }
+
+    chomp;
+    my @line = split;
+
+    if( !defined @last2 ) {
+	$line2 = $_;
+	@last2 = @line;
+	next;
+    }
+
+    if( !defined @last1 ) {
+	$line1 = $_;
+	@last1 = @line;
+	print "$line2 ";
+	my $i;
+	for $i (@columns) {
+	    printf( $format . " ",
+		    ($last1[$i] - $last2[$i])/
+		    ($last1[$xcolumn] - $last2[$xcolumn]) );
+	}
+	print "\n";
+	next;
+    }
+
+    print "$line1 ";
+    my $i;
+    for $i (@columns) {
+	printf( $format . " ",
+		($line[$i] - $last2[$i])/
+		($line[$xcolumn] - $last2[$xcolumn]) );
+    }
+    print "\n";
+
+    $line2 = $line1;
+    $line1 = $_;
+    @last2 = @last1;
+    @last1 = @line;
+}
+
+print "$line1 ";
+my $i;
+for $i (@columns) {
+    printf( $format . " ",
+	    ($last1[$i] - $last2[$i])/
+	    ($last1[$xcolumn] - $last2[$xcolumn]) );
+}
+print "\n";

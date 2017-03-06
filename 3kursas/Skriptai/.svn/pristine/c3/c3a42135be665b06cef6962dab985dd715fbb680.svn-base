@@ -1,0 +1,31 @@
+#!/bin/sh
+
+while [ "$1" != "" ]
+do
+   TEX_FILE=`basename $1 .doc`.tex
+   cat > $TEX_FILE <<- EOF
+	%------------------------------------------------------------------
+	%\$Author:\$
+	%\$Date:\$ 
+	%\$Header:
+	%\$Locker:\$
+	%\$Log:\$
+	%\$Revision:\$
+	%\$Source:\$
+	%\$State:\$
+	%------------------------------------------------------------------
+	\\documentclass[12pt]{article}
+	%\\include{full-page-size}
+	\\begin{document}
+	EOF
+
+   tr "\f\r\222\223" "\n\n\'\`" < $1 |\
+   tr -d "\0" |\
+   perl -pe 's/\&/\\\&/g; s/\007\007/\\\\\n/g; s/\007/ \& /g' |\
+   perl -pe 's/\036/-/g; s/\$/\\\$/g; s/\#/\\\#/g; s/%/\\%/g' |\
+   tr  -cd "[:print:]\n" |\
+   fold -s -w 75 >> $TEX_FILE
+
+   echo "\\end{document}" >> $TEX_FILE
+   shift
+done

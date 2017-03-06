@@ -1,0 +1,53 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/08/04 13:04:25 $ 
+#$Locker: saulius $
+#$Revision: 1.2 $
+#$Source: /home/saulius/src/epstools/RCS/pscut,v $
+#$State: Exp $
+#------------------------------------------------------------------------------
+#*
+# Turn EPS file a multiple of 90 degrees.
+#**
+
+use strict;
+
+$0 =~ m/([0-9]+)$/;
+my $angle = $1;
+
+$angle = 90 unless defined $angle;
+
+while( <> ) {
+    if( /^%%BoundingBox:\s+
+           ([-0-9.]+)\s+([-0-9.]+)\s+([-0-9.]+)\s+([-0-9.]+)/x ) {
+	if( $angle == 90 ) {
+	    print "%%BoundingBox: -$4 $1 -$2 $3\n";
+	} elsif ( $angle == 180 ) {
+	    print "%%BoundingBox: -$3 -$4 -$1 -$2\n";
+	} elsif ( $angle == 270 ) {
+	    print "%%BoundingBox: $2 -$3 $4 -$1\n";
+	} else {
+	    print "%%BoundingBox: $1 $2 $3 $4\n";
+	}
+	next;
+    }
+    if( /^%%EndComments/ ) {
+	do {
+	    print $_;
+	    $_ = <>;
+	} while( /^%%/ );
+	print "gsave $angle rotate\n";
+	print;
+	next;
+    }
+    if( /^%%Trailer/ ) {
+	print "grestore\n";
+	print $_;
+	next;
+    }
+    print;
+}

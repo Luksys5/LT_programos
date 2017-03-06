@@ -1,0 +1,215 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$ 
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+# Fetch bibliography from CrossRef using various criteria.
+#**
+
+use strict;
+use warnings;
+binmode STDOUT, ':utf8';
+
+use File::Basename;
+
+use LWP::UserAgent;
+use LWP::Simple;
+use HTTP::Request;
+use HTTP::Headers;
+use URI::Encode;
+
+use SOptions;
+use SUsage;
+
+my $journal;
+my $volume;
+my $issue;
+my $doi;
+my $start_page;
+my $year;
+my $text;
+my $title;
+my @authors;
+my $first_author;
+my $last_author;
+my $author_separator = ";";
+my $multihit = "";
+my $issn;
+my $script = 0;
+
+my $username;
+my $domain;
+
+my $query_url = "http://www.crossref.org/openurl?";
+
+#** OPTIONS:
+
+#** -a,--author"
+#** -A,--all-authors"
+#** --add-author"
+#** -C,--clear-authors"
+#** -d,--domain
+#** -I,--id
+#** --doi
+#** -s,--separator
+#** -1,--first-author
+#** -l,--last-author
+#** -j,--journal
+#** -v,--volume
+#** -i,--issue
+#** -p,--page
+#** --start-page
+#** -t,--title
+#** -T,--text
+#** -u,--user
+#** -y,--year
+#** --issn
+#** --multihit
+#** --no-multihit
+
+#** --script
+#** --run
+#** --help,--usage
+
+@ARGV = getOptions( 
+    "-a,--author"        => sub{ @authors = ( get_value() ) },
+    "-A,--all-authors"   =>
+        sub{ @authors = split( $author_separator, get_value()) },
+    "--add-author"       => \@authors,
+    "-C,--clear-authors" => sub{ @authors = () },
+    "-d,--domain"        => \$domain,
+    "-I,--id"            => \$doi,
+    "--doi"              => \$doi,
+    "-s,--separator"     => \$author_separator,
+    "-1,--first-author"  => sub{ $first_author = get_value() },
+    "-l,--last-author"   => sub{ $last_author = get_value() },
+    "-j,--journal"       => sub{ $journal = get_value() },
+    "-v,--volume"        => sub{ $volume = get_value() },
+    "-i,--issue"         => sub{ $issue = get_value() },
+    "-p,--page"          => sub{ $start_page = get_value() },
+    "--start-page"       => sub{ $start_page = get_value() },
+    "-t,--title"         => sub{ $title = get_value() },
+    "-T,--text"          => sub{ $text = get_value() },
+    "-u,--user"          => \$username,
+    "-y,--year"          => sub{ $year = get_value() },
+    "--issn" =>          => \$issn,
+    "--multihit"         => sub { $multihit = "&multihit=true" },
+    "--no-multihit"      => sub { $multihit = "" },
+    "--script"           => sub{ $script = 1 },
+    "--run"              => sub{ $script = 0 },
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+$username = $ENV{USER} unless $username;
+
+if( !$domain ) {
+    my $hostname = `hostname`;
+    chomp $hostname;
+    my $hostname_full = `hostname -f`;
+    chomp $hostname_full;
+
+    $domain = $hostname_full;
+    $domain =~ s/^${hostname}\.//;
+}
+
+my $email = $username . "@" . $domain;
+
+## print $email, "\n"; exit;
+
+my $term = "";
+
+if( @authors ) {
+    $term .= "authors=" . join( "&", map { $_ } @authors );
+}
+
+if( defined $first_author ) {
+    $term .= "&" if $term;
+    $term .= "aufirst=$first_author";
+}
+
+if( defined $last_author ) {
+    $term .= "&" if $term;
+    $term .= "aulast=$last_author";
+}
+
+if( defined $journal ) {
+    $term .= "&" if $term;
+    $term .= "title=$journal";
+}
+
+if( defined $title ) {
+    $term .= "&" if $term;
+    $term .= "title=$title";
+}
+
+if( defined $text ) {
+    $term .= "&" if $term;
+    $term .= "text=$text";
+}
+
+if( defined $volume ) {
+    $term .= "&" if $term;
+    $term .= "volume=$volume";
+}
+
+if( defined $issue ) {
+    $term .= "&" if $term;
+    $term .= "issue=$issue";
+}
+
+if( defined $doi ) {
+    $term .= "&" if $term;
+    $term .= "id=" . URI::Encode::uri_encode( $doi, 1 );
+}
+
+if( defined $start_page ) {
+    $term .= "&" if $term;
+    $term .= "spage=$start_page";
+}
+
+if( defined $year ) {
+    $term .= "&" if $term;
+    $term .= "date=$year";
+}
+
+if( defined $issn ) {
+    $term .= "&" if $term;
+    $term .= "issn=$issn";
+}
+
+if( !$term ) {
+    die "no search terms -- you probably do not want to download the whole " .
+    "CrossRef, do you?"
+}
+
+## $term =~ s/\s/%20/g;
+
+# Since around the autumn of the 2010, mentioning 'multihit=' argument
+# in a query string results in a shortened version of bibliography
+# (regardless to whether it is set to 'true' or 'false':
+#
+## my $query = "${query_url}pid=${email}&redirect=false&multihit=true&" . $term;
+
+# The commented-out string with 'noredirect=true' works as well:
+## my $query = "${query_url}pid=${email}&" . $term . "&noredirect=true";
+
+my $query = "${query_url}pid=${email}&redirect=false&" . $term . $multihit;
+
+if( $script ) {
+    print $query, "\n";
+} else {
+
+    my $esearch_result = get( $query );
+
+    if( $esearch_result ) {
+    print $esearch_result, "\n";
+    } else {
+    print STDERR "$0: Id for '$term' not found in CrossRef\n";
+    }
+}

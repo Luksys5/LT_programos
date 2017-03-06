@@ -1,0 +1,89 @@
+#! /bin/sh
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*
+# Attempt to extract a version number idenifying the used program
+#**
+
+#** USAGE:
+#**     $0 `which ls`
+#**     $0 /usr/bin/gcc
+#**
+
+## set -x
+
+ID='$Id$'
+
+#** OPTIONS:
+#**  --help               Print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+      --version|--versio|--versi|--vers|--ver|--ve|--v)
+          perl -lne 'print $1, ": ", $2 if /\$(URL|Revision):\s*([^\$]*?)\s*\$/' $0 \
+              | sort | uniq \
+              | tr "\n" " " \
+              | awk '{print}'
+          exit
+          ;;
+      --help|--hel|--he|--h)
+            awk '/#\*/,/#\*\*/ {
+                    sub("^ *#[*]?[*]?", ""); \
+                    gsub("\\$0","'$(basename $0)'"); \
+                    print $0
+                }' $0
+	    exit
+	    ;;      
+      -*) echo "`basename $0`: unknown option $1" >&2 ; exit 1 ;;
+      *)  FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+## echo ${FILES}
+eval set -- "${FILES}"
+
+echo "FORMAT\t"$(basename $0) \
+    $(echo '$Revision$' | sed 's/\$//g; s/Revision: *//') \
+    $(echo '$URL$' | sed 's/\$//g; s/URL: *//')
+
+for PROGRAM in "$@"
+do
+    if [ -f ${PROGRAM} ]
+    then
+        PRGFILE=${PROGRAM}
+    else
+        PRGFILE=$(which ${PROGRAM})
+    fi
+
+    if [ -z "${PRGFILE}" ]
+    then
+        echo "$0: could not find program '${PROGRAM}'" >&2
+        continue
+    fi
+
+    if strings ${PRGFILE} | grep -q -- '--version' > /dev/null
+    then
+        echo PRGVERS"\t"${PROGRAM}"\t"$(${PROGRAM} --version 2>&1 \
+            | perl -lne 'print $1 and exit if /(\d+\.[\d\._]+|Revision:[^\$]+)/')
+    elif strings ${PRGFILE} | grep -q -- '-version' > /dev/null
+    then
+        echo PRGVERS"\t"${PROGRAM}"\t"$(${PROGRAM} -version 2>&1 \
+            | perl -lne 'print $1 and exit if /(\d+\.[\d\._]+)/')
+    elif strings ${PRGFILE} | grep -q -- '-showversion' > /dev/null
+    then
+        echo PRGVERS"\t"${PROGRAM}"\t"$(${PROGRAM} -showversion 2>&1 \
+            | perl -lne 'print $1 and exit if /(\d+\.[\d\._]+)/')
+    else
+        echo -n PRGVERS"\t"${PROGRAM}"\t"
+        strings ${PRGFILE} \
+            | perl -lne 'print $1, ": ", $2 if /\$(URL|Revision):\s*([^\$]*?)\s*\$/' \
+            | sort | uniq \
+            | tr "\n" " " \
+            | awk '{print}'
+    fi
+done

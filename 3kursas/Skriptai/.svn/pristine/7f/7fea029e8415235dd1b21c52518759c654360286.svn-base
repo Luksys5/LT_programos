@@ -1,0 +1,91 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#-----------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1999/10/11 10:11:43 $ 
+#$Locker: grazulis $
+#$Revision: 1.0 $
+#$Source: $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# insert greek letters into the molscript PostScript file
+#**
+
+use strict;
+
+my $number = 
+  '[-+]? (?:[0-9]+(?:\.[0-9]*)? | (?:\.[0-9]+)) (?:[eE][-+]?[0-9]+)?';
+
+my %pattern_list = (
+    '\\\\alpha' => 'a',
+    '\\\\beta'  => 'b',
+);
+
+while(<>) {
+   if( /\((.*)\) \s+ ($number) \s+ Center/x ) {
+       my $string = $1;
+       my $size = $2;
+       my $pattern;
+       for $pattern (keys %pattern_list) {
+           $string =~ s/\Q$pattern/$pattern_list{$pattern}/eg;
+       }
+       while( $string =~ /_{(.*)}/ ) {
+           my $subscript = $1;
+           $string =~ s/_{(.*)}/"$1"/xe;
+       }
+       print "($string) $size Center$'";
+   } elsif( /\((.*)\) \s+ (FR|FG)? \s*($number) \s+ (Print|PR)/x ) {
+       my $string = $1;
+       my $getfont = defined $2 ? $2 : "";
+       my $size = $3;
+       my $print = $4;
+       my $pattern;
+       for $pattern (keys %pattern_list) {
+           $string =~ s/\Q$pattern/
+                        ") $getfont $size $print \n".
+                        "($pattern_list{$pattern}) ".
+                        "\/Symbol findfont $size scalefont setfont show\n".
+                        "("/xeg;
+       }
+       while( $string =~ /_{(.*?)}/ ) {
+           my $subscript = $1;
+           $string =~ s/_{.*?}/
+                       ") $getfont $size $print \n".
+                       "currentpoint \/baseline exch def pop \n".
+                       "gsave \n".
+                       "   currentfont 0.707 scalefont setfont \n".
+                       "   currentpoint \n".
+                       "      $size 0.707 mul 2.2 div sub \n".
+                       "      % exch $size 0.1 mul sub exch \n".
+                       "      moveto \n".
+                       "   ($subscript) show \n".
+                       "   currentpoint \n".
+                       "      pop \/x exch $size 0.1 mul add def \n".
+                       "grestore \n".
+		       "x baseline moveto \n(" /xe;
+       }
+       while( $string =~ /\^{(.*?)}/ ) {
+           my $superscript = $1;
+           $string =~ s/\^{.*?}/
+                       ") $getfont $size $print \n".
+                       "currentpoint \/baseline exch def pop \n".
+                       "gsave \n".
+                       "   currentfont 0.707 scalefont setfont \n".
+                       "   currentpoint \n".
+                       "      $size 0.707 mul 2 div add \n".
+                       "      exch $size 0.1 mul add exch \n".
+                       "      moveto \n".
+                       "   ($superscript) show \n".
+                       "   currentpoint \n".
+                       "      pop \/x exch $size 0.1 mul add def \n".
+                       "grestore \n".
+		       "x baseline moveto \n(" /xe;
+       }
+       print "($string) $getfont $size $print$'";
+   } else {
+      print;
+   }
+}

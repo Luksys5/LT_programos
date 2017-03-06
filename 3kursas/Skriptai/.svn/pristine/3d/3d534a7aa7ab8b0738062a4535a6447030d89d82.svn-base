@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# This script takes one or several .svn/entries files, from a
+# Subversion working copy, as its command line arguments, of from
+# stdin. It extracts filenames and MD5 sum lines of the *.svn-base
+# files and outputs the in the md5sum format. In a corresponding
+# .svn/text-base/ directory, the MD5 sums can be cheked for validity
+# my reading the output of this script into the 'md5sum -c -' command.
+#
+
+perl -014 -ne '@f=split(/\n/,$_); print $f[8],"  ",$f[1].".svn-base","\n"' \
+     ${1+"$0"}

@@ -1,0 +1,72 @@
+#!/bin/sh
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 1997/09/05 10:38:43 $ 
+#$Header:
+#$Locker:  $
+#$Log: ps2pnm,v $
+#Revision 1.2  1997/09/05 10:38:43  saulius
+#bug fix: -q option now handled correctly
+#default pnm format is now pnmraw (to save space)
+#
+#Revision 1.1  1997/09/05 10:26:22  saulius
+#Initial revision
+#
+#$Revision: 1.2 $
+#$Source: /home/saulius/src/scripts/RCS/ps2pnm,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+ID='$Id: ps2pnm,v 1.2 1997/09/05 10:38:43 saulius Exp $'
+
+usage()
+{
+cat <<EOT
+$ID
+convert PostScript to pnm
+usage: `basename $0` [options] file.ps ....
+Options:
+ -r, --resolution set Ghoscript resolution in dpi (dots per inch)
+ -g, --size       set Ghoscript image size
+ -h, --help       print this help message
+ -o, --output     set the name of the output file ('-' for stdout)
+ -q, --quite      do not print the progess messages to stderr
+ -q-,--vebose     print progress messages to stderr (default)
+ -v, --version    print version of the script and exit
+
+EOT
+}
+
+test $# = 0 && { usage; exit; }
+
+RESOLUTION=""
+OUTPUT=""
+QUITE=0
+while [ "$1" != "" ]
+do
+    case $1 in
+       -r|--reso*)   shift; RESOLUTION="-r$1" ;;
+       -g|--reso*)   shift; RESOLUTION="-g$1" ;;
+       -h|--help)    usage; exit ;;
+       -o|--output)  shift; OUTPUT=$1 ;;
+       -q|--quite)   QUITE=1 ;;
+       -q-|--vebose) QUITE=0 ;;
+       -v|--version) echo $ID; exit ;;
+       *) FILES="$FILES '$1'" ;;
+    esac
+    shift
+done
+
+eval set -- $FILES
+
+if [ ! -t 1 -a "$OUTPUT" = "" ]; then OUTPUT="-"; fi
+
+while [ "$1" != "" ]
+do
+   if [ "$OUTPUT" != "" ]; then OUTPUT_FILE=$OUTPUT; 
+   else OUTPUT_FILE=`basename $1 .ps`.pnm; 
+   fi
+   test $QUITE = 0 && echo $1 --\> $OUTPUT_FILE >&2
+   gs -dNOPAUSE -sDEVICE=pnmraw $RESOLUTION -sOutputFile=$OUTPUT_FILE -q -c - < $1
+   shift
+done

@@ -1,0 +1,31 @@
+#!/bin/sh
+#!perl  -w
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 1998/02/25 11:01:10 $ 
+#$Header:
+#$Locker: saulius $
+#$Log: oligowt,v $
+#Revision 1.1  1998/02/25 11:01:10  saulius
+#Initial revision
+#
+#$Revision: 1.1 $
+#$Source: /home/saulius/src/molwt/RCS/oligowt,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+
+use strict;
+
+my $subseq = shift( @ARGV );
+my $sequence = join( "", grep !/^\s*#/, <>);
+$sequence =~ s/\s+//g;
+
+my $pos = 0;
+
+while( ($pos = index( $sequence, $subseq, $pos )) >= 0 ) {
+    printf "%4d: ", $pos+1;
+    print substr( $sequence, $pos ), "\n";
+    $pos++;
+}

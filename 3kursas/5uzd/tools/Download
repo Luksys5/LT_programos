@@ -1,0 +1,5 @@
+#!/bin/sh
+for line in $(cat ../Protein_all.txt)
+do
+	wget -O - "http://www.pdb.org/pdb/files/$line.cif" > "../cifs/$line.cif"
+done

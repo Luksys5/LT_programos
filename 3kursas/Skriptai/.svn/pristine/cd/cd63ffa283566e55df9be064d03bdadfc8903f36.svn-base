@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -x
+
+SRC_REPO="$(basename $0 | awk -F- '{print $3}')"
+DST_REPO="$(basename $0 | awk -F- '{print $5}')"
+
+find . -type d -exec sh -c 'test -d "{}/.svn" && echo "{}"' \; -prune \
+| xargs -n1 svn info \
+| tdbgrep delfinas \
+| awk '/^Path:/{print $2}' \
+| xargs -n1 -iI \
+    sh -xc "cd I; svn sw --relocate svn+ssh://{${SRC_REPO},${DST_REPO}}.ibt.lt"

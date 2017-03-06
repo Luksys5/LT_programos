@@ -1,0 +1,183 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2010-03-11 12:21:36 +0200 (Kt, 11 Kov 2010) $ 
+#$Revision: 195 $
+#$URL: svn://saulius-grazulis.lt/scripts/mkcom $
+#------------------------------------------------------------------------------
+#*
+# Create a .com shell script (i.e. a shell script that contains its
+# outputs and inputs) from a command line, using our naming
+# conventions.
+#**
+
+use strict;
+
+my $Id = '$Id: mkcom 195 2010-03-11 10:21:36Z saulius $';
+
+$Id =~ s/\$//g;
+
+my $shebang = <<'EOT';
+#!/bin/sh
+EOT
+
+my $svn_keywords = <<'EOT';
+#------------------------------------------------------------------------------
+#@Author@
+#@Date@
+#@Revision@
+#@URL@
+#------------------------------------------------------------------------------
+EOT
+
+$svn_keywords =~ s/@/\$/g;
+
+my $preambule = <<'EOT';
+TMP_DIR="${TMPDIR}"
+
+setvar() { eval $1="'$3'"; }
+
+set -ue
+
+OUTPUT_DIR="./outputs"
+
+#BEGIN DEPEND------------------------------------------------------------------
+EOT
+
+my $basename_clause = <<'EOT';
+BASENAME="`basename $0 .com`"
+EOT
+
+my $post_depend = <<'EOT';
+#END DEPEND--------------------------------------------------------------------
+
+test -z "${TMP_DIR}" && TMP_DIR="."
+TMP_DIR="${TMP_DIR}/tmp-${BASENAME}-$$"
+mkdir "${TMP_DIR}"
+
+set -x
+EOT
+
+my $tail = <<'EOT';
+rm -rf "${TMP_DIR}"
+EOT
+
+if( !@ARGV ) {
+    print STDERR $0, ": please specify a command on the command line\n";
+    exit;
+}
+
+my %inputs;
+my %outputs;
+my @args;
+my $input_file_type;
+
+my $next_word_is_command = 1;
+my $next_word_is_output = 0;
+
+for my $word (@ARGV) {
+    if( $word =~ /^-/ ) {
+        push( @args, $word );
+        if( $word =~ /^-o$/ ||
+            $word =~ /^--output/ ||
+            $word =~ /^--outpu$/ ||
+            $word =~ /^--outp$/ ||
+            $word =~ /^--out$/ ||
+            $word =~ /^--ou$/ ||
+            $word =~ /^--o$/ ) {
+            $next_word_is_output = 1;
+        }
+        next;
+    }
+    if( $word =~ /^>>?\&?\d?$/ ) {
+        push( @args, $word );
+        $next_word_is_output = 1;
+        next;
+    }
+    if( $word =~ /^\|$/ ) {
+        push( @args, "\\\n$word" );
+        $next_word_is_command = 1;
+        next;
+    }
+    if( $next_word_is_command ) {
+        push( @args, $word );
+        $next_word_is_command = 0;
+        next;
+    }
+    if( $next_word_is_output ) {
+        my $output_ext = "dat";
+        if( $word =~ /\.([^.]+)$/ ) {
+            $output_ext = $1;
+        }
+        my $output_var_base = "OUTPUT_" . uc( $output_ext );
+        my $output_var_name = $output_var_base;
+        my $n = 2;
+        while( exists $outputs{$output_var_name} ) {
+            my $suffix = sprintf( "%02d", $n );
+            $output_var_name = $output_var_base . "_" . $suffix;
+            $n++;
+        }
+        $outputs{$output_var_name} =
+            "$output_var_name=\"\${OUTPUT_DIR}/\${BASENAME}.$output_ext\"";
+        push( @args, "\${$output_var_name}" );
+        $next_word_is_output = 0;
+    } else {
+        my $input_ext = "inp";
+        if( $word =~ /\.([^.]+)$/ ) {
+            $input_ext = $1;
+        }
+        $input_file_type = uc( $input_ext ) unless defined $input_file_type;
+        my $input_var_base = "INPUT_" . uc( $input_ext );
+        my $input_var_name = $input_var_base;
+        my $n = 2;
+        while( exists $inputs{$input_var_name} ) {
+            my $suffix = sprintf( "%02d", $n );
+            $input_var_name = $input_var_base . "_" . $suffix;
+            $n++;
+        }
+        $inputs{$input_var_name} =
+            "$input_var_name=\"$word\"";
+        push( @args, "\${$input_var_name}" );
+    }
+}
+
+if( !%outputs ) {
+    my $output_var_name="OUTPUT_DAT";
+    $outputs{$output_var_name} = 
+        "$output_var_name=\"\${OUTPUT_DIR}/\${BASENAME}.dat\"";
+    push( @args, '>', "\${$output_var_name}" );
+}
+
+print $shebang;
+print $svn_keywords;
+print "#*\n";
+print "# This script was created automatically with:\n";
+print "# $Id\n#\n";
+print "# Processing ";
+print "a ", $input_file_type, " file " if defined $input_file_type;
+print "with '$ARGV[0]'.\n";
+print "#**\n\n";
+
+print $preambule, "\n";
+
+for my $key (sort keys %inputs ) {
+    print $inputs{$key}, "\n";
+}
+
+print "\n" if %inputs;
+
+print $basename_clause, "\n";
+
+for my $key (sort keys %outputs ) {
+    print $outputs{$key}, "\n";
+}
+
+print "\n", $post_depend, "\n";
+
+print join( " ", @args ), "\n\n";
+
+print $tail;
+

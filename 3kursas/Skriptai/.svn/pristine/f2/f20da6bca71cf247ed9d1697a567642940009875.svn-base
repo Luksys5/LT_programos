@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Generate a COD CIF file path within the prefixed COD file tree from
+# a COD ID:
+
+# Usage:
+# echo 1000000 | CODPATH=~/struct/cod/cif/ codid2file
+# codsql 'select file from data where file like "2%"' -NB | codid2file
+
+# To avoid specifying CODPATH in each command, you can define it in
+# your ~/.bashrc file
+#
+# export CODPATH=~/struct/cod/cif/
+
+if [ $# -gt 0 ]
+then
+    if [ ! -f "$1" ] && [[ $1 =~ [0-9]{7} ]]
+    then
+        echo "$@" | tr " " "\n"
+    else
+        cat "$@"
+    fi
+else
+    cat
+fi \
+| gawk -vCODPATH=${CODPATH} \
+    '{print CODPATH \
+            substr($0,1,1)"/"substr($0,2,2)"/"substr($0,4,2)"/"$0".cif"}'

@@ -1,0 +1,90 @@
+#!/bin/sh
+#------------------------------------------------------------------------
+#$Author:$
+#$Date:$ 
+#$Locker:$
+#$Revision:$
+#$Source:$
+#$State:$
+#------------------------------------------------------------------------
+#*
+# Convert PostScript file to TIFF with a given resolution.
+# Calls 'gs' (ghost script)
+#**
+
+set -ue
+
+OUT_FILE=""
+INP_FILE=""
+O_FORMAT=tiff24nc
+
+RESOLUTION=""
+
+gs=gs
+
+#**OPTIONS:
+#** -o, --output outfile.tiff   name of the output TIFF file
+#** -r, --resolution 600        use resolution 600dpi
+#**
+#** --tiff24nc                  write 24bit colour, non-compressed TIFF
+#** --tiff12nc                  write 12bit colour, non-compressed TIFF
+#** other TIFF output formats are:
+#** --tiffcrle --tiffg3 --tiffg32d --tiffg4 --tifflzw --tiffpack
+#**
+#** -f, --format tifflzw        pass 'tifflzw' as an output device 
+#**                             (output format) to gs
+#** --script                    do not execute gs, print the command to
+#**                             the STDOUT instead
+#** --help, --usage             print short usage message (this message)
+#**                             and exit
+#**
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+	-o|--output|--outpu|--outp|--out|--ou|--o)
+	    OUT_FILE="$2" ; shift
+	    ;;
+	-r|--resolution|--resolutio|--resoluti|--resolut|--resolu|--resol|\
+	--reso|--res|--re|--r)
+	    RESOLUTION="-r$2" ; shift
+	    ;;
+
+        --tiffcrle) O_FORMAT=tiffcrle ;;
+        --tiffg3)   O_FORMAT=tiffg3   ;;
+        --tiffg32d) O_FORMAT=tiffg32d ;;
+        --tiffg4)   O_FORMAT=tiffg4   ;;
+        --tifflzw)  O_FORMAT=tifflzw  ;;
+        --tiffpack) O_FORMAT=tiffpack ;;
+        --tiff12nc) O_FORMAT=tiff12nc ;;
+        --tiff24nc) O_FORMAT=tiff24nc ;;
+
+	-f|--format|--forma|--form|--for|--fo|--f)
+	    O_FORMAT="$2" ; shift
+	    ;;
+	--script|--scrip|--scri|--scr|--sc|--s)
+	    gs="echo ${gs}"
+	    ;;
+	--help|--hel|--he|--h|--usage|--usage|--usag|--usa|--us|--u)
+	    usage $0 '[options] psfile.ps'
+	    exit
+	    ;;
+	-*) echo "$0: unknown option '$1'" ; exit 1 ;;
+	 *) INP_FILE="$1" ;;
+    esac
+    shift
+done
+
+if [ "${INP_FILE}" != "" -a "${INP_FILE}" != "-" ]
+then
+    test -z "${OUT_FILE}" && OUT_FILE="`basename ${INP_FILE} .ps`.tiff"
+else
+    test -z "${OUT_FILE}" && OUT_FILE="-"
+fi
+
+test "${gs}" != "echo gs" && set -x
+
+${gs} -dNOPAUSE -dBATCH ${RESOLUTION} \
+    -sDEVICE=${O_FORMAT} \
+    -sOutputFile="${OUT_FILE}" \
+    "${INP_FILE}"

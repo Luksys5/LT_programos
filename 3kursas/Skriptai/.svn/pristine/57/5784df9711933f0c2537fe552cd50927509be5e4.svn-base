@@ -1,0 +1,157 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author$
+#$Date$
+#$Revision$
+#$URL$
+#------------------------------------------------------------------------------
+#*USAGE:
+#     $0 --options jabref-biblio-database.bib
+#
+# Replace semicolons (";") in author name lists by "and".
+#**
+
+use strict;
+use Text::BibTeX;
+
+use Encode 'decode_utf8';
+
+use SOptions;
+use SUsage;
+
+binmode( STDIN, "utf8" );
+binmode( STDOUT, "utf8" );
+binmode( STDERR, "utf8" );
+
+my $debug = 0;
+my $script = 0;
+my $rename = 0;
+
+my $use_Perl_parser = 0;
+
+#**OPTIONS:
+#** --help    print a short usage message (this message) and exit
+@ARGV = getOptions( 
+
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+if( $use_Perl_parser ) {
+    use IO::File;
+    use BibTeX::Parser;
+} else {
+    use Text::BibTeX;
+}
+
+undef $/; # "slurp" mode
+
+unless( @ARGV ) {
+    push( @ARGV, "-" );
+    print STDERR "# $0: reading from stdin...\n" if -t STDIN;
+}
+
+foreach my $filename (@ARGV) {
+
+    my $text;
+    if( $filename ne "-" ) {
+        open( BIBTEX, "<:utf8", $filename ) or
+            die( "could not open file '$filename' for reading: $!" );
+        $text = <BIBTEX>;
+        close( BIBTEX );
+    } else {
+        $text = <STDIN>;
+    }
+
+    if( $text =~ /^\s*$/ ) {
+        warn( "empty file '$filename'" );
+        next
+    }
+
+    my @entries = map { m/^\s*$/ ? () : ( m/^\s*(%|@)/ ? $_ : "@" . $_ ) }
+        split( /\s@/, $text );
+
+    ## my $bibfile = new Text::BibTeX::File( $filename );
+    ## my $entry;
+    ## while( $entry = new Text::BibTeX::Entry( $bibfile )) {
+
+    for my $entry_text (@entries) {
+
+        # Remove non-alphanumeric chars from BibTeX keys befor presenting
+        # them to the 'btparse' BibTeX parser, to avoid syntax errors:
+
+        $entry_text =~ s/@(\w+)\{(.*),/my $type = $1; my $key = $2;
+        $key =~ s,["'{}],,g;
+        "@".$type."{".$key.","/xe; #/# finish this RE for Emacs...
+
+        if( $entry_text !~ /^@/ ) {
+            print $entry_text;
+            next
+        }
+
+        my $entry;
+
+        if( $use_Perl_parser ) {
+            use IO::String;
+            use BibTeX::Parser;
+            my $bib_io_string = new IO::String( $entry_text );
+            $bib_io_string->binmode( ":utf8" );
+            my $parser = BibTeX::Parser->new( $bib_io_string );
+            $entry = $parser->next;
+        } else {
+            $entry = new Text::BibTeX::Entry;
+            $entry->parse_s( $entry_text );
+        }
+
+        unless( $entry && $entry->parse_ok ) {
+            my $entry_start = substr($entry_text,0,40);
+            $entry_start =~ s/\n/ /g;
+            $entry_start =~ s/\r//g;
+            warn "could not parse entry ", $entry_start, "... \n";
+            print $entry_text;
+            next
+        }
+
+        unless( $use_Perl_parser || $entry->metatype == &BTE_REGULAR ) {
+            print $entry_text;
+            next
+        }
+
+        my %data;
+
+        my @fieldlist = $entry->fieldlist;
+        for my $key (@fieldlist) {
+	    # Insist that the names are well-formed utf8:
+            $data{$key} = decode_utf8( $use_Perl_parser ?
+                                       $entry->field( $key ) :
+                                       $entry->get( $key ));
+        }
+        
+        my $bibtex_id = $entry->key;
+        my $type = $entry->type;
+
+        if( !defined $data{author} ) {
+            print( STDERR "$0: WARNING, field 'authors' is not defined " .
+                   "in entry '$bibtex_id'\n" );
+        } else {
+            $data{author} =~ s/;/ and/g;
+        }
+
+        print '@', uc($type), "\{$bibtex_id,\n";
+        print_bibtex_data( \%data );
+        print "}\n\n";
+    }
+}
+
+sub print_bibtex_data
+{
+    my ( $data ) = @_;
+
+    for my $key (keys %$data) {
+        if( defined $data->{$key} ) {
+            print "    $key = {$data->{$key}},\n"
+        }
+    }
+}

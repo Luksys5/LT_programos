@@ -1,0 +1,99 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 2000/02/07 09:00:35 $ 
+#$Locker:  $
+#$Revision: 1.1 $
+#$Source: /home/grazulis/src/tdb/RCS/tdbJOexpand,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#*
+# Split the JO (journal) field and extract voluma, yer, etc.
+# The command:
+#    dbf2tagged file.dbf | tdbJOexpand
+# should be equivalent to: 
+#    dbf2tagged_JO file.dbf
+#**
+
+use strict;
+
+sub fold
+{
+    my $length = shift;
+    my $separator = shift;
+    my $string = shift;
+    my @lines = ();
+    my $line = "";
+
+    my $ors = $separator =~ /\s/ ? $separator : "$separator ";
+    my $word;
+    for $word (split( $separator, $string )) {
+	$word =~ s/^\s*|\s*$//g;
+	if( !$line ) {
+	    $line = $word;
+	} else {
+	    my $new_line = "$line$ors$word";
+	    if( length($new_line) < $length ) {
+		$line = $new_line;
+	    } else {
+		push( @lines, $line );
+		$line = $word;
+	    }
+	}
+    }
+    push( @lines, $line );
+    return @lines;
+}
+
+my $source = "";
+
+my $journal = "";
+my $no = "";
+my $vol = "";
+my $pages = "";
+my $year = "";
+
+while(<>) {
+    if( /^JO/ ) {
+	chomp;
+	my ( $kwd, $text ) = split( " ", $_, 2 );
+	$source = $source ? "$source $text" : $text;
+	next unless eof;
+    }
+
+    if( $source ) {
+	if( $source =~ /([^\.]+)\.\s*(\d+) \(([-\d]+)\) : 
+	   ([-\d]+),\s*(\d+)\s+(.+)$ /x ) {
+	    $journal = $1;
+	    $no = $2;
+	    $vol = $3;
+	    $pages = $4;
+	    $year = $5;
+	    print map {"JO\t$_\n"} fold( 70, " ", $journal );
+	    print map {"YE\t$_\n"} fold( 70, " ", $year );
+	    print map {"NO\t$_\n"} fold( 70, " ", $no );
+	    print map {"VO\t$_\n"} fold( 70, " ", $vol );
+	    print map {"PA\t$_\n"} fold( 70, " ", $pages );
+	}
+	elsif( $source =~ /([^\.]+)\.\s*(\d+) :
+	      ([-\d]+),\s*(\d+)\s+(.+)$ /x ) {
+	    $journal = $1;
+	    $no = $2;
+	    $pages = $3;
+	    $year = $4;
+	    print map {"JO\t$_\n"} fold( 70, " ", $journal );
+	    print map {"YE\t$_\n"} fold( 70, " ", $year );
+	    print map {"NO\t$_\n"} fold( 70, " ", $no );
+	    print map {"PA\t$_\n"} fold( 70, " ", $pages );
+	} else {
+	    print map {"JO\t$_\n"} fold( 70, " ", $source );
+	}
+	$source = "";
+	print if !/^JO/;
+    } else {
+	print;
+    }
+}

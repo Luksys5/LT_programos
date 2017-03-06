@@ -1,0 +1,6 @@
+#!/bin/sh
+
+ls -1 | grep "\;" | awk -F\; '{print "mv -i \"" $0 "\"     \t" $1 }' > rename
+chmod a+x rename
+./rename
+rm rename

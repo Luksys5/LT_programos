@@ -1,0 +1,137 @@
+#!/bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#*
+# Generate an O script to load and/or redraw maps listed on the command line
+#
+#USAGE:
+# genloadmaps [options] density1.omap [ density2.omap ... ]
+#**
+
+use strict;
+use File::Basename;
+use Crunch;
+use SOptions;
+use SUsage;
+
+my @colors = ();
+my @object_names = ();
+my ($prefix, $suffix) = ( "", "" );
+my ($remove_prefix, $remove_suffix, $one_color);
+my $threshold;
+my $O_datablock_name = "autoremap";
+my $print_names = 0;
+
+#**OPTIONS:
+#** -t, --threshold N             contour all maps at a threshold N * sigma
+#** -c, --colors color1,color2    use color1, color2 and so on for 
+#**                               drawing density1.omap, density2.omap
+#** -p, --prefix prefix           prepend 'prefix' to density file name
+#**                               before constructing an object name
+#** -s, --suffix suffix           append 'suffix' to density file name
+#**                               before constructing an object name
+#** -n, --names                   the generated script will print map names
+#**                               before contouring them
+#** -n-,--no-names                the generated script will not print map names
+#** -C, --one-color xxx           use same color 'xxx' for all maps
+#** -D, --O-datablock-name xxx    give a name '@xxx' to the created O datablock
+#** -O, --object-names obj1,obj2  name map objects obj1, obj2 and so on
+#** -P, --remove-prefix prefix    remove 'prefix' from density file name
+#**                               before constructing an object name
+#** -S, --remove-suffix suffix    remove 'suffix' from density file name
+#**                               before constructing an object name
+#** --help, --usage     print short usage message (this message) and exit
+#**
+
+@ARGV = getOptions(
+    "-t,--threshold"        => \$threshold,
+    "-c,--colors"           => \@colors,
+    "-p,--prefix"           => \$prefix,
+    "-s,--suffix"           => \$suffix,
+    "-n,--names"            => sub { $print_names = 1 },
+    "-n-,--no-names"        => sub { $print_names = 0 },
+    "-C,--one-color"        => \$one_color,
+    "-D,--O-datablock-name" => \$O_datablock_name,
+    "-O,--object-names"     => \@object_names,
+    "-P,--remove-prefix"    => \$remove_prefix,
+    "-S,--remove-suffix"    => \$remove_suffix,
+    "--help,--usage"        => sub { SUsage::usage(); exit },
+);
+
+@colors = map{split(/[,:]/)} map{split} join(" ", @colors);
+@object_names = map {split(/[,:]/)} map{split} join(" ", @object_names);
+
+my @macro = ();
+
+if( defined $threshold ) {
+    push( @macro, "copy_db map_save .map_real" );
+}
+
+my $color_step = scalar(@ARGV) + 1 - scalar(@colors) + 2;
+my $color = 1;
+my $file;
+for $file (@ARGV) {
+
+    my $object;
+    if( @object_names ) {
+	$object = shift( @object_names );
+    } else {
+	my $basename = basename( $file, ".omap", ".dn6" );
+	$basename =~ s/^$remove_prefix// if $remove_prefix;
+	$basename =~ s/$remove_suffix$// if $remove_suffix;
+	my $prefix_length = defined $prefix ? length($prefix) : 0;
+	my $suffix_length = defined $suffix ? length($suffix) : 0;
+	$object = crunch( $basename, 5 - $prefix_length - $suffix_length );
+	$object = "${prefix}${object}" if $prefix;
+	$object = "${object}${suffix}" if $suffix;
+    }
+
+    my $color_now;
+    if( @colors ) {
+	$color_now = shift( @colors );
+    } elsif( $one_color ) {
+	$color_now = $one_color;
+    } else {
+	my $red   = sprintf "%5.3f", 0.7 * $color/$color_step;
+	my $green = 0;
+	my $blue  = sprintf "%5.3f", (1 - $color/$color_step);
+	$color_now = "$red $green $blue";
+	$color += 1;
+    }
+
+    if( $print_names ) {
+	push( @macro, "print \"Now contouring $object ($file)\"" );
+    }
+
+    push( @macro, "map_obj $object" );
+    push( @macro, "map_file $file" );
+
+    if( defined $threshold ) {
+	push( @macro, "map_par ; $threshold $color_now ;;" );
+    } else {
+	push( @macro, "map_par ;; $color_now ;;" );
+    }
+
+    push( @macro, "map_active_centre" );
+    push( @macro, "map_draw" );
+}
+
+if( defined $threshold ) {
+    push( @macro, "copy_db .map_real map_save " );
+}
+
+push( @macro, "!!" );
+
+$\ = "\n";
+$, = "\n";
+
+my $width = 0;
+for( @macro ) { $width = length($_) if $width < length($_) }
+
+unshift( @macro,
+	 sprintf "\@%s                    T        %d      %d",
+	 $O_datablock_name, scalar(@macro), $width );
+
+print @macro;

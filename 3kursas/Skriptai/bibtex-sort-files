@@ -1,0 +1,581 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2015-03-05 17:10:46 +0200 (Kt, 05 Kov 2015) $
+#$Revision: 503 $
+#$URL: svn://saulius-grazulis.lt/scripts/bibtex-sort-files $
+#------------------------------------------------------------------------------
+#*USAGE:
+#     $0 --options jabref-biblio-database.bib
+#
+# Distributes files into subdirectories according to the
+# bibliographic information.
+#**
+
+use strict;
+use Text::BibTeX;
+
+use Encode 'decode_utf8';
+
+use SOptions;
+use SUsage;
+
+binmode( STDIN, "utf8" );
+binmode( STDOUT, "utf8" );
+binmode( STDERR, "utf8" );
+
+my $debug = 0;
+my $script = 1;
+my $rename = 0;
+
+my $use_Perl_parser = 0;
+
+my $user_cp_command;
+my $user_mv_command;
+my $user_mkdir_command;
+my $user_use_svn;
+
+my @selected_files;
+my @selected_entries;
+
+my $move_files= "all";   # other possibilities: "all", "pdf"
+my $action = "none"; # other possibilities: "move", "copy" (move or
+                     # copy the files mentioned in the input BibTeX
+                     # stream).
+
+use File::Basename;
+
+my $new_bibtex_file = File::Basename::basename( $0 ) . ".bib";
+
+my $directory_pattern_by_author = "by-author/%{A}/%{author}/";
+my $directory_pattern_by_journal = "by-journal/%{jnrl}/%{year}/";
+my $directory_pattern_by_year = "by-year/%{year}/%{author}/";
+my $directory_pattern_by_decade = "by-decade/%{decade}/%{A}/%{author}";
+my $directory_pattern_by_keywords = "by-keyword/%{keywords}/";
+my $directory_pattern_by_owner_keywords = "by-keyword/%{owner}/%{keywords}/";
+my $directory_pattern_by_bibkey = "by-keyword/%{A}/%{author}/";
+
+my $directory_pattern = $directory_pattern_by_author;
+
+my $filename_pattern = '%{year}_%{author}_%{page}';
+
+my @patterns = qw (
+    %{author}
+    %{A}
+    %{journal}
+    %{jnrl}
+    %{year}
+    %{yr}
+    %{volume}
+    %{decade}
+    %{keywords}
+    %{owner}
+    %{bibkey}
+    %{page}
+);
+
+my %journal_abbrev = (
+    "nucleic acids research" => "NAR",
+    "proceedings of the national academy of sciences of the united states of " .
+    "america" => "PNAS",
+    "journal of the american cheimcal society" => "JACS",
+);
+
+#**OPTIONS:
+#** --by-author              Sort files by the first author
+#** --by-journal             Sort files by the journal
+#** --by-year                Sort files by publication year
+#** --by-decade              Sort files by decade
+#** --by-keywords            Sort files by keywords
+#** --by-owner-keywords      Sort files by owner and keywords
+#** --by-bibkey              Sort files by BibTeX record keys
+#** 
+#** --directory-pattern 'by-author/%{A}/%{author}/'
+#**     Specify your own directory pattern. Supported pattern widcards:
+#**     %{author}, %{A}, %{journal}, %{jnrl}, %{year}, %{decade},
+#**     %{keywords}, %{owner}
+#**
+#**  --filename-pattern '%{year}_%{author}_%{page}'
+#**     Specify your own pattern for renaming files.
+#**
+#**  --select-file file.pdf         Process only file "file.pdf"
+#**  --file file.pdf                Process only file "file.pdf"
+#**  --add-file file2.pdf           Only move files added to with this option
+#**  --add-selected-file file2.pdf  same as above
+#**  --clear-selected-files
+#**     Forget all files added to the move list, move all files (default)
+#**                             
+#**  --select-entry Author1999      Process only bibtex entry Author1999
+#**  --entry Author1999             Process only bibtex entry Author1999
+#**
+#**  --add-entry Author2000a
+#**     Only move files from entrys added to with this option
+#**
+#**  --add-selected-entry entry2.pdf  same as above
+#**
+#**  --clear-selected-entrys
+#**     Forget all entries added to the move list, move files from all entries
+#**     (default)
+#**                             
+#** --move-files                  Move files to new destinations
+#** --copy-files                  Copy files to new destinations.
+#** --no-move, --dont-move-files  Do not touch files on the files system (default).
+#**
+#** --rename       Rename PDF files to %{year}_%{author}_%{page}.pdf
+#**
+#** --use-svn      Always use 'svn {cp,mv}' instead of 'cp' or 'mv'
+#** --no-svn       Never use 'svn {cp,mv}'
+#** --svn          Use svn commands if we work in a versioned dir (default)
+#** --default-svn  Same as '--svn'
+#**
+#** --pdf   process only PDF files
+#** --all   process all files listed in .bib
+#** --first process only the first file in each .bib entry (default)
+#** 
+#** --use-Perl-parser  Use pure Perl parser BibTeX::Parser
+#** --use-C-parser     Use Perl/C parser Text::BibTeX (default)
+#** 
+#** --debug            print out debug information
+#** --no-debug         no debug information (default)
+#** 
+#** --script           print shell commands STDOUT, do not run them
+#** --no-script,--run  run the actual commands (default)
+#**
+#** --help    print a short usage message (this message) and exit
+@ARGV = getOptions( 
+
+    "--by-author" =>
+        sub { $directory_pattern = $directory_pattern_by_author },
+    "--by-journal" =>
+        sub { $directory_pattern = $directory_pattern_by_journal },
+    "--by-year" =>
+        sub { $directory_pattern = $directory_pattern_by_year },
+    "--by-decade" =>
+        sub { $directory_pattern = $directory_pattern_by_decade },
+    "--by-keywords" =>
+        sub { $directory_pattern = $directory_pattern_by_keywords },
+    "--by-owner-keywords" =>
+        sub { $directory_pattern = $directory_pattern_by_owner_keywords },
+    "--by-bibkey" =>
+        sub { $directory_pattern = $directory_pattern_by_bibkey },
+
+    "--directory-pattern" => \$directory_pattern,
+
+    "--filename-pattern" => \$filename_pattern,
+
+    "--select-file"          => sub { push( @selected_files, &get_value ) },
+    "--file"                 => sub { push( @selected_files, &get_value ) },
+    "--add-file"             => \@selected_files,
+    "--add-selected-file"    => \@selected_files,
+    "--clear-selected-files" => sub { undef @selected_files },
+
+    "--select-entry"           => sub { push( @selected_entries, &get_value ) },
+    "--entry"                  => sub { push( @selected_entries, &get_value ) },
+    "--add-entry"              => \@selected_entries,
+    "--add-selected-entry"     => \@selected_entries,
+    "--clear-selected-entries" => sub { undef @selected_entries },
+
+    "--move-files" => sub { $action = "move" },
+    "--copy-files" => sub { $action = "copy" },
+    "--no-move"    => sub { $action = "none" },
+    "--dont-move-files" => sub { $action = "none" },
+
+    "--rename" => sub { $rename = 1; },
+    "--dont-rename" => sub { $rename = 0; },
+
+    "--use-svn" => sub { $user_use_svn = 1 },
+    "--no-svn"  => sub { $user_use_svn = 0 },
+    "--svn,--default-svn"  => sub { undef $user_use_svn },
+
+    "--pdf" => sub{ $move_files = "pdf" },
+    "--all" => sub{ $move_files = "all" },
+    "--first" => sub{ $move_files = "first" },
+
+    "--use-Perl-parser" => sub { $use_Perl_parser = 1 },
+    "--use-C-parser"    => sub { $use_Perl_parser = 0 },
+
+    "--debug"    => sub { $debug = 1 },
+    "--no-debug" => sub { $debug = 0 },
+
+    "--script"           => sub { $script = 1 },
+    "--no-script,--run"  => sub { $script = 0 },
+
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+if( $use_Perl_parser ) {
+    use IO::File;
+    use BibTeX::Parser;
+} else {
+    use Text::BibTeX;
+}
+
+my $cp_command = 'cp';
+my $mkdir_command = 'mkdir --parents';
+
+if( $action eq "move" ) {
+    $cp_command = 'mv';
+}
+
+if( $user_use_svn ||
+    ( !defined $user_use_svn && -d ".svn" )) {
+    $cp_command = 'svn --quiet ' . $cp_command;
+    $mkdir_command = 'svn --quiet ' . $mkdir_command;
+}
+
+my %selected_files =
+    @selected_files ? (map {($_,$_)} @selected_files) : ();
+
+my %selected_entries =
+    @selected_entries ? (map {($_,$_)} @selected_entries) : ();
+
+undef $/; # "slurp" mode
+
+unless( @ARGV ) {
+    push( @ARGV, "-" );
+    print STDERR "# $0: reading from stdin...\n" if -t STDIN;
+}
+
+foreach my $filename (@ARGV) {
+
+    my $text;
+    if( $filename ne "-" ) {
+        open( BIBTEX, "<:utf8", $filename ) or
+            die( "could not open file '$filename' for reading: $!" );
+        $text = <BIBTEX>;
+        close( BIBTEX );
+    } else {
+        $text = <STDIN>;
+    }
+
+    if( $text =~ /^\s*$/ ) {
+        warn( "empty file '$filename'" );
+        next
+    }
+
+    my @entries = map { m/^\s*$/ ? () : ( m/^\s*(%|@)/ ? $_ : "@" . $_ ) }
+        split( /\s@/, $text );
+
+    ## my $bibfile = new Text::BibTeX::File( $filename );
+    ## my $entry;
+    ## while( $entry = new Text::BibTeX::Entry( $bibfile )) {
+
+    for my $entry_text (@entries) {
+
+        # Remove non-alphanumeric chars from BibTeX keys befor presenting
+        # them to the 'btparse' BibTeX parser, to avoid syntax errors:
+
+        $entry_text =~ s/@(\w+)\{(.*),/my $type = $1; my $key = $2;
+        $key =~ s,["'{}],,g;
+        "@".$type."{".$key.","/xe; #/# finish this RE for Emacs...
+
+        if( $entry_text !~ /^@/ ) {
+            print $entry_text;
+            next
+        }
+
+        my $entry;
+
+        if( $use_Perl_parser ) {
+            use IO::String;
+            use BibTeX::Parser;
+            my $bib_io_string = new IO::String( $entry_text );
+            $bib_io_string->binmode( ":utf8" );
+            my $parser = BibTeX::Parser->new( $bib_io_string );
+            $entry = $parser->next;
+        } else {
+            $entry = new Text::BibTeX::Entry;
+            $entry->parse_s( $entry_text );
+        }
+
+        unless( $entry && $entry->parse_ok ) {
+            my $entry_start = substr($entry_text,0,40);
+            $entry_start =~ s/\n/ /g;
+            $entry_start =~ s/\r//g;
+            warn "could not parse entry ", $entry_start, "... \n";
+            print $entry_text;
+            next
+        }
+
+        unless( $use_Perl_parser || $entry->metatype == &BTE_REGULAR ) {
+            print $entry_text;
+            next
+        }
+
+        my %data;
+
+        my @fieldlist = $entry->fieldlist;
+        for my $key (@fieldlist) {
+	    # Insist that the names are well-formed utf8:
+            $data{$key} = decode_utf8( $use_Perl_parser ?
+                                       $entry->field( $key ) :
+                                       $entry->get( $key ));
+        }
+        
+        my $bibtex_id = $entry->key;
+        my $type = $entry->type;
+
+        if( %selected_entries && !exists $selected_entries{$bibtex_id} ) {
+            print $entry_text;
+            next
+        }
+
+        if( !defined $data{file} ) {
+            print( STDERR "$0: WARNING, field 'file' is not defined " .
+                   "in entry '$bibtex_id'\n" );
+        } else {
+            my @authors;
+            my $first_author_surname;
+
+            if( exists $data{author} ) {
+
+                my @authors =
+                    map {s/^\s+|\s+$//g; s/\s*\(.*?\)|\s*et\s+al\.//g; $_}
+                    split( " and ", $data{author} );
+                if( $authors[0] =~ /,/ ) {
+                    my @first_author = split( ',\s*', $authors[0] );
+                    $first_author_surname = $first_author[0];
+                } else {
+                    my @first_author = split( ' ', $authors[0] );
+                    $first_author_surname = $first_author[-1];
+                }
+            }
+
+            my @file_entries = 
+                map {[ split( /(?<!\\):/, $_, 3 ) ]}
+                split( /(?<!\\);/, $data{file} );
+
+            my ( @files_to_move, @files_to_list );
+            if( $move_files eq "pdf" ) {
+                @files_to_move = grep { $_->[1] =~ /\.pdf$/i ? $_ : () }
+                    @file_entries;
+                @files_to_list = grep { $_->[1] !~ /\.pdf$/i ? $_ : () }
+                    @file_entries;
+            } elsif( $move_files eq "first" ) {
+                @files_to_move = ( $file_entries[0] );
+                @files_to_list = ( @file_entries[1..$#file_entries] );
+            } else {
+                @files_to_move = @file_entries;
+                @files_to_list = ();
+            }
+
+            my $file_moved = 0; # indicates whether at leat one file
+                                # has been moved in this entry
+
+            for my $file_descr (@files_to_move) {
+                my $filename = $file_descr->[1];
+                my $directory = expand_pattern( $directory_pattern,
+                                                { %data,
+                                                  bibtex_id =>
+                                                      $bibtex_id,
+                                                  first_author_surname =>
+                                                      $first_author_surname,
+                                                }, "unknown"
+                    );
+
+                if( %selected_files && !exists $selected_files{$filename} ) {
+                    unshift( @files_to_list, $file_descr );
+                    next
+                }
+
+                my $file_basename = basename( $filename );
+                my $new_basename = $file_basename;
+
+                my $extension;
+                if( $rename && $file_basename =~ /(\.[^\/]*)$/i ) {
+                    $extension = $1;
+                    if( $directory_pattern eq $directory_pattern_by_bibkey ) {
+                        $new_basename = $bibtex_id . $extension;
+                    } else {
+                        my $page = exists $data{pages} ? $data{pages} : "";
+                        my $year = exists $data{year} ? $data{year} : "XXXX";
+                        my $author = defined $first_author_surname ?
+                            $first_author_surname : "unknown";
+                        $page =~ s/-.*$//;
+                        if( $page =~ /^([0-9]+)/ ) {
+                            $page = $1;
+                        }
+                        $page = "_" . $page if $page;
+                        $page =~ s/:/\\:/g;
+                        $author =~ s/\s+//g;
+                        $author =~ s/[^-[:upper:][:lower:]0-9_]//g;
+                        $new_basename =
+                            expand_pattern( $filename_pattern,
+                                            { %data,
+                                              bibtex_id =>
+                                                  $bibtex_id,
+                                                  first_author_surname =>
+                                                  $first_author_surname,
+                                            }, ""
+                            );
+                    }
+                }
+
+                $new_basename =~ s/_+/_/g;
+
+                my $old_basename = $new_basename;
+                $new_basename =~ s/_+$//g;
+                $directory .= "/" unless $directory =~ /\/$/;
+
+                my $count = ord("a");
+                my $new_filename = $directory . $new_basename . $extension;
+                while( -f $new_filename ) {
+                    $new_basename = $old_basename . chr($count++);
+                    $new_filename = $directory . $new_basename . $extension;
+                }
+
+                if( !files_are_the_same( $new_filename, $filename )) {
+
+                    unshift( @files_to_list,
+                             [ $file_descr->[0], $new_filename, 
+                               $file_descr->[2] ] );
+
+                    $file_moved = 1;
+
+                    if( $action ne "none" ) {
+                        my $source_filename = $filename;
+                        $source_filename =~ s/\\:/:/g;
+                        my $dest_filename = $new_filename;
+                        $dest_filename  =~ s/\\:/:/g;
+                        if( $script ) {
+                            print STDERR "$mkdir_command '$directory'\n";
+                            print STDERR "$cp_command " .
+                                "'$source_filename' '$dest_filename'\n";
+                        } else {
+                            system split( " ", $mkdir_command ), $directory;
+                            system split( " ", $cp_command ),
+                                $source_filename, $dest_filename;
+                        }
+                    }
+                }
+            }
+            if( $file_moved ) {
+                $data{file} = join( ";", map { join( ":", @$_ ) }
+                                    @files_to_list );
+                print '@', uc($type), "\{$bibtex_id,\n";
+                print_bibtex_data( \%data );
+                print "}\n\n";
+            } else {
+                print $entry_text;
+            }
+        }
+    }
+}
+
+if( $script ) {
+    print STDERR "$0: (DRY RUN) - the commands where not actually executed, " .
+        "only printed.\n";
+    print STDERR "$0: Please rerun with the '--run' option to " .
+        "actually run them.\n";
+}
+
+sub print_bibtex_data
+{
+    my ( $data ) = @_;
+
+    for my $key (keys %$data) {
+        if( defined $data->{$key} ) {
+            print "    $key = {$data->{$key}},\n"
+        }
+    }
+}
+
+sub files_are_the_same
+{
+    my ( $new_filename, $filename ) = @_;
+
+    ( $new_filename, $filename ) =
+        map { s|^\.||; s|/+$||; s|//||g; $_ } ( $new_filename, $filename );
+
+    return ($new_filename eq $filename);
+}
+
+sub expand_pattern
+{
+    my ($string, $data, $unknown_indicator) = @_;
+
+    my $first_author_surname = defined $data->{first_author_surname} ?
+        $data->{first_author_surname} : "unknown";
+
+    for my $pattern (@patterns) {
+        my $value;
+        if( $pattern eq "%{author}" ) {
+            $value = $first_author_surname;
+            $value =~ s/\s+//g;
+            $value =~ s/[^-[:upper:][:lower:]0-9_]//g;
+        } elsif( $pattern eq "%{journal}" ) {
+            $value = $data->{journal};
+        } elsif( $pattern eq "%{year}" ) {
+            $value = defined $data->{year} ? $data->{year} : "XXXX";
+        } elsif( $pattern eq "%{yr}" ) {
+            $value = defined $data->{year} ?
+                substr( $data->{year}, 2, 2 ) : "XX";
+        } elsif( $pattern eq "%{volume}" ) {
+            $value = $data->{volume};
+        } elsif( $pattern eq "%{page}" ) {
+            $value = exists $data->{pages} ? $data->{pages} : "";
+            $value =~ s/-.*$//;
+            if( $value =~ /^([0-9]+)/ ) {
+                $value = $1;
+            }
+            $value =~ s/:/\\:/g;
+        } elsif( $pattern eq "%{jnrl}" ) {
+            $value = exists $data->{journal} ? $data->{journal} : "";
+            if( exists $journal_abbrev{lc($value)} ) {
+                $value = $journal_abbrev{lc($value)};
+                $value =~ s/\s+//g;
+                $value =~ s/[^-A-Za-z0-9_]//g;
+            } else {
+                $value =~ s/\b(the|of|in|by|a|for|section)\b//gi;
+                $value =~ s/\s+/ /g;
+                $value =~ s/^\s*|\s*$//g;
+                if( $value =~ /\s/ ) {
+                    $value = join( "", map { uc(substr($_,0,1)) }
+                                   split( ' ', $value ));
+                }
+            }
+            $value =~ s/[^A-Za-z0-9]//g;
+        } elsif( $pattern eq "%{A}" ) {
+            $value = substr( $first_author_surname, 0, 1 );
+        } elsif( $pattern eq "%{bibkey}" ) {
+            $value = $data->{bibtex_id};
+        } elsif( $pattern eq "%{decade}" ) {
+            $value = $data->{year};
+            if( defined $value ) {
+                $value = substr( $value, 0, 3 );
+                $value = "${value}0-${value}9";
+            }
+        } elsif( $pattern eq "%{keywords}" ) {
+            my $bibtex_value = $data->{keywords};
+            if( defined $bibtex_value ) {
+                my @keywords = 
+                    map { s/^\s+|\s+$//g, $_ }
+                split( ",", $bibtex_value );
+                my @mayor = grep /^[A-Z]/, @keywords;
+                my @minor = grep /^[^A-Z]/, @keywords;
+                if( @mayor ) {
+                    $value = $mayor[0] .
+                        (defined $minor[0] ? "/$minor[0]" : "");
+                } else {
+                    $value = defined $minor[0] ? $minor[0] : "";
+                }
+                $value =~ s/\s/_/g;
+            }
+        } else {
+            $pattern =~ /%\{(.*)\}/;
+            my $key = $1;
+            $value = $data->{$key};
+        }
+        if( ! $value ) {
+            $value = $unknown_indicator;
+        }
+        $string =~ s/$pattern/$value/g;
+    }
+
+    $string =~ s/__/_/g;
+
+    return $string;
+}

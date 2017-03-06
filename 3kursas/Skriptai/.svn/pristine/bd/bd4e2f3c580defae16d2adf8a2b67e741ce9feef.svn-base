@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# Draw a simple molecule picture using Jmol.
+
+# USAGE:
+#    $0 input.pdb output.png
+
+set -ue
+
+INPUT_FILE="$1"
+OUTPUT_FILE="$2"
+
+jmol \
+    --nodisplay \
+    --script - <<EOF
+load ${INPUT_FILE}
+select all
+wireframe off
+cpk 200
+color chain
+write png "${OUTPUT_FILE}"
+EOF
+
+##     --write PNG:${OUTPUT_FILE}

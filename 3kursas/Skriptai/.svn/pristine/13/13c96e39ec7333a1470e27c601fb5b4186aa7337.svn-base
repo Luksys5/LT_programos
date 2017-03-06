@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -ue
+
+cmpl()
+{
+    LINK=`ls -l $2 2> /dev/null | awk '{print $NF}'`
+    test -z "${LINK}" && exit 1
+    test -z "$2" && exit 1
+    test ${LINK} = $1
+}
+
+cmpl $1 $2

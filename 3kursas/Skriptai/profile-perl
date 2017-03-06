@@ -1,0 +1,188 @@
+#!/bin/bash
+#------------------------------------------------------------------------------
+#$Author: andrius $
+#$Date: 2014-06-30 14:57:08 +0300 (Pr, 30 Bir 2014) $
+#$Revision: 461 $
+#$URL: svn://saulius-grazulis.lt/scripts/profile-perl $
+#------------------------------------------------------------------------------
+#*
+# Runs Perl script with given command line options several times and
+# outputs averaged information about performance of script's subroutines.
+#**
+
+#** USAGE:
+#**     $0 --options --script test.pl -- argv1 argv2 ... argvN
+#**
+
+TMP_DIR="${TMPDIR}"
+
+BASENAME="$(basename $0)"
+
+SCRIPT=""
+N_RUNS=5
+SHOW_OUTPUT=0
+
+ARGS=""
+
+test -z "${TMP_DIR}" && TMP_DIR="."
+TMP_DIR="${TMP_DIR}/tmp-${BASENAME}-$$"
+mkdir "${TMP_DIR}"
+
+#** OPTIONS:
+#**  -n, --number-of-runs
+#**      Number of times the profiling have to be repeated. Default 5.
+#**
+#**  -s, --script
+#**      The path to the Perl script
+#**
+#**  --show-output
+#**      Print STDERR and STDOUT of the executed Perl script (both
+#**      streams are concatenated in aforementioned order and directed to
+#**      STDOUT). Output is turned off by default.
+#**
+#**  --help               Print short help message (this message) and exit
+while [ $# -gt 0 ]
+do
+  case $1 in
+    -n|--number-of-runs|--number-of-run|--number-of-ru|\
+    --number-of-r|--runs|--run)
+        N_RUNS="$2"
+        shift
+        ;;
+    -s|--script|--scrip|--scri|--scr|--sc|--s)
+        SCRIPT="$2"
+        shift
+        ;;
+    --show-output|--show-outpu|--show-outp|--show-out|--show-ou|\
+    --show-o|--show|--sho|--sh)
+        SHOW_OUTPUT=1
+        ;;
+    --help|--hel|--he|--h)
+          awk '/#\*/,/#\*\*/ {
+                  sub("^ *#[*]?[*]?", ""); \
+                  gsub("\\$0","'$(basename $0)'"); \
+                  print $0
+              }' $0
+          exit
+          ;;      
+    --)
+        shift
+        ARGS="$ARGS $*"
+        break
+        ;;
+    -*)
+        echo "`basename $0`: unknown option $1" >&2 ; exit 1 ;;
+    *)  ARGS="$ARGS $1" ;;
+    esac
+    shift
+done
+
+if [ -z "${SCRIPT}" ]
+then
+    echo The Perl script is not specified. >&2
+    echo Usage: $(basename $0) --script test.pl >&2
+    exit 1
+fi
+
+cp ${SCRIPT} ${TMP_DIR}
+if [ -e $(dirname ${SCRIPT})/_Inline ]
+then
+    CWD=$(pwd)
+    (
+        cd ${TMP_DIR}
+        ln -s ${CWD}/$(dirname ${SCRIPT})/_Inline _Inline
+    )
+fi
+
+(
+    cd ${TMP_DIR}
+    SCRIPT_BASENAME=$(basename ${SCRIPT})
+
+    if grep -q '^#! /bin/sh' < ${SCRIPT_BASENAME}
+    then
+        tail -n +5 ${SCRIPT_BASENAME} | sponge ${SCRIPT_BASENAME}
+    fi
+
+    OUT=output.stdout
+    ERR=output.stderr
+
+    for i in $(seq 1 ${N_RUNS})
+    do
+        perl -d:DProf ./${SCRIPT_BASENAME} ${ARGS} >${OUT} 2>${ERR}
+        PROFILE_FILE=run-$i.profile
+        dprofpp > ${PROFILE_FILE} 2>/dev/null
+        tail -n +4 ${PROFILE_FILE} \
+            | perl -lpe 's/^\s+//g; s/\s+/\t/g' \
+            | perl -lpe 's/\t-\t/\tNA\t/g' \
+            | perl -e 'while( <> ) {
+                           s/\n//;
+                           if( /^%/ ) {
+                               print "$_";
+                           } elsif( /^(\S+)$/ ) {
+                               print "$1";
+                           } else {
+                               print "\n$_";
+                           }
+                       }
+                       print "\n";' > run-$i.subroutines
+        head -n  2 ${PROFILE_FILE} \
+            | perl -lpe 's/[^\d\.]//g' > run-$i.time
+        rm tmon.out
+    done
+
+    if [ ${SHOW_OUTPUT} == 1 ]
+    then
+        cat ${ERR} ${OUT}
+    fi
+)
+
+TOTAL_PROFILE=${TMP_DIR}/total-profile.out
+
+R --vanilla --slave > ${TOTAL_PROFILE} <<EOF
+
+    elapsed_time     = 0
+    user_system_time = 0
+    exec_stats = list()
+    for (i in 1:${N_RUNS}) {
+        D = read.csv( file = paste( "${TMP_DIR}/run-", i, ".subroutines",
+                                    sep = "" ),
+                      header = TRUE,
+                      sep = "\t" )
+        for (j in 1:length(D[,1])) {
+            if( !is.na( D[j,2] ) ) {
+                sub = as.character( D[j,7] )
+                if( ! sub %in% names(exec_stats) ) {
+                    exec_stats[[sub]] = list( time = 0, count = 0 )
+                }
+                exec_stats[[sub]][['time']] =
+                    exec_stats[[sub]][['time']]  + D[j,2]
+                exec_stats[[sub]][['count']] =
+                    exec_stats[[sub]][['count']] + D[j,4]
+            }
+        }
+        T = read.csv( file = paste( "${TMP_DIR}/run-", i, ".time",
+                                    sep = "" ),
+                      header = FALSE )
+        elapsed_time     = elapsed_time     + T[1,1]
+        user_system_time = user_system_time + T[2,1]
+    }
+    total_time = 0
+    for (i in names(exec_stats) ) {
+        total_time = total_time + exec_stats[[i]][['time']]
+    }
+    for (i in names(exec_stats) ) {
+        time         = exec_stats[[i]][['time']]
+        percent_time = time / total_time * 100
+        count        = exec_stats[[i]][['count']] / ${N_RUNS}
+        cat( format( percent_time, digits = 3 ),
+             time, count, i, "\n", sep = "\t" )
+    }
+    cat( "Average elapsed time",
+         format( elapsed_time / ${N_RUNS}, 3 ), "\n", sep = "\t" )
+    cat( "User + system time",
+         format( user_system_time / ${N_RUNS}, 3 ), "\n", sep = "\t" )
+EOF
+
+sort -nr ${TOTAL_PROFILE} >&2
+
+rm -rf ${TMP_DIR}

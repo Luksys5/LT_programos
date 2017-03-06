@@ -1,0 +1,64 @@
+#!/bin/sh
+#-----------------------------------------------------------------------
+#  CCP4 control script - lsqkab matching two molecules
+#-----------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1997/07/01 16:05:58 $
+#$Header:
+#$Locker: grazulis $
+#$Revision: 1.6 $
+#$Source: /kaefer/u05/grazulis/bin/CCP4/RCS/match,v $
+#$State: Exp $
+#-----------------------------------------------------------------------
+#    Maches two molecules (in .pdb file format) 
+#
+#INPUT: Two pdb files
+#
+#OUTPUT: Both molecules in the pdb file, matched on one another
+#
+#-----------------------------------------------------------------------
+#set -x
+
+set -e
+
+function showscript { echo lsqkab $*; cat }
+lsqkab="lsqkab"
+
+INCLUDE=""
+while [ "$1" != "" ]
+do
+    case $1 in
+        -f|--firs*|--first-residue) shift; FIRST_RES=$1 ;;
+        -n|--last*|--last-residue)  shift; LAST_RES=$1 ;;
+        -o|--outp*|--output)  shift; OUTPUT=$1 ;;
+        -t|--titl*|--title)   shift; TITLE="TITLE $1" ;;
+        -I|--inc*|--include)  shift; INCLUDE="$INCLUDE\n\t$1" ;;
+        --scr*|--script) lsqkab=showscript ;;
+
+        *.pdb) PDB="$PDB '$1'" ;;
+        * ) echo "Sorry, dont know what is '$1' -- exiting"; exit 1 ;;  
+    esac
+    shift
+done
+
+eval set -- $PDB
+
+test -z "$1" && { echo "Please give 2 pdb files as input"; exit 1 }
+test -z "$2" && { echo "Please give 2 pdb files as input"; exit 1 }
+
+test -z "$TITLE"     && TITLE="TITLE Matching $1 on $2, lsqkab"
+test -z "$OUTPUT"    && OUTPUT=`dirname $1`/`basename $1 .pdb`-on-`basename $2`
+test -z "$FIRST_RES" && FIRST_RES=1
+test -z "$LAST_RES"  && \
+     LAST_RES=`awk '/^ATOM/{n=substr($0,23,4)} END{print n}' $1`
+test -z "$LAST_RES"  && exit 1
+
+set -u
+$lsqkab	WORKCD $1 REFRCD $2 LSQOP $OUTPUT << END-lsqkab
+	$TITLE
+	OUTPUT  XYZ
+	FIT     WRESIDU ALL $FIRST_RES TO $LAST_RES
+	MATCH   $FIRST_RES TO $LAST_RES
+        `test ! -z "$INCLUDE" && echo -e "$INCLUDE\n \n"`
+	END
+END-lsqkab

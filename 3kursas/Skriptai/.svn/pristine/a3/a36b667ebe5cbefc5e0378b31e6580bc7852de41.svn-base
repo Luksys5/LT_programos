@@ -1,0 +1,8 @@
+#!/bin/sh
+
+test -z "${XLOG_FONT}" && XLOG_FONT=8x13
+
+##  XLOG_FONT="-misc-fixed-medium-r-normal--20-140-100-100-c-100-iso8859-1"
+
+xterm -bg black -fg cyan -geometry 140x40 \
+      -T "$*" -fn $XLOG_FONT -e tail -f "$@"

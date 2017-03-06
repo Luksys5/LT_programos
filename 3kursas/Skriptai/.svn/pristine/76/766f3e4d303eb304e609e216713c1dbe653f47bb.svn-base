@@ -1,0 +1,65 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $header = "";
+my $length;
+
+unshift( @ARGV, "-" ) unless @ARGV;
+
+my $wavfile;
+for $wavfile (@ARGV) {
+    open( WAV, "$wavfile" ) or die( "can't open file '$wavfile': $!" );
+
+    read( WAV, $header, 4 );
+    print STDERR "# $header\n";
+    read( WAV, $header, 4 );
+    $length = unpack( "V", $header );
+    print STDERR "# LENGTH $length\n";
+
+    read( WAV, $header, 4 );
+    print STDERR "# $header\n";
+
+    my $signature = "";
+    do {
+	read( WAV, $signature, 4 );
+	print STDERR "# $signature\n";
+	read( WAV, $header, 4 );
+	$length = unpack( "V", $header );
+	print STDERR "# LENGTH $length\n";
+    } until $signature eq "fmt ";
+
+    read( WAV, $header, $length );
+    my ( $format_tag, $channels, $samples, $bytes_per_second,
+	$align, $bits_per_sample ) = unpack( "vvVVvv", $header );
+
+    print STDERR "# FORMAT          $format_tag\n";
+    print STDERR "# CHANNELS        $channels\n";
+    print STDERR "# SAMPLES         $samples\n";
+    print STDERR "# BYTES_PER_SEC   $bytes_per_second\n";
+    print STDERR "# ALIGN           $align\n";
+    print STDERR "# BITS_PER_SAMPLE $bits_per_sample\n";
+
+    read( WAV, $header, 4 );
+    print STDERR "# $header\n";
+    read( WAV, $header, 4 );
+    $length = unpack( "V", $header );
+    print STDERR "# LENGTH $length\n";
+
+    my $buffersz = 2048;
+    my $words = $buffersz / 2;
+    my $data = "";
+    my $datasz = 0;
+    my $total_data = 0;
+
+    while(( $datasz = read( WAV, $data, $buffersz ))) {
+	$words = $datasz / 2;
+	$data = pack( "n$words", unpack( "v$words", $data ));
+	syswrite( STDOUT, $data, $datasz );
+	$total_data += $datasz;
+    }
+
+    print STDERR "# amount of data written $total_data\n";
+
+    close( WAV );
+}

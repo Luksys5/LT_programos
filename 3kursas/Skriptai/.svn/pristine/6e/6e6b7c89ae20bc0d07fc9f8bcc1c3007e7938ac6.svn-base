@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+use lib "$ENV{HOME}/lib/perl5";
+use strict;
+use GetOptions;
+
+my ($rev, $comp) = ( 0, 0 );
+getOptions({ "-r" => sub{$rev=1}, "-c" => sub{$comp=1} });
+
+my %pairs = ( "A"=>"T", "C"=>"G", "G"=>"C", "T"=>"A" );
+
+while( @ARGV ) {
+    my $first_seq = uc( shift(@ARGV) );
+    $first_seq =~ s/[- ._]//g;
+    my $second_seq = @ARGV > 0 ? uc( shift(@ARGV) ) : 
+           $comp ? &comp($first_seq) : $first_seq;
+    $second_seq =~ s/[- ._]//g;
+    $second_seq = &rev($second_seq) if $rev;
+    my ($row, $col);
+    print " " x 3, join( " ", split(//,$first_seq)), "\n";
+    foreach $row ( split(//, $second_seq) ) {
+        print "$row: ";
+        foreach $col ( split(//, $first_seq) ) {
+            print $pairs{$col} eq $row ? "O " : ". ";
+        }
+        print "\n";
+    }
+}
+
+sub rev
+{
+   my @ret = ();
+   foreach ( split(//,$_[0]) ) {
+       unshift(@ret, $_);
+   }
+   return join( "", @ret );
+}
+
+sub comp
+{
+   my @ret = ();
+   foreach ( split(//,$_[0]) ) {
+       push(@ret, $pairs{$_});
+   }
+   return join( "", @ret );
+}

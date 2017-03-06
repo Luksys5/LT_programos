@@ -1,0 +1,30 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author:$
+#$Date:$ 
+#$Locker:$
+#$Revision:$
+#$Source:$
+#$State:$
+#------------------------------------------------------------------------------
+#*
+#  Print letters of each command line argument in reversed order.
+#**
+
+use strict;
+
+my $arg;
+for $arg (@ARGV) {
+    my @letters = split( '', $arg );
+
+    my $i;
+    for( $i = $#letters; $i >= 0; $i-- ) {
+	print $letters[$i];
+    }
+    print " ";
+}
+
+print "\n";

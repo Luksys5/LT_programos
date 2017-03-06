@@ -1,0 +1,12 @@
+#!/usr/bin/perl -w
+
+use strict;
+use lib "$ENV{HOME}/bin/perl";
+use Crunch;
+
+my $length = 8;
+$length = shift if @ARGV > 0 and $ARGV[0] =~ /^[0-9]+$/;
+
+foreach(@ARGV) {
+    print crunch($_, $length), "\n";
+}

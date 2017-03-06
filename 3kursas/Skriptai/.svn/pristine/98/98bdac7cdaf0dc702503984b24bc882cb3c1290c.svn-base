@@ -1,0 +1,14 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+
+use strict;
+
+my @v1 = @ARGV[0,1,2];
+my @v2 = @ARGV[3,4,5];
+
+$\ = "\n";
+$, = "\t";
+
+print sqrt( ($v1[0]-$v2[0])**2 + ($v1[1]-$v2[1])**2 + ($v1[2]-$v2[2])**2 );

@@ -1,0 +1,11 @@
+#!/bin/sh 
+
+cat > gnu.$$.inp  << EOF
+   set data style lines
+   plot `echo $* | awk '{for(i=1;i<NF;i++) printf "\"%s\",", $i; printf "\"%s\"\n", $NF}'`
+   pause -1
+EOF
+
+gnuplot gnu.$$.inp
+
+rm gnu.$$.inp

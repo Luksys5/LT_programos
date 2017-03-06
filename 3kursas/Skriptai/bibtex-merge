@@ -1,0 +1,181 @@
+#! /bin/sh
+#!perl -w # --*- Perl -*--
+eval 'exec perl -x $0 ${1+"$@"}'
+    if 0;
+#------------------------------------------------------------------------------
+#$Author: saulius $
+#$Date: 2014-01-16 09:33:10 +0200 (Kt, 16 Sau 2014) $
+#$Revision: 391 $
+#$URL: svn://saulius-grazulis.lt/scripts/bibtex-merge $
+#------------------------------------------------------------------------------
+#*USAGE:
+#     $0 --options jabref-biblio-database.bib
+#
+# Distributes files into subdirectories according to the
+# bibliographic information.
+#**
+
+use strict;
+use Text::BibTeX;
+
+use Encode 'decode_utf8';
+
+use SOptions;
+use SUsage;
+
+binmode( STDIN, "utf8" );
+binmode( STDOUT, "utf8" );
+binmode( STDERR, "utf8" );
+
+my $old_priority = 1;
+my $debug = 0;
+my $print_entry_head = 0;
+
+#**OPTIONS:
+#** --debug            print out debug information
+#** --no-debug         no debug information (default)
+#** 
+#** --help    print a short usage message (this message) and exit
+@ARGV = getOptions( 
+
+    "--old-priority,--merge"     => sub { $old_priority = 1 },
+    "--new-priority,--overwrite" => sub { $old_priority = 0 },
+
+    "--debug"    => sub { $debug = 1 },
+    "--no-debug" => sub { $debug = 0 },
+    "--entry-heads" => sub { $print_entry_head = 1 },
+    "--no-entry-heads" => sub { $print_entry_head = 0 },
+    "--options" => sub {
+        print <<EOF;
+$0: the "--options" option is a placeholder where you can put
+any options supported by the $0 program. 
+Please see the option list below:
+
+EOF
+
+        SUsage::usage;
+        exit 0;
+    },
+
+    "--help,--usage" => sub { SUsage::usage; exit },
+);
+
+undef $/; # "slurp" mode
+
+unless( @ARGV ) {
+    push( @ARGV, "-" );
+    print STDERR "# $0: reading from stdin...\n" if -t STDIN;
+}
+
+my @bibtex_ids;
+my %entries;
+my %entry_types;
+
+foreach my $filename (@ARGV) {
+
+    my $text;
+    if( $filename ne "-" ) {
+        open( BIBTEX, "<:utf8", $filename ) or
+            die( "could not open file '$filename' for reading: $!" );
+        $text = <BIBTEX>;
+        close( BIBTEX );
+    } else {
+        $text = <STDIN>;
+    }
+
+    if( $text =~ /^\s*$/ ) {
+        warn( "empty file '$filename'" );
+        next
+    }
+
+    my @entries = map { m/^\s*$/ ? () : ( m/^\s*%/ ? $_ : "@" . $_ ) }
+        split( /^@/m, $text );
+
+    ## my $bibfile = new Text::BibTeX::File( $filename );
+    ## my $entry;
+    ## while( $entry = new Text::BibTeX::Entry( $bibfile )) {
+
+    for my $entry_text (@entries) {
+
+        # Remove non-alphanumeric chars from BibTeX keys befor presenting
+        # them to the 'btparse' BibTeX parser, to avoid syntax errors:
+
+        #$entry_text =~ s/@(\w+)\{(.*),/my $type = $1; my $key = $2;
+        #$key =~ s,["'{}],,g;
+        #"@".$type."{".$key.","/xe; #/# finish this RE for Emacs...
+
+        ## if( $entry_text !~ /^@/ ) {
+        ##     print $entry_text;
+        ##     next
+        ## }
+
+        if( $print_entry_head ) {
+            my $entry_head = substr($entry_text,0,80);
+            $entry_head =~ s/\n/ /g;
+            print STDERR ">>> ", $entry_head, "\n";
+        }
+
+        my $entry = new Text::BibTeX::Entry;
+
+        eval {
+            $entry->parse_s( $entry_text );
+        };
+        if( $@ ) {
+            warn "died while parsing entry ", substr($entry_text,0,60),"... \n";
+            ## print $entry_text if $update_database;
+            next
+        }
+
+        unless( $entry->parse_ok ) {
+            warn "could not parse entry ", substr($entry_text,0,60),"... \n";
+            ## print $entry_text if $update_database;
+            next
+        }
+
+        unless( $entry->metatype == &BTE_REGULAR ) {
+            ## print $entry_text if $update_database;
+            next
+        }
+
+        my $bibtex_id = $entry->key;
+        my $type = $entry->type;
+
+        my %data;
+        my $old_entry = exists $entries{$bibtex_id} ? $entries{$bibtex_id} : undef;
+
+        my @fieldlist = $entry->fieldlist;
+        for my $key (@fieldlist) {
+            if( !$old_priority || !defined $old_entry || !exists $old_entry->{$key} ) {
+                # Insist that the names are well-formed utf8:
+                $data{$key} = decode_utf8( $entry->get( $key ));
+            }
+        }
+        
+        if( exists $entries{$bibtex_id} ) {
+            %{$entries{$bibtex_id}} = ( %{$entries{$bibtex_id}}, %data );
+        } else {
+            push( @bibtex_ids, $bibtex_id );
+            $entries{$bibtex_id} = \%data;
+            $entry_types{$bibtex_id} = $type;
+        }
+
+    }
+}
+
+for my $id (@bibtex_ids) {
+    my $type = $entry_types{$id};
+    print '@', uc($type), "\{$id,\n";
+    print_bibtex_data( $entries{$id} );
+    print "}\n\n";
+}
+
+sub print_bibtex_data
+{
+    my ( $data ) = @_;
+    
+    for my $key (keys %$data) {
+        if( defined $data->{$key} ) {
+            print "    $key = {$data->{$key}},\n"
+        }
+    }
+}

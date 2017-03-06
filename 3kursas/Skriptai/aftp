@@ -1,0 +1,9 @@
+#!/usr/bin/expect --
+
+spawn ftp -i
+
+expect "ftp>"      { send "open [lindex $argv 0]\r" }
+expect "Name"      { send "anonymous\r"        }
+expect "Password:" { send "$env(USER)@assel.biochem.mpg.de\r"  }
+
+interact

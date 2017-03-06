@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "P2"
+echo "512 512"
+#hexdump -s 0x400 -e '/2 "%5.5d\n"' $1 |
+#	awk 'BEGIN{max=0} {if( max < $0 ) max = $0} END{print max}'
+echo "30000"
+hexdump -s 0x400 -e '15/2 "%5.5d " "\n"' $1
+

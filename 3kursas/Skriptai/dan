@@ -1,0 +1,197 @@
+#!/bin/sh
+#------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1997/09/30 14:16:45 $ 
+#$Header:
+#$Locker: grazulis $
+#$Log: dan,v $
+# Revision 1.17  1997/09/30  14:16:45  grazulis
+# --contour (-c) option added.
+# default contouring level changed:
+# 'contour' defaults -> "SIG 1.0 TO 4.0 by 0.3"
+#
+# Revision 1.17  1997/09/30  11:12:13  grazulis
+# small typo fixed
+#
+# Revision 1.16  1997/09/30  11:08:04  grazulis
+# --output now specifies output file name, not only the directory
+# --basename option removed
+#
+# Revision 1.15  1997/09/30  09:33:29  grazulis
+# Error message corrected
+#
+# Revision 1.14  1997/09/21  15:07:27  grazulis
+# bug fix: cp --> cp -f
+#
+# Revision 1.13  1997/09/21  15:00:10  grazulis
+# output files now all go to the --output directory
+#
+# Revision 1.12  1997/09/19  18:02:34  grazulis
+# bug fixes: processing of one pre-scaled file fixed, but very inefectively
+# (one onnecessary colpy)
+# output names of the contour files fixed
+#
+# Revision 1.12  1997/09/19  17:52:56  grazulis
+# bug fix: linking file if not merging
+#
+# Revision 1.11  1997/09/19  17:38:18  grazulis
+# bug fix: syntax corrected
+#
+# Revision 1.10  1997/09/19  17:35:22  grazulis
+# possibility to give just one mtz file and skip the merging step added
+#
+# Revision 1.9  1997/09/19  17:19:39  grazulis
+# '$res' added to the psearch output file name
+#
+# Revision 1.8  1997/09/19  17:12:26  grazulis
+# harker and contour output correctly diverted to the outout dir
+#
+# Revision 1.7  1997/09/19  17:05:39  grazulis
+# adjusted to the version of 'harker' that automatically predicts
+# the positions of harker sections
+#
+# Revision 1.6  1997/09/18  14:22:07  grazulis
+# log files placed to the same directory as the output files
+# 'usage' function added
+# --log-dir option removed
+# output file name handling changed
+#
+# ...
+# Revision 1.3  1997/09/17  15:05:22  grazulis
+# variables now "predeclared" correctly and checked (to catch typos)
+#
+# Revision 1.2  1997/09/17  15:01:15  grazulis
+# --resolution option added
+# RSPS program called for peak search
+#
+# Revision 1.1  1997/09/17  14:17:37  grazulis
+# Initial revision
+#
+#$Revision: 1.17 $
+#$Source: /kaefer/u05/grazulis/src/CCE/scripts/RCS/dan,v $
+#$State: Exp $
+#------------------------------------------------------------------------
+#set -x
+set -e
+
+ID='$Id: dan,v 1.17 1997/09/30 14:16:45 grazulis Exp grazulis $'
+
+test -z "$htmp1" || tmp=$htmp1
+test -z "$tmp" && tmp=./
+
+usage()
+{
+cat <<EOF
+$ID
+Heavy atom derivative analysis (difference Patterson method) Scales
+derivative data set with native, calculates difference Patterson,
+contour Harker sections and tries to find peaks in the Patterson map.
+
+usage:
+ `basename $0` [options] nati.mtz [deri.mtz]
+options:
+ -c, --contour    set the contouring levels for the Harker sections,
+                  using NPO syntax (default "SIG 1.0 TO 4.0 by 0.3")
+ -o, --output     set the output file name 
+                  (default: constructed from the input file names)
+ -r, --resolution set one or more resolution limits for map calculations
+                  (default: 4.5 A)
+ -s, --spacegroup set the spacegroup (default: taken from nati.mtz)
+ --help, --usage  print short usage instruction and exit
+ --version        print script version and exit
+EOF
+}
+
+OUTPUT=""
+OUTPUT_DIR="./"
+OUTPUT_BASE=""
+RESOLUTION=""
+SPACEGROUP=""
+CONTOUR_LVL="SIG 1.0 TO 4.0 by 0.3"
+
+while [ "$1" != "" ]
+do
+    case $1 in
+        -c|--contour)    CONTOUR_LVL=$2; shift ;;
+        -o|--output)     OUTPUT=$2;  shift ;;
+        -r|--resolution) RESOLUTION=$2;  shift ;;
+        -s|--spacegroup) SPACEGROUP=$2;  shift ;;
+        --help|--usage)  usage;    exit ;;
+        --version)       echo $ID; exit ;;
+        -*)              echo "`basename $0`: unknown option $1"; exit ;;
+        *) test -z "$FILE2" && FILE2=$1
+           test -z "$FILE1" && { FILE1=$1; FILE2=""; } ;;
+    esac
+    shift
+done
+
+test -z "$FILE1" && {
+    echo "Please supply one or two mtz files (native and derivative data sets)"
+    echo "on the command line"
+    echo
+    usage
+    exit 1 
+}
+
+set -u
+echo $ID
+
+BASE1=`basename $FILE1 .mtz`
+BASE2=`basename $FILE2 .mtz`
+
+if [ "$OUTPUT" != "" ]; then
+    OUTPUT_BASE=`basename $OUTPUT`
+    OUTPUT_DIR=`dirname $OUTPUT`
+fi
+
+test -z "$OUTPUT_BASE" -a -z "$FILE2" && OUTPUT_BASE="$BASE1"
+test -z "$OUTPUT_BASE" && OUTPUT_BASE="$BASE1-$BASE2"
+test -z "$RESOLUTION"  && RESOLUTION=5.0
+test -z "$SPACEGROUP" && SPACEGROUP=`mtzsymm $FILE1`
+test -z "$OUTPUT" && OUTPUT="$OUTPUT_DIR/$OUTPUT_BASE"
+
+LOG_DIR=$OUTPUT_DIR
+SCALED_MTZ=$tmp/$OUTPUT_BASE.mtz
+MERGED_MTZ=$tmp/$OUTPUT_BASE.merged.mtz
+
+test -z "$OUTPUT_DIR" && { echo "output directory (option -o) must have a non-empty name"; exit 2; }
+test -d "$OUTPUT_DIR" || mkdir "$OUTPUT_DIR"
+
+if [ "$FILE2" != "" ]
+then
+    echo "merging files $FILE1 and $FILE2"
+    mtzmerge $FILE1 $FILE2 -o $MERGED_MTZ > $LOG_DIR/mtzmerge.log
+else
+    cp -f $FILE1 $MERGED_MTZ
+fi
+
+echo "scaling native to derivative"
+scale $MERGED_MTZ $SCALED_MTZ > $LOG_DIR/scaleit.log
+logplot $LOG_DIR/scaleit.log -o $LOG_DIR/scaleit.ps
+
+rm -f $OUTPUT_BASE.merged.mtz
+
+for res in $RESOLUTION
+do
+     echo "\nat resolution ${res} A:"
+     
+     echo "calculating Patterson map"
+     PATTERSON_MAP=$tmp/$OUTPUT_BASE.$res.map
+     patterson -r $res $SCALED_MTZ -o $PATTERSON_MAP > $LOG_DIR/patterson.$res.log 
+     
+     echo "searching for peaks (RSPS)"
+     psearch -s $SPACEGROUP $PATTERSON_MAP -o $OUTPUT.$res.peaks \
+                                            > $LOG_DIR/rsps.$res.log
+
+     echo "extracting Harker sections"
+     harker -x -s $SPACEGROUP $PATTERSON_MAP -o $OUTPUT.$res.x.map >  $LOG_DIR/harker.$res.log
+     harker -y -s $SPACEGROUP $PATTERSON_MAP -o $OUTPUT.$res.y.map >> $LOG_DIR/harker.$res.log
+     harker -z -s $SPACEGROUP $PATTERSON_MAP -o $OUTPUT.$res.z.map >> $LOG_DIR/harker.$res.log
+
+     echo "contouring Harker sections"
+     contour --cont "$CONTOUR_LVL" $OUTPUT.$res.x.map -o $OUTPUT.$res.x.ps >  $LOG_DIR/contour.$res.log
+     contour --cont "$CONTOUR_LVL" $OUTPUT.$res.y.map -o $OUTPUT.$res.y.ps >> $LOG_DIR/contour.$res.log
+     contour --cont "$CONTOUR_LVL" $OUTPUT.$res.z.map -o $OUTPUT.$res.z.ps >> $LOG_DIR/contour.$res.log
+done
+
+echo "\nAll done!"

@@ -1,0 +1,30 @@
+#!/usr/bin/perl -w
+#------------------------------------------------------------------------
+#$Author:$
+#$Date:$ 
+#$Header:
+#$Locker:$
+#$Log:$
+#$Revision:$
+#$Source:$
+#$State:$
+#------------------------------------------------------------------------
+
+use strict;
+
+my $file;
+for $file (@ARGV) {
+    open(SCAN, $file) or die("Can't open '$file': $!");
+
+    my $raster = "";
+    
+    seek(SCAN, 2200, 0);
+    read(SCAN, $raster, 1100*1120);
+
+    print "P5\n";
+    print "1100 1120\n";
+    print "255\n";
+    print $raster;
+
+    close(SCAN);
+}

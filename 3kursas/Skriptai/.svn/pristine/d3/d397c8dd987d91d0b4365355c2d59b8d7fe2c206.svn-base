@@ -1,0 +1,578 @@
+#!/bin/csh -f
+#-----------------------------------------------------------------------------
+#$Author: grazulis $
+#$Date: 1996/04/30 11:46:47 $ 
+#$Header:
+#$Locker: grazulis $
+#$Log: auto_amore,v $
+# Revision 1.18  1996/04/30  11:46:47  grazulis
+# second Cfr10 poly-Ala in 78B5 (Denzo processed)
+#
+# Revision 1.17  1996/04/30  09:38:02  grazulis
+# searching first Cfr10 (poly-Ala) in 78B5 (Denzo processed)
+#
+# Revision 1.16  1996/04/29  19:59:00  grazulis
+# Second Cfr10 (full) model in 78B5 (Denzo)
+#
+# Revision 1.15  1996/04/29  17:47:28  grazulis
+# This script finds the first strong solution
+# of Cfr10 in 78B5 (cfr10t, Denzo) data
+#
+# Revision 1.14  1996/04/22  15:11:49  grazulis
+# rf_adjusted according to the results of tabling run
+# path to the packman adjusted - again... :-(
+#
+# Revision 1.13  1996/04/22 14:24:46   grazulis
+# Searching full Cfr10 molecule in 78B5 data set, Denzo processed
+#
+# Revision 1.12  1996/03/22  22:59:54  grazulis
+# Searchning Cfr10 polyAla model in Cfr10T data (69A3, Denzo processed)
+#
+# Revision 1.11  1996/03/21  21:48:38  grazulis
+# New symmetry group (P222) for denzo data entered
+#
+# Revision 1.10  1996/03/21  19:53:15  grazulis
+# trying to search cfr10 (full molecule) in cfr10t data (69A3), processed with Denzo
+#
+# Revision 1.9  1996/03/16  19:37:46  grazulis
+# symmetry file name corrected
+#
+# Revision 1.8  1996/03/16  15:55:08  grazulis
+# path to executable of packman adjusted
+#
+# Revision 1.7  1996/03/16  15:01:09  grazulis
+# GENERATE statement changed to a new syntax
+#
+# Revision 1.6  1996/03/16  14:43:59  grazulis
+# scratch file ..._tab.pdb moved to scratch directory;
+# small syntac error corrected
+#
+# Revision 1.5  1996/03/16  14:39:56  grazulis
+# scratch file ..._tab.pdb moved to scratch directory
+#
+# Revision 1.4  1996/03/16  14:36:23  grazulis
+# file names changed from 'mun_...' to 'cfr10t_...'
+#
+# Revision 1.3  1996/03/14  19:56:18  grazulis
+# Path to amore executabel changed from .../ccp4_old/ to .../ccp4
+# RCS header moved to a right place
+#
+# Revision 1.2  1996/03/14  19:04:37  grazulis
+# RCS header added
+#
+#$Revision: 1.18 $
+#$Source: /kaefer/u05/grazulis/struct/cfr10t/amore/RCS/auto_amore,v $
+#$State: Exp $
+#----------------------------------------------------------------------------
+
+# GA TMLDH 4-95
+# auto_amore.com - Gerard Kleywegt - March 1994/February 1995
+
+# set scratch directories
+setenv CCP4_SCR /kaefer/scratch/grazulis/amore
+setenv SCRA /kaefer/scratch/grazulis/amore
+setenv TABLING_MI 1500000
+setenv TABLING_MR 5500000
+
+# go to your working directory
+# cd /alf4/grazulis/struct/cfr10t/amore
+
+# where are the AMORE and PACMAN executables ?
+set myamore=/xray/ccp4/bin/amore
+set mypacman=/xray/uppsala/al_pacman
+
+# input MTZ file
+set mtzin=hkldata/78b5.mtz
+
+# input search model (PDB file)
+set pdbin=models/cfr10-polyAla.pdb
+
+# the following "id" is used to generate names of AMORE scratch files etc.
+set id=cfr10t_scratch
+
+# logid is used to generate output file names, so you can
+# do multiple runs with the same TAB files etc. (e.g., for
+# Tra Funs in enantiomorphic spacegroups like P41/P43)
+set logid=cfr10t_auto
+
+# resolution range (make sure that half_hires = 0.5 * hires !)
+# lores and hires are used in the Rot and Tra Fun
+# lores and rbr_hires are used in the rigid-body refinement
+set lores='10.0'
+set hires='6.0'
+set half_hires='3.0'
+set rbr_hires='5.0'
+
+# set column labels in MTZ file
+# F and SIGF
+set fplab='F'
+set siglab='SIGF'
+
+# set real cell
+# set cell='100.0  109.6 226.5 90.0 90.0 90.0' # for munI
+# set cell='64.50   81.30  119.70   90.00   90.00   90.00' # for cfr10
+
+set cell='57.61  122.91  125.44   90.00   90.00   90.00' # for cfr10T
+ 
+# set Rot Fun cell = max dimensions of search model plus high resolution
+# limit plus 1 or 2 or 3 (according to Eleanor D); the max dimensions
+# of your search model are listed at the end of the TABFUN output
+#set rf_cell='50.0 48.0 44.0' # 90.0 90.0 90.0'
+set rf_cell='100.0  86.0  78.00' # 90.0 90.0 90.0'
+#set rf_cell='65.0 65.0 65.0' # 90.0 90.0 90.0'
+
+# set spacegroup and O file with its operators
+# don't forget to run Tra Fun, *but not Rot Fun* in all enantiomorphic
+# spacegroups if you don't know the correct one yet
+set symmetry='P222'
+set osymop='./sym/p222.sym'
+
+# max BETA angle in ROTFUN; should be 180 degrees
+# except when you have two-folds perpendicular to
+# your major rotation axis - i.e., BMAX 180 for
+# P21, P43, P65, but only 90 for P212121, P41212
+# and P6122
+# if in doubt bmax = 180
+# set bmax='90'
+set bmax='180'
+
+# set min safe distance between centres-of-gravity (A)
+# use ~0.7-0.9 * shortest diameter of your protein or search model
+# comment	sqr3(MW) = ca. diameter of protein
+# 		e.g. tmldh: sqr3(35000) = 32.71
+# 		32.71 x 0.75 = 24.53 (A)
+# 		e.g. 2xtmldh: sqr3(70000) = 41.21
+# 		41.21 x 0.75 = 30.91 (A)
+#set safe='20.0' # for DNA model /?/
+#set safe='30.0' # for Mun I protein model
+set safe='30.0'
+
+# set max nr of peaks to pick in RF and TF
+# if this is not a trivial MR case, use as many as 100 Rot Fun peaks
+# default is	set rf_pick='50'
+#		set tf_pick='25'
+#set rf_pick='50'
+#set tf_pick='25'
+set rf_pick='100'
+set tf_pick='50'
+
+# set Patterson integration radii (A)
+set pat_lo='5.0'
+set pat_hi='22.00'
+
+#set pat_lo='5.0'
+#set pat_hi='25.00'
+
+# what to refine in FITING (e.g., P21 NOT Y, P41/P61 NOT Z !)
+set refsol='AL BE GA X Y Z BF'
+
+# max nr of TF solutions to try in FITING
+set maxrbr='20'
+
+# What do you want to do ? (the first 'yes' will be executed)
+# in simple, one-molecule cases, you need to run "start_tab"
+# once, then define the values of "rf_cell" above from the
+# tabling output, then run "rot_tra_rbr" to do the rest of
+# the work
+set start_tab='no'
+set rot_tra_rbr='yes'
+set self_rot='no'
+set tra_rbr='no'
+set pac_rbr='no'
+set rbr='no'
+set pack='no'
+
+### end of user input ###
+
+# the following things you may or may not want to change (once)
+
+# value of BADD in TABFUN
+# homology model tmldh95 file has b-factor 0.00
+set badd='0.0'
+
+# pklim rp: output all peaks above rp*(maximum peak hight), default is 0.5
+# value of PKLIM in ROTFUN and TRAFUN (do *NOT* set too high !!
+# you could miss the real solution in the Rot Fun if you do !)
+set pklim='0.5'
+
+# step size for the Rot Fun
+# angular step size for alpha, beta and gamma in degrees
+set rotstep='1.5'
+
+# sharpening factor for most steps
+# e.g. sharpening B value for structure factors
+# set sharp='10.0'
+set sharp='5.0'
+
+
+# SHANNON factor for Tra Fun; select 1.0, 2.0 or 4.0
+# the higher the value, the more accurate R, *but* the
+# slower the Tra Fun and the more disk space is required
+# (up to hundreds of MB for large unit cells)
+set shann='1.0'
+# shannon factor for Tab Fun is 4.0
+
+
+# generate names of amore files
+set pdbtab=$SCRA/{$id}_tab.pdb
+set pack0=$SCRA/{$id}_amore.hkl
+set pack1=$SCRA/{$id}_search.hkl
+set tab1=$SCRA/{$id}_search.tab
+set cl0=$SCRA/{$id}_amore.clmn
+set cl1=$SCRA/{$id}_search.clmn
+set map=$SCRA/{$logid}_amore.map
+
+# list parameters etc.
+echo ""
+banner "AUTO AMORE"
+echo ""
+echo "Gerard Kleywegt - March 1994 - `date`"
+echo ""
+echo "Work directory .................................. " $cwd
+echo "Scratch directory ............................... " $SCRA
+echo "CCP4 scratch directory .......................... " $CCP4_SCR
+echo ""
+echo "AMORE exebetable ................................ " $myamore
+echo "PACMAN exebetable ............................... " $mypacman
+echo ""
+echo "MTZ input file .................................. " $mtzin
+echo "FP and SIGFP labels ............................. " $fplab $siglab
+echo "PDB input file .................................. " $pdbin
+echo "ID for AMORE scratch files ...................... " $id
+echo "ID for output files ............................. " $logid
+echo "Process number is ID for temporary files ........ " $$
+echo "PDBTAB file ..... " $pdbtab
+echo "PACK0 file ...... " $pack0
+echo "PACK1 file ...... " $pack1
+echo "TAB1 file ....... " $tab1
+echo "CLMN0 file ...... " $cl0
+echo "CLMN1 file ...... " $cl1
+echo "CCP4 map file ... " $map
+echo ""
+echo "Resolution range to use ......................... " $lores $hires
+echo "High-res limit divided by 2 should be ........... " $half_hires
+echo "High-res limit for RBR .......................... " $rbr_hires
+echo "Real unit cell ....... " $cell
+echo "RF unit cell ......... " $rf_cell
+echo "Spacegroup ........... " $symmetry
+echo "O operators for it ... " $osymop
+echo ""
+echo "Patterson integration limits .................... " $pat_lo $pat_hi
+echo "Number of peaks to pick in rotation function .... " $rf_pick
+echo "Ditto, in translation functions ................. " $tf_pick
+echo "Min COG distance for acceptable packing ......... " $safe
+echo "Parameters to refine in RBR ..................... " $refsol
+echo "Maximum number of TF solutions to try in RBR .... " $maxrbr
+echo ""
+
+# exebete appropriate amore step
+if ("$start_tab" == "yes")   goto start
+if ("$rot_tra_rbr" == "yes") goto roting
+if ("$self_rot" == "yes")    goto self
+if ("$tra_rbr" == "yes")     goto traing
+if ("$pac_rbr" == "yes")     goto fiting
+if ("$rbr" == "yes")         goto rbring
+if ("$pack" == "yes")        goto packing
+
+echo "ERROR - nothing to do"
+exit -1
+
+#    sorting run: 
+start:
+
+echo "SORTFUN RESO 100.0 $rbr_hires" > q.$$
+echo "LABI FP=$fplab SIGFP=$siglab" >> q.$$
+
+echo ""
+echo "SORTFUN `date` :"
+cat q.$$
+echo ""
+
+$myamore hklin $mtzin hklpck0 $pack0 \
+         < q.$$ > {$logid}_sorting.log
+
+grep -i error {$logid}_sorting.log
+\rm q.$$
+
+if (! -e $pack0) then
+  echo "ERROR - $pack0 not created"
+  exit -1
+endif
+
+#    tabling run: 
+tab:
+
+echo "TABFUN SHIFT ROTATE TABULATE" > q.$$
+echo "CRYSTAL ORTH 1 CELL $cell" >> q.$$
+echo "MODEL 1 BADD $badd" >> q.$$
+echo "SAMPLE 1 TMIN $rbr_hires SHANN 4.0 SCALE 4.0" >> q.$$
+
+echo ""
+echo "TABFUN `date` :"
+cat q.$$
+echo ""
+
+$myamore xyzin1 $pdbin xyzout1 $pdbtab TABLE1 $tab1 \
+         < q.$$ > {$logid}_tabling.log
+
+grep -i error {$logid}_tabling.log
+\rm q.$$
+
+if (! -e $pdbtab) then
+  echo "ERROR - $pdbtab not created"
+  exit -1
+endif
+
+if (! -e $tab1) then
+  echo "ERROR - $tab1 not created"
+  exit -1
+endif
+
+exit 0
+
+#    self roting run: 
+self:
+
+echo "ROTFUN" > q.$$
+echo "ROTA  SELF  MODEL 1  BESLIMI 6 120 STEP $rotstep -" >> q.$$
+echo "PKLIM $pklim DELTA 0.1E-03 NPIC $rf_pick" >> q.$$
+
+echo ""
+echo "SELFROT `date` :"
+cat q.$$
+echo ""
+
+$myamore TABLE1 $tab1 HKLPCK1 $pack1 hklpck0 $pack0 \
+         clmn1 $cl1 clmn0 $cl0 MAPOUT $map \
+         < q.$$ > {$logid}_self.log
+
+grep SOLUTIONRS {$logid}_self.log
+
+grep -i error {$logid}_self.log
+\rm q.$$
+
+exit 0
+
+#    roting run: 
+roting:
+
+echo "ROTFUN" > q.$$
+echo "VERBOSE" >> q.$$
+echo "GENE 1 RESO $lores $hires CELL $rf_cell" >> q.$$
+echo "CLMN CRYSTAL ORTH 1 FLIM 0.E0 1.E8 SHARP $sharp RESO $hires $lores -" >> q.$$
+echo "  SPHERE $pat_lo $pat_hi" >> q.$$
+echo "CLMN MODEL 1 FLIM 0.E0 1.E8 SHARP $sharp RESO $hires $lores -" >> q.$$
+echo "  SPHERE $pat_lo $pat_hi" >> q.$$
+echo "ROTA CROSS MODEL 1 BESLIMI 6 120 STEP $rotstep -" >> q.$$
+# echo "  PKLIM $pklim DELTA 0.1E-2 NPIC 250 BMAX $bmax" >> q.$$
+echo "  PKLIM $pklim DELTA 0.1E-2 NPIC 250 BMAX $bmax" >> q.$$
+
+echo ""
+echo "CROSSROT `date` :"
+cat q.$$
+echo ""
+
+$myamore TABLE1 $tab1 HKLPCK1 $pack1 hklpck0 $pack0 \
+         clmn1 $cl1 clmn0 $cl0 MAPOUT $map \
+         < q.$$ > {$logid}_roting.log
+
+grep -i error {$logid}_roting.log
+\rm q.$$
+
+set cnt=`grep SOLUTIONRC {$logid}_roting.log | wc -l`
+if ($cnt < 1) then
+  echo "ERROR - no solutions in rotation function"
+  exit -1
+endif
+
+#    traing run:   NMOL = 1
+traing:
+
+grep SOLUTIONRC {$logid}_roting.log | head -$rf_pick > q3.$$
+# grep SOLUTIONRC edit_roting.log | head -$rf_pick > q3.$$
+
+set total=`cat q3.$$ | wc -l`
+if (-e {$logid}_traing.log) /bin/rm {$logid}_traing.log
+touch {$logid}_traing.log
+
+# run Tra Fun for batches of 40 Rot Fun solutions
+
+@ first = 1
+
+looptr:
+@ last = $first + 39
+if ($last > $total) set last=$total
+
+echo "TRAFUN CB NMOL 1 RESO $hires $lores TMIN $half_hires -" > q.$$
+echo "TRAFUN CB NMOL 2 RESO $hires $lores TMIN $half_hires -" > q.$$
+echo "  SHANN $shann PKLIM $pklim DELTA 0.1E-04 NPIC $tf_pick" >> q.$$
+echo "SYMMETRY $symmetry" >> q.$$
+echo "CRYSTAL ORTH 1 FLIMI 0.E0 1.E8 SHARP $sharp" >> q.$$
+#echo "SOLUTIONT FIX 1 112.66   133.79   220.56  0.25933  0.35834  0.43412 45.2 56.6"  >> q.$$
+echo "SOLUTIONT FIX 1 113.13   112.22   250.80  0.13762  0.23884  0.37356 43.8 54.6"  >> q.$$
+
+echo "$first,$last p" > q4.$$
+sed -n -f q4.$$ q3.$$ >> q.$$
+
+echo ""
+echo "TRAFUN $first $last `date` :"
+cat q.$$
+echo ""
+
+$myamore TABLE1 $tab1 hklpck0 $pack0 MAPOUT $map \
+         < q.$$ >> {$logid}_traing.log
+
+@ first = $first + 40
+
+if ($last < $total) goto looptr
+
+grep -i error {$logid}_traing.log
+\rm q.$$ q3.$$ q4.$$
+
+set cnt=`grep 'SOLUT_' {$logid}_traing.log | wc -l`
+if ($cnt < 1) then
+  echo "ERROR - no solutions in translation function"
+  exit -1
+endif
+
+#    fiting run: 
+fiting:
+
+grep 'SOLUT_' {$logid}_traing.log | sort +8 -nbr > q1.$$
+set total=`cat q1.$$ | wc -l`
+
+# get rid of poorly packing solutions
+echo "$cell" > q.$$
+echo "$osymop" >> q.$$
+echo "0 0 0" >> q.$$
+echo "1" >> q.$$
+echo "$safe" >> q.$$
+echo "5" >> q.$$
+echo "q1.$$" >> q.$$
+echo "q2.$$" >> q.$$
+echo "q3.$$" >> q.$$
+echo "0" >> q.$$
+echo "0" >> q.$$
+
+echo ""
+echo "PACMAN `date` :"
+cat q.$$
+echo ""
+
+$mypacman -b < q.$$ >& {$logid}_pacman.log
+
+grep 'Nr of SOLUT_ lines read' {$logid}_pacman.log
+grep 'Nr with reasonable packing' {$logid}_pacman.log
+
+mv q2.$$ {$logid}_pacman.okay
+mv q3.$$ {$logid}_pacman.poor
+\rm q*.$$
+
+set cnt=`grep 'SOLUT_' {$logid}_pacman.okay | wc -l`
+if ($cnt < 1) then
+  echo "ERROR - no solutions left with reasonable packing"
+  exit -1
+endif
+
+rbring:
+
+grep SOLUT_ {$logid}_pacman.okay | head -$maxrbr > q3.$$
+
+set total=`cat q3.$$ | wc -l`
+if (-e {$logid}_fiting.log) /bin/rm {$logid}_fiting.log
+touch {$logid}_fiting.log
+
+# run RBR for batches of 40 Tra Fun solutions
+
+@ first = 1
+
+looper:
+@ last = $first + 39
+if ($last > $total) set last=$total
+
+echo "FITFUN CB NMOL 1 RESO $rbr_hires $lores ITER 10 CONV 1.E-3" > q.$$
+echo "FITFUN CB NMOL 2 RESO $rbr_hires $lores ITER 10 CONV 1.E-3" > q.$$
+echo "SYMMETRY $symmetry" >> q.$$
+echo "CRYSTAL ORTH 1 FLIMI 0.E0 1.E8 SHARP $sharp" >> q.$$
+echo "REFSOL $refsol" >> q.$$
+#echo "SOLUTIONT FIX 1 112.66   133.79   220.56  0.25933  0.35834  0.43412 45.2 56.6"  >> q.$$
+echo "SOLUTIONT FIX 1 113.13   112.22   250.80  0.13762  0.23884  0.37356 43.8 54.6"  >> q.$$
+
+echo "$first,$last p" > q4.$$
+sed -n -f q4.$$ q3.$$ >> q.$$
+
+echo ""
+echo "FITING $first $last `date` :"
+cat q.$$
+echo ""
+
+$myamore TABLE1 $tab1 hklpck0 $pack0 \
+         < q.$$ >> {$logid}_fiting.log
+
+@ first = $first + 40
+
+if ($last < $total) goto looper
+
+grep -i error {$logid}_fiting.log
+\rm q*.$$
+
+grep SOLUTIONF {$logid}_fiting.log | sort +8 -nbr > {$logid}_rbr.out
+
+set cnt=`grep SOLUTIONF {$logid}_rbr.out | wc -l`
+if ($cnt < 1) then
+  echo "ERROR - no solutions left after RBR"
+  exit -1
+endif
+
+packing:
+
+grep SOLUTIONF {$logid}_rbr.out| sed -e s/SOLUTIONF/SOLUT_/g | sort +8 -nbr > q1.$$
+set total=`cat q1.$$ | wc -l`
+
+# get rid of poorly packing solutions
+echo "$cell" > q.$$
+echo "$osymop" >> q.$$
+echo "0 0 0" >> q.$$
+echo "1" >> q.$$
+echo "$safe" >> q.$$
+echo "5" >> q.$$
+echo "q1.$$" >> q.$$
+echo "q2.$$" >> q.$$
+echo "q3.$$" >> q.$$
+echo "0" >> q.$$
+echo "0" >> q.$$
+
+echo ""
+echo "PACMAN `date` :"
+cat q.$$
+echo ""
+
+$mypacman -b < q.$$ >& {$logid}_packing.log
+
+grep 'Nr of SOLUT_ lines read' {$logid}_packing.log
+grep 'Nr with reasonable packing' {$logid}_packing.log
+
+mv q2.$$ {$logid}_packing.okay
+mv q3.$$ {$logid}_packing.poor
+\rm q*.$$
+
+set cnt=`grep 'SOLUT_ ' {$logid}_packing.okay | wc -l`
+if ($cnt < 1) then
+  echo "ERROR - no solutions left with reasonable packing"
+  exit -1
+endif
+
+echo ""
+echo "DONE `date`"
+echo "Sorted solutions are in file {$logid}_packing.okay ... top 10:"
+echo ""
+head -20 {$logid}_packing.okay
+echo ""
+
+exit 0
+
+
+
+
+
+
