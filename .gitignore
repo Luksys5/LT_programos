@@ -1,6 +1,7 @@
 *.class
 *machine
-*/node_modules/
+*node_modules/
+*node_modules/*
 
 # Package Files #
 *.war
