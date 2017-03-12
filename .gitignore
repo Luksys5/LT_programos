@@ -2,6 +2,8 @@
 *machine
 *node_modules/
 *node_modules/*
+*main.js*
+*main.css
 
 # Package Files #
 *.war
